@@ -1,0 +1,6 @@
+# Ignore Gradle output folders
+/.gradle/
+/build/
+
+# Ignore Intellij configuration
+/.idea/
