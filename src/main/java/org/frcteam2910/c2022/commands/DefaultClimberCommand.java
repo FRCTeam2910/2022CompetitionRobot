@@ -19,7 +19,7 @@ public class DefaultClimberCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void execute() { 
         if(Math.abs(joystick.getAsDouble()) > 0.1){
             climber.setManual(true);
         }

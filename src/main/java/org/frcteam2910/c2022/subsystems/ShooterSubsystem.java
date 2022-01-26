@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class ShooterSubsystem implements Subsystem {
     private static final double HOOD_MOMENT_OF_INTERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
+    // Abhi fix your spelling
     private static final double HOOD_GEAR_REDUCTION = 85.0;
     private final FlywheelSim flywheel = new FlywheelSim(DCMotor.getFalcon500(2), 1.0, Units.inchesToMeters(6));
     private final LinearSystem hoodPlant = LinearSystemId.createSingleJointedArmSystem(DCMotor.getFalcon500(2), HOOD_MOMENT_OF_INTERTIA, HOOD_GEAR_REDUCTION);
