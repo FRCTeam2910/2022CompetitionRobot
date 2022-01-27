@@ -20,11 +20,12 @@ public class ClimberToPointCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        System.out.println(climber.getManual());
         return climber.isAtTargetHeight();
     }
 
-    @Override
-    public void end(boolean interrupted) {
-        System.out.println("Command Finished");
-    }
+//    @Override
+//    public void end(boolean interrupted) {
+//        System.out.println("Command Finished");
+//    }
 }
