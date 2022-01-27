@@ -10,9 +10,11 @@ import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.FeederSubsystem;
 import org.frcteam2910.c2022.subsystems.IntakeSubsystem;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
+import org.frcteam2910.c2022.commands.DefaultShooterCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import org.frcteam2910.c2022.commands.ClimberToPointCommand;
+import org.frcteam2910.c2022.commands.DefaultClimberCommand;
 import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
-import org.frcteam2910.c2022.Robot;
 
 import java.time.Instant;
 
@@ -50,22 +52,16 @@ public class RobotContainer {
     }
 
     public void configureButtonBindings() {
-        if(Robot.isSimulation()) {
-            new Button(() -> joystick.getRawButton(1)).whenPressed(new ClimberToPointCommand(climber, 1.0));
-            new Button(() -> joystick.getRawButton(2)).whenPressed(new ClimberToPointCommand(climber, 0.1));
-            // new Button(() -> joystick.getRawButton(3)).whenPressed(new InstantCommand(() -> climber.setPositionControl(false)));
-            new Button(() -> joystick.getRawButton(4)).whenPressed(new InstantCommand(() -> climber.setPositionControl(true)));
-            new Button(() -> joystick.getRawButton(3)).whenPressed(new SequentialCommandGroup(
-                    new ClimberToPointCommand(climber, 1.1),
-                    new WaitCommand(0.5),
-                    new ClimberToPointCommand(climber, 0.1),
-                    new WaitCommand(0.5),
-                    new ClimberToPointCommand(climber, 1.1)
-            ));
-        } else {
-            controller.getLeftBumperButton().whileHeld(
-                new SimpleIntakeCommand(intake, feeder, 1.0)
-            );
-        }
+        new Button(() -> joystick.getRawButton(1)).whileHeld(new ClimberToPointCommand(climber, 1.0));
+        new Button(() -> joystick.getRawButton(2)).whileHeld(new ClimberToPointCommand(climber, 0.1));
+//        new Button(() -> joystick.getRawButton(3)).whenPressed(new InstantCommand(() -> climber.setPositionControl(false)));
+        new Button(() -> joystick.getRawButton(4)).whenPressed(new InstantCommand(() -> climber.setPositionControl(true)));
+        new Button(() -> joystick.getRawButton(3)).whenPressed(new SequentialCommandGroup(
+                new ClimberToPointCommand(climber, 1.1),
+                new WaitCommand(0.5),
+                new ClimberToPointCommand(climber, 0.1),
+                new WaitCommand(0.5),
+                new ClimberToPointCommand(climber, 1.1)
+        ));
     }
 }
