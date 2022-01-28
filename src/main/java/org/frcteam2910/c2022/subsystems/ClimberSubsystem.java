@@ -13,11 +13,12 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.frcteam2910.c2022.Constants;
 
 public class ClimberSubsystem implements Subsystem {
     private final DCMotor gearbox = DCMotor.getFalcon500(2);
     private final ElevatorSim climber = new ElevatorSim(gearbox, 22.0, Units.lbsToKilograms(60.0), Units.inchesToMeters(1), 0.1, 1.1);
-    private final PWMTalonSRX motor = new PWMTalonSRX(0);
+    private final PWMTalonSRX motor = new PWMTalonSRX(Constants.CLIMBER_MOTOR_PORT);
     private final PIDController positionPID = new PIDController(10.0, 0.0, 0.0);
     private final PIDController velocityPID = new PIDController(3.0, 0.0, 0.0);
 

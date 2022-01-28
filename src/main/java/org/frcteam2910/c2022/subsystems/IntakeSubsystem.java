@@ -1,12 +1,15 @@
 package org.frcteam2910.c2022.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.frcteam2910.c2022.Constants;
 
 public class IntakeSubsystem implements Subsystem {
-    private TalonFX motor = new TalonFX(0);
-    private Solenoid extensionSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 0);
+    private TalonFX motor = new TalonFX(Constants.INTAKE_MOTOR_PORT);
+    private Solenoid extensionSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_PORT);
 
     private double motorSpeed = 0.0;
     private boolean extended = true;
@@ -19,7 +22,7 @@ public class IntakeSubsystem implements Subsystem {
         extensionSolenoid.set(extended);
     }
 
-    public void setFeederSpeed(double motorSpeed) {
+    public void setIntakeSpeed(double motorSpeed) {
         this.motorSpeed = motorSpeed;
     }
 

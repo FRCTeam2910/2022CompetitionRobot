@@ -6,13 +6,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.frcteam2910.c2022.commands.ResetIntakeCommand;
+import org.frcteam2910.c2022.commands.*;
+import org.frcteam2910.c2022.subsystems.FeederSubsystem;
 import org.frcteam2910.c2022.subsystems.IntakeSubsystem;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
-import org.frcteam2910.c2022.commands.DefaultShooterCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import org.frcteam2910.c2022.commands.ClimberToPointCommand;
-import org.frcteam2910.c2022.commands.DefaultClimberCommand;
 import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 import org.frcteam2910.c2022.Robot;
 
@@ -23,18 +21,22 @@ public class RobotContainer {
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ShooterSubsystem shooter = new ShooterSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
+    private final FeederSubsystem feeder = new FeederSubsystem();
 
     private final Joystick joystick = new Joystick(0);
-    private final XboxController controller = new XboxController(0);
+    private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
 
     public RobotContainer() {
         CommandScheduler.getInstance().registerSubsystem(climber);
         CommandScheduler.getInstance().registerSubsystem(shooter);
         CommandScheduler.getInstance().registerSubsystem(intake);
+        CommandScheduler.getInstance().registerSubsystem(feeder);
 
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter,
                 () -> joystick.getRawAxis(0) * 12,
                 () -> joystick.getRawAxis(1) * 12));
+        CommandScheduler.getInstance().setDefaultCommand(intake,
+                new DefaultIntakeCommand(intake));
         CommandScheduler.getInstance().setDefaultCommand(climber,
                 new DefaultClimberCommand(climber,
                 () -> joystick.getRawAxis(2),
@@ -61,7 +63,9 @@ public class RobotContainer {
                     new ClimberToPointCommand(climber, 1.1)
             ));
         } else {
-            new Button(controller::getAButton).whenPressed(new ResetIntakeCommand(intake));
+            controller.getLeftBumperButton().whileHeld(
+                new SimpleIntakeCommand(intake, feeder, 1.0)
+            );
         }
     }
 }
