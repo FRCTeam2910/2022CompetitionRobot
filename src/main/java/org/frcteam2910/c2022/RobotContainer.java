@@ -50,9 +50,6 @@ public class RobotContainer {
     }
 
     public void configureButtonBindings() {
-        new Button(() -> joystick.getRawButton(1)).whileHeld(new ClimberToPointCommand(climber, 1.0));
-        new Button(() -> joystick.getRawButton(2)).whileHeld(new ClimberToPointCommand(climber, 0.1));
-//        new Button(() -> joystick.getRawButton(3)).whenPressed(new InstantCommand(() -> climber.setPositionControl(false)));
         new Button(() -> joystick.getRawButton(1)).whenPressed(new ClimberToPointCommand(climber, 1.0));
         new Button(() -> joystick.getRawButton(2)).whenPressed(new ClimberToPointCommand(climber, 0.1));
         // new Button(() -> joystick.getRawButton(3)).whenPressed(new InstantCommand(() -> climber.setPositionControl(false)));
