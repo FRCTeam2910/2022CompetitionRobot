@@ -7,14 +7,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frcteam2910.c2022.commands.*;
-import org.frcteam2910.c2022.subsystems.FeederSubsystem;
-import org.frcteam2910.c2022.subsystems.IntakeSubsystem;
-import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
+import org.frcteam2910.c2022.subsystems.*;
 import org.frcteam2910.c2022.commands.DefaultShooterCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import org.frcteam2910.c2022.commands.ClimberToPointCommand;
 import org.frcteam2910.c2022.commands.DefaultClimberCommand;
-import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 
 import java.time.Instant;
 
@@ -24,6 +21,7 @@ public class RobotContainer {
     private final ShooterSubsystem shooter = new ShooterSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
     private final FeederSubsystem feeder = new FeederSubsystem();
+//    private final FeederSubsystem vision = new VisionSubsystem(drivetrain);
 
     private final Joystick joystick = new Joystick(0);
     private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
@@ -33,6 +31,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(shooter);
         CommandScheduler.getInstance().registerSubsystem(intake);
         CommandScheduler.getInstance().registerSubsystem(feeder);
+//        CommandScheduler.getInstance().registerSubsystem(vision);
 
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter,
                 () -> joystick.getRawAxis(0) * 12,
