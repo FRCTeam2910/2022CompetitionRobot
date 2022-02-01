@@ -15,7 +15,7 @@ public class ResetIntakeCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        intake.setFeederSpeed(-1.0);
+        intake.setIntakeSpeed(-1.0);
         timer.reset();
         timer.start();
     }
