@@ -41,12 +41,12 @@ public class RobotContainer {
                         () -> joystick.getRawAxis(2),
                         climber.getPID()
                 ));
-        configureButtonBindings();
         drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
-                () -> joystick.getRawAxis(3) * drivetrain.getMaxVelocityMetersPerSecond(),
-                () -> joystick.getRawAxis(4) * drivetrain.getMaxVelocityMetersPerSecond(),
-                () -> joystick.getRawAxis(5) * drivetrain.getMaxVelocityMetersPerSecond()
+                () -> joystick.getRawAxis(3) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> joystick.getRawAxis(4) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> joystick.getRawAxis(5) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                 ));
+        configureButtonBindings();
     }
 
     public ClimberSubsystem getClimber() {
