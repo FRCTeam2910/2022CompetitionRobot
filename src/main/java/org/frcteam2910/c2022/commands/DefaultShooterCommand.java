@@ -10,11 +10,9 @@ public class DefaultShooterCommand extends CommandBase {
     private final DoubleSupplier voltageSupplier;
     private final DoubleSupplier hoodVoltageSupplier;
 
-    public DefaultShooterCommand(ShooterSubsystem shooter, DoubleSupplier volatageSupplier, DoubleSupplier hoodVoltageSupplier) {
-        // Abhi fix your spelling
+    public DefaultShooterCommand(ShooterSubsystem shooter, DoubleSupplier voltageSupplier, DoubleSupplier hoodVoltageSupplier) {
         this.shooter = shooter;
-        this.voltageSupplier = volatageSupplier;
-        // Abhi fix your spelling
+        this.voltageSupplier = voltageSupplier;
         this.hoodVoltageSupplier = hoodVoltageSupplier;
         addRequirements(shooter);
     }
