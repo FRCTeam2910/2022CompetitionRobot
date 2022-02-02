@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022;
 
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -7,11 +8,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frcteam2910.c2022.commands.*;
-import org.frcteam2910.c2022.subsystems.FeederSubsystem;
-import org.frcteam2910.c2022.subsystems.IntakeSubsystem;
-import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
+import org.frcteam2910.c2022.subsystems.*;
 import edu.wpi.first.wpilibj2.command.button.Button;
-import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 import org.frcteam2910.c2022.Robot;
 
 import java.time.Instant;
@@ -22,6 +20,7 @@ public class RobotContainer {
     private final ShooterSubsystem shooter = new ShooterSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
     private final FeederSubsystem feeder = new FeederSubsystem();
+    private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
 
     private final Joystick joystick = new Joystick(0);
 
@@ -30,6 +29,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(shooter);
         CommandScheduler.getInstance().registerSubsystem(intake);
         CommandScheduler.getInstance().registerSubsystem(feeder);
+        CommandScheduler.getInstance().registerSubsystem(drivetrain);
 
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter,
                 () -> joystick.getRawAxis(0) * 12,
@@ -40,6 +40,11 @@ public class RobotContainer {
                 new DefaultClimberCommand(climber,
                         () -> joystick.getRawAxis(2),
                         climber.getPID()
+                ));
+        drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
+                () -> joystick.getRawAxis(3) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> joystick.getRawAxis(4) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> joystick.getRawAxis(5) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                 ));
         configureButtonBindings();
     }
