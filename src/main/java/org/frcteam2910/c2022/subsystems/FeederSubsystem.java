@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.c2022.Constants;
 
 public class FeederSubsystem implements Subsystem {
-    private TalonFX motor = new TalonFX(Constants.FEEDER_MOTOR_PORT);
+    private final TalonFX motor = new TalonFX(Constants.FEEDER_MOTOR_PORT);
 
     private double motorSpeed;
 

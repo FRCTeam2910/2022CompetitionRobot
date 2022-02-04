@@ -1,6 +1,5 @@
 package org.frcteam2910.c2022.subsystems;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.common.math.MathUtils;
@@ -51,7 +50,7 @@ public class VisionSubsystem implements Subsystem {
     public boolean isOnTarget() {
         shooterHasTargets = shooterHasTargets();
         if (shooterHasTargets) {
-            double delta = shooterAngleToTarget - drivetrain.getPose().rotation.toRadians();
+            double delta = shooterAngleToTarget - drivetrain.getPose().getRotation().getRadians();
             if (delta > Math.PI) {
                 delta = 2.0 * Math.PI - delta;
             }
@@ -78,7 +77,7 @@ public class VisionSubsystem implements Subsystem {
             );
 
             PhotonTrackedTarget target = shooterLimelight.getLatestResult().getBestTarget();
-            shooterAngleToTarget = drivetrain.getPoseAtTime(Timer.getFPGATimestamp() - result.getLatencyMillis() / 1000.0).rotation.toRadians() + Math.toRadians(target.getYaw());
+            shooterAngleToTarget = drivetrain.getPose().getRotation().getRadians() + Math.toRadians(target.getYaw());
         } else {
             shooterDistanceToTarget = Double.NaN;
             shooterAngleToTarget = Double.NaN;
