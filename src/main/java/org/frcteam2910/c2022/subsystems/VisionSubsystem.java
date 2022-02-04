@@ -39,12 +39,7 @@ public class VisionSubsystem implements Subsystem {
     }
 
     public boolean shooterHasTargets() {
-        if (result.hasTargets()){
-            shooterHasTargets = true;
-        } else {
-            shooterHasTargets = false;
-        }
-        return shooterHasTargets;
+        return result.hasTargets();
     }
 
     public boolean isOnTarget() {

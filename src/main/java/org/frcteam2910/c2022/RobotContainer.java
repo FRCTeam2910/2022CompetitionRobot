@@ -29,17 +29,17 @@ public class RobotContainer {
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter,
                 () -> joystick.getRawAxis(0) * 12,
                 () -> joystick.getRawAxis(1) * 12));
-        CommandScheduler.getInstance().setDefaultCommand(intake,
-                new DefaultIntakeCommand(intake));
-        CommandScheduler.getInstance().setDefaultCommand(climber,
-                new DefaultClimberCommand(climber,
+        intake.setDefaultCommand(new DefaultIntakeCommand(intake));
+        climber.setDefaultCommand(new DefaultClimberCommand(climber,
                 () -> joystick.getRawAxis(2),
-                climber.getPID()));
+                climber.getPID()
+        ));
         drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
             () -> joystick.getRawAxis(3) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> joystick.getRawAxis(4) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> joystick.getRawAxis(5) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
         ));
+        feeder.setDefaultCommand(new DefaultFeederCommand(feeder));
         configureButtonBindings();
     }
 
@@ -58,8 +58,8 @@ public class RobotContainer {
 //                new ClimberToPointCommand(climber, 0.1),
 //                new WaitCommand(0.5),
 //                new ClimberToPointCommand(climber, 1.1)
-        new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake, feeder, 1.0));
-//        new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new AutoShootCommand);
-//        new Button(() -> controller.getRightBumper()).whileHeld(new ManualShootCommand(shooter));
+        new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
+        new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new AutoShootCommand(shooter, feeder, drivetrain, vision));
+        new Button(() -> controller.getRightBumper()).whileHeld(new ManualShootCommand(feeder, shooter));
     }
 }

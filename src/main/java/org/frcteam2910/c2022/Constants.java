@@ -7,6 +7,10 @@ public class Constants {
     public static final int INTAKE_SOLENOID_PORT = 0;
     public static final int CLIMBER_MOTOR_PORT = 0;
     public static final int FEEDER_MOTOR_PORT = 0;
+    public static final int FEEDER_SOLENOID_PORT = 0;
+
+    public static final int FEEDER_SENSOR_FULL_PORT = 0;
+    public static final int FEEDER_SENSOR_ENTRY_PORT = 0;
 
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = 22;
     public static final double DRIVETRAIN_WHEELBASE_METERS = 22;
