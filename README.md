@@ -1,1 +1,1 @@
-# 2022CompetitionRobot. This section is for vertical targeting the upper Hub.
+# 2022CompetitionRobot. This section is for verticely targeting the upper Hub.
