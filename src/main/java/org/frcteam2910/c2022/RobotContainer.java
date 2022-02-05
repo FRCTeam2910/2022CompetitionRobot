@@ -63,6 +63,22 @@ public class RobotContainer {
         new Button(() -> controller.getRightBumper()).whileHeld(new ManualShootCommand(feeder, shooter));
         new Button(() -> controller.getYButton()).whenPressed(new ZeroClimberCommand(climber));
         new Button(() -> controller.getXButton()).whenPressed(new ZeroHoodCommand(shooter));
-
+//        //manual hood adjustment - 0: up, 180: down
+//        new Button(() -> controller.getPOV() == 180.0).whenPressed(() -> shooter.setHoodAngle(
+//                shooter.getHoodAngle() + Constants.HOOD_MANUAL_ADJUST_INTERVAL)
+//        );
+//
+//        new Button(() -> controller.getPOV() == 0.0).whenPressed(() -> shooter.setHoodAngle(
+//                shooter.getHoodAngle() - Constants.HOOD_MANUAL_ADJUST_INTERVAL)
+//        );
+//
+//        //manual flywheel adjustment - 90: right, 270: left
+//        new Button(() -> controller.getPOV() == 90.0).whenPressed(() -> shooter.setVoltage(
+//                shooter.getFlywheelSpeed() + Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)
+//        );
+//
+//        new Button(() -> controller.getPOV() == 270.0).whenPressed(() -> shooter.setHoodAngle(
+//                shooter.getFlywheelSpeed() + Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)
+//        );
     }
 }
