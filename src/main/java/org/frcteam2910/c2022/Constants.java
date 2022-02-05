@@ -38,4 +38,5 @@ public class Constants {
 
     public static final int HOOD_MOTOR_PORT = 0;
 
+    public static final double HOOD_MOTOR_TO_HOOD_GEAR_RATIO = 1;
 }

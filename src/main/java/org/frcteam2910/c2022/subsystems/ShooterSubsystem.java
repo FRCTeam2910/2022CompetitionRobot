@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.c2022.Constants;
 
+import java.util.Optional;
+import java.util.OptionalDouble;
+
 
 public class ShooterSubsystem implements Subsystem {
     private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
@@ -23,6 +26,7 @@ public class ShooterSubsystem implements Subsystem {
     private double voltage;
     private double hoodVoltage;
     private boolean isHoodZeroed;
+    private double hoodTargetPosition = Double.NaN;
 
     // Used in the ZeroHoodCommand, unused otherwise
     private final TalonFX hoodAngleMotor = new TalonFX(Constants.HOOD_MOTOR_PORT);
@@ -57,6 +61,18 @@ public class ShooterSubsystem implements Subsystem {
         this.isHoodZeroed = zeroed;
     }
 
+    public void setHoodTargetPosition(double position){
+        this.hoodTargetPosition = position;
+    }
+
+    public OptionalDouble getHoodTargetPosition() {
+        if(Double.isFinite(hoodTargetPosition)) {
+            return OptionalDouble.of(hoodTargetPosition);
+        } else {
+            return OptionalDouble.empty();
+        }
+    }
+
     public boolean isHoodZeroed() {
         return isHoodZeroed;
     }
@@ -73,6 +89,18 @@ public class ShooterSubsystem implements Subsystem {
             hoodSim.setInput(hoodVoltage);
             hoodSim.update(0.02);
 
+    }
+
+    @Override
+    public void periodic() {
+        if(!getHoodTargetPosition().isEmpty()){
+            double targetAngle = getHoodTargetPosition().getAsDouble();
+            hoodAngleMotor.set(TalonFXControlMode.Position, angleToTalonUnits(targetAngle));
         }
     }
+
+    private double angleToTalonUnits(double angle) {
+        return angle * 2048 / (2 * Math.PI) * Constants.HOOD_MOTOR_TO_HOOD_GEAR_RATIO;
+    }
+}
 
