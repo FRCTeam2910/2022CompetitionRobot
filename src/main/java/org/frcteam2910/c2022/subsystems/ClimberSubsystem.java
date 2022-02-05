@@ -1,5 +1,8 @@
 package org.frcteam2910.c2022.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -18,7 +21,7 @@ import org.frcteam2910.c2022.Constants;
 public class ClimberSubsystem implements Subsystem {
     private final DCMotor gearbox = DCMotor.getFalcon500(2);
     private final ElevatorSim climber = new ElevatorSim(gearbox, 22.0, Units.lbsToKilograms(60.0), Units.inchesToMeters(1), 0.1, 1.1);
-    private final PWMTalonSRX motor = new PWMTalonSRX(Constants.CLIMBER_MOTOR_PORT);
+    private final TalonFX motor = new TalonFX(Constants.CLIMBER_MOTOR_PORT);
     private final PIDController positionPID = new PIDController(10.0, 0.0, 0.0);
     private final PIDController velocityPID = new PIDController(3.0, 0.0, 0.0);
 
@@ -59,13 +62,15 @@ public class ClimberSubsystem implements Subsystem {
             voltage = positionPID.calculate(climber.getPositionMeters(), targetHeight) * 12;
         }
         climber.setInputVoltage(voltage);
-        motor.setVoltage(voltage);
+        motor.set(TalonFXControlMode.PercentOutput, voltage / 12);
         climber.update(0.020);
         position.setLength(climber.getPositionMeters() * 100);
         motorOutput.setLength((motorSpeed + 1) * 50);
     }
 
     public void setMotorSpeed(double motorSpeed) {
+        this.manual = true;
+        this.positionControl = false;
         this.motorSpeed = motorSpeed;
     }
 
@@ -107,4 +112,12 @@ public class ClimberSubsystem implements Subsystem {
     }
 
     public PIDController getPID() { return positionPID; }
+
+    public double getVelocity() {
+        return climber.getVelocityMetersPerSecond();
+    }
+
+    public void zeroClimber() {
+        motor.setSelectedSensorPosition(0.0);
+    }
 }

@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -10,6 +11,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.frcteam2910.c2022.Constants;
 
 
 public class ShooterSubsystem implements Subsystem {
@@ -20,6 +22,10 @@ public class ShooterSubsystem implements Subsystem {
     private final LinearSystemSim hoodSim = new LinearSystemSim(hoodPlant);
     private double voltage;
     private double hoodVoltage;
+    private boolean isHoodZeroed;
+
+    // Used in the ZeroHoodCommand, unused otherwise
+    private final TalonFX hoodAngleMotor = new TalonFX(Constants.HOOD_MOTOR_PORT);
 
     public ShooterSubsystem(){
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Shooter");
@@ -43,7 +49,21 @@ public class ShooterSubsystem implements Subsystem {
         this.hoodVoltage = hoodVoltage;
     }
 
+    public double getHoodVoltage() {
+        return hoodVoltage;
+    }
 
+    public void setHoodZeroed(boolean zeroed) {
+        this.isHoodZeroed = zeroed;
+    }
+
+    public boolean isHoodZeroed() {
+        return isHoodZeroed;
+    }
+
+    public void zeroHoodMotor() {
+        hoodAngleMotor.setSelectedSensorPosition(0.0);
+    }
 
     public void simulationPeriodic() {
 

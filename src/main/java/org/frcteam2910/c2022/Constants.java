@@ -36,6 +36,6 @@ public class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 4;
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(0.0);
 
-
+    public static final int HOOD_MOTOR_PORT = 0;
 
 }
