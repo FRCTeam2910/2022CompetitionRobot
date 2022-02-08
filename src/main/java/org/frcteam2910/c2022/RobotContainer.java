@@ -42,6 +42,10 @@ public class RobotContainer {
         configureButtonBindings();
     }
 
+    public DrivetrainSubsystem getDrivetrain() {
+        return drivetrain;
+    }
+
     public ClimberSubsystem getClimber() {
         return climber;
     }
