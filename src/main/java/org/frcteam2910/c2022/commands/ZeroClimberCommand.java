@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 
@@ -9,7 +10,7 @@ public class ZeroClimberCommand extends CommandBase {
 
     private final ClimberSubsystem climber;
 
-    private long zeroVelocityTimestamp;
+    private double zeroVelocityTimestamp;
 
     public ZeroClimberCommand(ClimberSubsystem climber){
         this.climber = climber;
@@ -27,7 +28,7 @@ public class ZeroClimberCommand extends CommandBase {
         climber.setMotorSpeed(-0.1);
         if(Math.abs(climber.getVelocity()) < 0.05){
             if(zeroVelocityTimestamp == Long.MAX_VALUE) {
-                zeroVelocityTimestamp = System.currentTimeMillis();
+                zeroVelocityTimestamp = Timer.getFPGATimestamp();
             }
         } else {
             zeroVelocityTimestamp = Long.MAX_VALUE;
@@ -36,7 +37,7 @@ public class ZeroClimberCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return System.currentTimeMillis() - zeroVelocityTimestamp >= CLIMBER_ZERO_VELOCITY_TIME_PERIOD;
+        return Timer.getFPGATimestamp() - zeroVelocityTimestamp >= CLIMBER_ZERO_VELOCITY_TIME_PERIOD;
     }
 
     @Override

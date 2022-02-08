@@ -5,9 +5,9 @@ import org.frcteam2910.c2022.subsystems.FeederSubsystem;
 import org.frcteam2910.c2022.subsystems.IntakeSubsystem;
 
 public class SimpleIntakeCommand extends CommandBase {
-    private final IntakeSubsystem intake;
+    private static final double INTAKE_SPEED = 0.5;
 
-    private final double INTAKE_SPEED = 0.5;
+    private final IntakeSubsystem intake;
 
     public SimpleIntakeCommand(IntakeSubsystem intake){
         this.intake = intake;

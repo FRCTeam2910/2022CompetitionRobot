@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -28,7 +29,6 @@ public class ShooterSubsystem implements Subsystem {
     private boolean isHoodZeroed;
     private double hoodTargetPosition = Double.NaN;
 
-    // Used in the ZeroHoodCommand, unused otherwise
     private final TalonFX hoodAngleMotor = new TalonFX(Constants.HOOD_MOTOR_PORT);
 
     public ShooterSubsystem(){

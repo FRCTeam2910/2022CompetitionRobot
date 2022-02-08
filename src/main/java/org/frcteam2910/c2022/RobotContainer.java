@@ -16,7 +16,6 @@ public class RobotContainer {
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
     private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
 
-    private final Joystick joystick = new Joystick(0);
     private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
 
     public RobotContainer() {
@@ -25,19 +24,19 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(intake);
         CommandScheduler.getInstance().registerSubsystem(feeder);
         CommandScheduler.getInstance().registerSubsystem(vision);
+        CommandScheduler.getInstance().registerSubsystem(drivetrain);
 
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter,
-                () -> joystick.getRawAxis(0) * 12,
-                () -> joystick.getRawAxis(1) * 12));
+                () -> controller.getRawAxis(0) * 12,
+                () -> controller.getRawAxis(1) * 12));
         intake.setDefaultCommand(new DefaultIntakeCommand(intake));
         climber.setDefaultCommand(new DefaultClimberCommand(climber,
-                () -> joystick.getRawAxis(2),
-                climber.getPID()
+                () -> controller.getRawAxis(2)
         ));
         drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
-            () -> joystick.getRawAxis(3) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> joystick.getRawAxis(4) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> joystick.getRawAxis(5) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+            () -> controller.getRawAxis(3) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> controller.getRawAxis(4) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> controller.getRawAxis(5) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
         ));
         feeder.setDefaultCommand(new DefaultFeederCommand(feeder));
         configureButtonBindings();
@@ -48,16 +47,6 @@ public class RobotContainer {
     }
 
     public void configureButtonBindings() {
-//        new Button(() -> joystick.getRawButton(1)).whenPressed(new ClimberToPointCommand(climber, 1.0));
-//        new Button(() -> joystick.getRawButton(2)).whenPressed(new ClimberToPointCommand(climber, 0.1));
-//        // new Button(() -> joystick.getRawButton(3)).whenPressed(new InstantCommand(() -> climber.setPositionControl(false)));
-//        new Button(() -> joystick.getRawButton(4)).whenPressed(new InstantCommand(() -> climber.setPositionControl(true)));
-//        new Button(() -> joystick.getRawButton(3)).whenPressed(new SequentialCommandGroup(
-//                new ClimberToPointCommand(climber, 1.1),
-//                new WaitCommand(0.5),
-//                new ClimberToPointCommand(climber, 0.1),
-//                new WaitCommand(0.5),
-//                new ClimberToPointCommand(climber, 1.1)
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
         new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new AutoShootCommand(shooter, feeder, drivetrain, vision));
         new Button(() -> controller.getRightBumper()).whileHeld(new ManualShootCommand(feeder, shooter));

@@ -9,12 +9,10 @@ import java.util.function.DoubleSupplier;
 public class DefaultClimberCommand extends CommandBase {
     public final ClimberSubsystem climber;
     public DoubleSupplier joystick;
-    public PIDController pidController;
 
-    public DefaultClimberCommand(ClimberSubsystem climber, DoubleSupplier joystick, PIDController pidController){
+    public DefaultClimberCommand(ClimberSubsystem climber, DoubleSupplier joystick){
         this.climber = climber;
         this.joystick = joystick;
-        this.pidController = pidController;
         addRequirements(climber);
     }
 

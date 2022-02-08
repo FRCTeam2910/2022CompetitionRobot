@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
@@ -25,7 +26,7 @@ public class ZeroHoodCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         if (Math.abs(shooterSubsystem.getHoodVoltage()) > 0.2) {
-            zeroHoodStartTime = System.currentTimeMillis();
+            zeroHoodStartTime = Timer.getFPGATimestamp();
         }
 
         if (System.currentTimeMillis() - zeroHoodStartTime >= ZERO_HOOD_VElOCITY_TIME) {
