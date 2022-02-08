@@ -5,9 +5,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class ZeroHoodCommand extends CommandBase {
-    private final double ZERO_HOOD_VElOCITY_TIME = 250; //in ms, 5 sec
+    private static final double ZERO_HOOD_VELOCITY_TIME = 250; //in ms, 5 sec
 
-    private ShooterSubsystem shooterSubsystem;
+    private final ShooterSubsystem shooterSubsystem;
 
     private double zeroHoodStartTime;
 
@@ -29,7 +29,7 @@ public class ZeroHoodCommand extends CommandBase {
             zeroHoodStartTime = Timer.getFPGATimestamp();
         }
 
-        if (System.currentTimeMillis() - zeroHoodStartTime >= ZERO_HOOD_VElOCITY_TIME) {
+        if (System.currentTimeMillis() - zeroHoodStartTime >= ZERO_HOOD_VELOCITY_TIME) {
             shooterSubsystem.setHoodZeroed(true);
             return true;
         }

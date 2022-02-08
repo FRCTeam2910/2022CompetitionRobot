@@ -80,6 +80,7 @@ public class ClimberSubsystem implements Subsystem {
     
     public void setTargetHeight(double targetHeight) {
         this.targetHeight = targetHeight;
+        manual = false;
     }
 
     public double getTargetHeight() {
@@ -88,6 +89,7 @@ public class ClimberSubsystem implements Subsystem {
 
     public void setTargetVelocity(double targetVelocity) {
         this.targetVelocity = targetVelocity;
+        manual = true;
     }
 
     public void setPositionControl(boolean positionControl) {
