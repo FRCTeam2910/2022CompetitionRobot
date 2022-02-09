@@ -8,10 +8,16 @@ import org.frcteam2910.common.util.InterpolatingDouble;
 import org.frcteam2910.common.util.InterpolatingTreeMap;
 
 public class TargetWithShooterCommand extends CommandBase {
+    private static double SHOOTER_ALLOWABLE_ERROR = 0.5;
+    private static double HOOD_ALLOWABLE_ERROR = 1.0;
+
     private final VisionSubsystem vision;
     private final ShooterSubsystem shooter;
 
     private static final InterpolatingTreeMap<InterpolatingDouble, Vector2> SHOOTER_TUNING = new InterpolatingTreeMap<>();
+
+    private boolean isShooterAtSpeed = false;
+    private boolean isHoodAtAngle = false;
 
     static {
 
@@ -29,13 +35,8 @@ public class TargetWithShooterCommand extends CommandBase {
     public void execute() {
         Vector2 angleAndSpeed = SHOOTER_TUNING.getInterpolated(new InterpolatingDouble(vision.getShooterDistanceToTarget()));
 
-        shooter.setHoodVoltage(angleAndSpeed.y*12);
+        shooter.setTargetFlywheelSpeed(angleAndSpeed.y);
         shooter.setHoodTargetPosition(angleAndSpeed.x);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        shooter.setVoltage(0.0);
     }
 }
 

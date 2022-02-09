@@ -2,6 +2,7 @@ package org.frcteam2910.c2022.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -21,13 +22,16 @@ import java.util.OptionalDouble;
 public class ShooterSubsystem implements Subsystem {
     private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
     private static final double HOOD_GEAR_REDUCTION = 85.0;
+    private static final double FLYWHEEL_ALLOWABLE_ERROR = 0.1;
     private final FlywheelSim flywheel = new FlywheelSim(DCMotor.getFalcon500(2), 1.0, Units.inchesToMeters(6));
     private final LinearSystem hoodPlant = LinearSystemId.createSingleJointedArmSystem(DCMotor.getFalcon500(2), HOOD_MOMENT_OF_INERTIA, HOOD_GEAR_REDUCTION);
     private final LinearSystemSim hoodSim = new LinearSystemSim(hoodPlant);
     private double voltage;
     private double hoodVoltage;
     private boolean isHoodZeroed;
+    private double targetFlywheelSpeed;
     private double hoodTargetPosition = Double.NaN;
+    private PIDController flywheelVelocityController = new PIDController(0.5, 0.0, 0.0);
 
     private final TalonFX hoodAngleMotor = new TalonFX(Constants.HOOD_MOTOR_PORT);
 
@@ -65,6 +69,22 @@ public class ShooterSubsystem implements Subsystem {
         this.hoodTargetPosition = position;
     }
 
+    public boolean isHoodAtTargetAngle() {
+        return Math.abs(hoodTargetPosition - hoodSim.getOutput(0)) < Constants.HOOD_ALLOWABLE_ERROR;
+    };
+
+    public void setTargetFlywheelSpeed(double targetFlywheelSpeed){
+        this.targetFlywheelSpeed = targetFlywheelSpeed;
+    }
+
+    public double getTargetFlywheelSpeed() {
+        return targetFlywheelSpeed;
+    }
+
+    public boolean isFlywheelAtTargetSpeed(){
+        return Math.abs(flywheel.getAngularVelocityRadPerSec() - targetFlywheelSpeed) < FLYWHEEL_ALLOWABLE_ERROR;
+    }
+
     public OptionalDouble getHoodTargetPosition() {
         if(Double.isFinite(hoodTargetPosition)) {
             return OptionalDouble.of(hoodTargetPosition);
@@ -97,10 +117,10 @@ public class ShooterSubsystem implements Subsystem {
             double targetAngle = getHoodTargetPosition().getAsDouble();
             hoodAngleMotor.set(TalonFXControlMode.Position, angleToTalonUnits(targetAngle));
         }
+        flywheel.setInputVoltage(flywheelVelocityController.calculate(flywheel.getAngularVelocityRadPerSec(), targetFlywheelSpeed) * 12);
     }
 
     private double angleToTalonUnits(double angle) {
         return angle * 2048 / (2 * Math.PI) * Constants.HOOD_MOTOR_TO_HOOD_GEAR_RATIO;
     }
 }
-
