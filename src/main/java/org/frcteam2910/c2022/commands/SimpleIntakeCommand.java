@@ -5,14 +5,12 @@ import org.frcteam2910.c2022.subsystems.FeederSubsystem;
 import org.frcteam2910.c2022.subsystems.IntakeSubsystem;
 
 public class SimpleIntakeCommand extends CommandBase {
-    private final IntakeSubsystem intake;
-    private final FeederSubsystem feeder;
-    private double feedSpeed = 0.0;
+    private static final double INTAKE_SPEED = 0.5;
 
-    public SimpleIntakeCommand(IntakeSubsystem intake, FeederSubsystem feeder, double feedSpeed){
+    private final IntakeSubsystem intake;
+
+    public SimpleIntakeCommand(IntakeSubsystem intake){
         this.intake = intake;
-        this.feeder = feeder;
-        this.feedSpeed = feedSpeed;
 
         addRequirements(intake);
     }
@@ -24,13 +22,11 @@ public class SimpleIntakeCommand extends CommandBase {
 
     @Override
     public void execute() {
-        feeder.setFeederSpeed(feedSpeed);
-        intake.setIntakeSpeed(1.0);
+        intake.setIntakeSpeed(INTAKE_SPEED);
     }
 
     @Override
     public void end(boolean interrupted) {
-        feeder.setFeederSpeed(0.0);
         intake.setIntakeSpeed(0.0);
     }
 }

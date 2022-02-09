@@ -23,9 +23,4 @@ public class ClimberToPointCommand extends CommandBase {
         System.out.println(climber.getManual());
         return climber.isAtTargetHeight();
     }
-
-//    @Override
-//    public void end(boolean interrupted) {
-//        System.out.println("Command Finished");
-//    }
 }

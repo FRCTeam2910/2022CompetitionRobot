@@ -1,5 +1,7 @@
 package org.frcteam2910.c2022.subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -10,17 +12,24 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.frcteam2910.c2022.Constants;
+
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 
 public class ShooterSubsystem implements Subsystem {
-    private static final double HOOD_MOMENT_OF_INTERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
-    // Abhi fix your spelling
+    private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
     private static final double HOOD_GEAR_REDUCTION = 85.0;
     private final FlywheelSim flywheel = new FlywheelSim(DCMotor.getFalcon500(2), 1.0, Units.inchesToMeters(6));
-    private final LinearSystem hoodPlant = LinearSystemId.createSingleJointedArmSystem(DCMotor.getFalcon500(2), HOOD_MOMENT_OF_INTERTIA, HOOD_GEAR_REDUCTION);
+    private final LinearSystem hoodPlant = LinearSystemId.createSingleJointedArmSystem(DCMotor.getFalcon500(2), HOOD_MOMENT_OF_INERTIA, HOOD_GEAR_REDUCTION);
     private final LinearSystemSim hoodSim = new LinearSystemSim(hoodPlant);
     private double voltage;
     private double hoodVoltage;
+    private boolean isHoodZeroed;
+    private double hoodTargetPosition = Double.NaN;
+
+    private final TalonFX hoodAngleMotor = new TalonFX(Constants.HOOD_MOTOR_PORT);
 
     public ShooterSubsystem(){
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Shooter");
@@ -44,7 +53,33 @@ public class ShooterSubsystem implements Subsystem {
         this.hoodVoltage = hoodVoltage;
     }
 
+    public double getHoodVoltage() {
+        return hoodVoltage;
+    }
 
+    public void setHoodZeroed(boolean zeroed) {
+        this.isHoodZeroed = zeroed;
+    }
+
+    public void setHoodTargetPosition(double position){
+        this.hoodTargetPosition = position;
+    }
+
+    public OptionalDouble getHoodTargetPosition() {
+        if(Double.isFinite(hoodTargetPosition)) {
+            return OptionalDouble.of(hoodTargetPosition);
+        } else {
+            return OptionalDouble.empty();
+        }
+    }
+
+    public boolean isHoodZeroed() {
+        return isHoodZeroed;
+    }
+
+    public void zeroHoodMotor() {
+        hoodAngleMotor.setSelectedSensorPosition(0.0);
+    }
 
     public void simulationPeriodic() {
 
@@ -54,6 +89,18 @@ public class ShooterSubsystem implements Subsystem {
             hoodSim.setInput(hoodVoltage);
             hoodSim.update(0.02);
 
+    }
+
+    @Override
+    public void periodic() {
+        if(!getHoodTargetPosition().isEmpty()){
+            double targetAngle = getHoodTargetPosition().getAsDouble();
+            hoodAngleMotor.set(TalonFXControlMode.Position, angleToTalonUnits(targetAngle));
         }
     }
+
+    private double angleToTalonUnits(double angle) {
+        return angle * 2048 / (2 * Math.PI) * Constants.HOOD_MOTOR_TO_HOOD_GEAR_RATIO;
+    }
+}
 
