@@ -7,10 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frcteam2910.c2022.RobotContainer;
-import org.frcteam2910.c2022.commands.AutoShootCommand;
-import org.frcteam2910.c2022.commands.FollowTrajectoryCommand;
-import org.frcteam2910.c2022.commands.SimpleIntakeCommand;
-import org.frcteam2910.c2022.commands.TargetWithShooterCommand;
+import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.common.control.Trajectory;
 
 
@@ -53,9 +50,10 @@ public class AutonomousChooser {
     private void shootAtTarget(SequentialCommandGroup command, RobotContainer container, double timeToWait) {
         command.addCommands(
                 new TargetWithShooterCommand(container.getShooter(), container.getVision())
-                        .alongWith(new AutoShootCommand(container.getShooter(), container.getFeeder(), container.getDrivetrain(), container.getVision()))
+                        .alongWith(new AlignRobotToShootCommand(container.getDrivetrain(), container.getVision()))
                         .alongWith(
-                                new WaitCommand(0.1).andThen(new AutonomousFeedCommand(container.getShooter(), container.getFeeder(), container.getVision())))
+                                new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getFeeder(), container.getShooter(), container.getVision())))
+                        .alongWith(new TargetWithShooterCommand(container.getShooter(), container.getVision()))
                         .withTimeout(timeToWait));
     }
 

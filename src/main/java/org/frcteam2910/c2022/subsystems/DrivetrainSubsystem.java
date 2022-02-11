@@ -24,6 +24,7 @@ import org.frcteam2910.common.control.PidConstants;
 import org.frcteam2910.common.math.RigidTransform2;
 import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.util.DrivetrainFeedforwardConstants;
+import org.frcteam2910.common.util.HolonomicDriveSignal;
 import org.frcteam2910.common.util.HolonomicFeedforward;
 
 import static org.frcteam2910.c2022.Constants.*;
@@ -157,17 +158,39 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SwerveModuleState currentBackLeftModuleState = new SwerveModuleState(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getSteerAngle()));
         SwerveModuleState currentBackRightModuleState = new SwerveModuleState(backRightModule.getDriveVelocity(), new Rotation2d(backRightModule.getSteerAngle()));
 
-        ChassisSpeeds temp = kinematics.toChassisSpeeds(currentFrontLeftModuleState, currentFrontRightModuleState, currentBackLeftModuleState, currentBackRightModuleState);
+        ChassisSpeeds temp = kinematics.toChassisSpeeds(
+                currentFrontLeftModuleState,
+                currentFrontRightModuleState,
+                currentBackLeftModuleState,
+                currentBackRightModuleState);
 
-        estimator.update(getGyroscopeRotation(), currentFrontLeftModuleState, currentFrontRightModuleState, currentBackLeftModuleState, currentBackRightModuleState);
+        estimator.update(
+                getGyroscopeRotation(),
+                currentFrontLeftModuleState,
+                currentFrontRightModuleState,
+                currentBackLeftModuleState,
+                currentBackRightModuleState);
 
-        var driveSignalOpt = follower.update(Utilities.poseToRigidTransform(getPose()), new Vector2(temp.vxMetersPerSecond, temp.vyMetersPerSecond), temp.omegaRadiansPerSecond, Timer.getFPGATimestamp(), Robot.kDefaultPeriod);
+        var driveSignalOpt = follower.update(
+                Utilities.poseToRigidTransform(getPose()),
+                new Vector2(temp.vxMetersPerSecond, temp.vyMetersPerSecond),
+                temp.omegaRadiansPerSecond,
+                Timer.getFPGATimestamp(),
+                Robot.kDefaultPeriod);
+
         if (driveSignalOpt.isPresent()) {
-            // Convert drive signal to chassis speeds
+            HolonomicDriveSignal driveSignal = driveSignalOpt.get();
             if(driveSignalOpt.get().isFieldOriented()){
-                chassisSpeeds = new ChassisSpeeds(driveSignalOpt.get().getTranslation().x, driveSignalOpt.get().getTranslation().y, driveSignalOpt.get().getRotation());
+                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                        driveSignal.getTranslation().x,
+                        driveSignal.getTranslation().y,
+                        driveSignal.getRotation(),
+                        getPose().getRotation());
             } else{
-                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(driveSignalOpt.get().getTranslation().x, driveSignalOpt.get().getTranslation().y, driveSignalOpt.get().getRotation(), getPose().getRotation());
+                chassisSpeeds = new ChassisSpeeds(
+                        driveSignal.getTranslation().x,
+                        driveSignal.getTranslation().y,
+                        driveSignal.getRotation());
             }
         }
 

@@ -7,6 +7,8 @@ import org.frcteam2910.common.math.Vector2;
 
 public class Utilities {
     public static RigidTransform2 poseToRigidTransform(Pose2d pose){
-        return new RigidTransform2(new Vector2(pose.getX(), pose.getY()), Rotation2.fromDegrees(pose.getRotation().getDegrees()));
+        return new RigidTransform2(
+                new Vector2(pose.getX(), pose.getY()),
+                Rotation2.fromDegrees(pose.getRotation().getDegrees()));
     }
 }
