@@ -11,11 +11,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.c2022.Constants;
 
-import java.util.Optional;
 import java.util.OptionalDouble;
 
 
@@ -26,7 +24,9 @@ public class ShooterSubsystem implements Subsystem {
     private final FlywheelSim flywheel = new FlywheelSim(DCMotor.getFalcon500(2), 1.0, Units.inchesToMeters(6));
     private final LinearSystem hoodPlant = LinearSystemId.createSingleJointedArmSystem(DCMotor.getFalcon500(2), HOOD_MOMENT_OF_INERTIA, HOOD_GEAR_REDUCTION);
     private final LinearSystemSim hoodSim = new LinearSystemSim(hoodPlant);
-    private double voltage;
+    private final TalonFX flywheelPrimaryMotor = new TalonFX(Constants.FLYWHEEL_PRIMARY_MOTOR_PORT);
+    private final TalonFX flywheelSecondaryMotor = new TalonFX(Constants.FLYWHEEL_SECONDARY_MOTOR_PORT);
+    private double flywheelVoltage;
     private double hoodVoltage;
     private boolean isHoodZeroed;
     private double targetFlywheelSpeed;
@@ -39,6 +39,11 @@ public class ShooterSubsystem implements Subsystem {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Shooter");
         shuffleboardTab.addNumber("Flywheel Speed", () -> Units.radiansPerSecondToRotationsPerMinute(getFlywheelSpeed()));
         shuffleboardTab.addNumber("Hood Angle", () -> Math.toDegrees(getHoodAngle()));
+
+        flywheelPrimaryMotor.configVoltageCompSaturation(12.0);
+        flywheelSecondaryMotor.configVoltageCompSaturation(12.0);
+        flywheelPrimaryMotor.enableVoltageCompensation(true);
+        flywheelSecondaryMotor.enableVoltageCompensation(true);
     }
 
     public double getFlywheelSpeed(){
@@ -49,8 +54,8 @@ public class ShooterSubsystem implements Subsystem {
         return hoodSim.getOutput(0);
     }
 
-    public void setVoltage(double voltage) {
-        this.voltage = voltage;
+    public void setFlywheelVoltage(double flywheelVoltage) {
+        this.flywheelVoltage = flywheelVoltage;
     }
 
     public void setHoodVoltage(double hoodVoltage){
@@ -102,13 +107,11 @@ public class ShooterSubsystem implements Subsystem {
     }
 
     public void simulationPeriodic() {
-
-            flywheel.setInputVoltage(voltage);
+            flywheel.setInputVoltage(flywheelVoltage);
             flywheel.update(0.02);
 
             hoodSim.setInput(hoodVoltage);
             hoodSim.update(0.02);
-
     }
 
     @Override
@@ -117,7 +120,10 @@ public class ShooterSubsystem implements Subsystem {
             double targetAngle = getHoodTargetPosition().getAsDouble();
             hoodAngleMotor.set(TalonFXControlMode.Position, angleToTalonUnits(targetAngle));
         }
-        flywheel.setInputVoltage(flywheelVelocityController.calculate(flywheel.getAngularVelocityRadPerSec(), targetFlywheelSpeed) * 12);
+        flywheelVoltage = flywheelVelocityController.calculate(flywheel.getAngularVelocityRadPerSec(), targetFlywheelSpeed) * 12;
+
+        flywheelPrimaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage / 12.0);
+        flywheelSecondaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage / 12.0);
     }
 
     private double angleToTalonUnits(double angle) {

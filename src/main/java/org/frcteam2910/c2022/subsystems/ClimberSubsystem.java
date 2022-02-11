@@ -52,6 +52,7 @@ public class ClimberSubsystem implements Subsystem {
         shuffleboardTab.addNumber("voltage", () -> voltage);
     }
 
+    @Override
     public void simulationPeriodic(){
         climber.setInputVoltage(voltage);
         climber.update(0.020);
@@ -59,6 +60,7 @@ public class ClimberSubsystem implements Subsystem {
         motorOutput.setLength((motorSpeed + 1) * 50);
     }
 
+    @Override
     public void periodic(){
         if (manual) {
             if(positionControl) {

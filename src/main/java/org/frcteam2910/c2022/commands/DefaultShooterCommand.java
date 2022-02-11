@@ -18,7 +18,7 @@ public class DefaultShooterCommand extends CommandBase {
     }
 
     public void execute(){
-        shooter.setVoltage(voltageSupplier.getAsDouble());
+        shooter.setFlywheelVoltage(voltageSupplier.getAsDouble());
         shooter.setHoodVoltage(hoodVoltageSupplier.getAsDouble());
     }
 }

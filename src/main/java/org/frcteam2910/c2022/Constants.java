@@ -39,6 +39,8 @@ public class Constants {
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(0.0);
 
     public static final int HOOD_MOTOR_PORT = 20;
+    public static final int FLYWHEEL_PRIMARY_MOTOR_PORT = 21;
+    public static final int FLYWHEEL_SECONDARY_MOTOR_PORT = 22;
 
     public static final double HOOD_MANUAL_ADJUST_INTERVAL = Math.toRadians(0.5);
     public static final double FLYWHEEL_MANUAL_ADJUST_INTERVAL = 50.0;
