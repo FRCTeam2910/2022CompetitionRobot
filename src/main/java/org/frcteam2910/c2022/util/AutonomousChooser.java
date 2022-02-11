@@ -58,20 +58,14 @@ public class AutonomousChooser {
     }
 
     private void follow(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new FollowTrajectoryCommand(container.getDrivetrain(), trajectory)
-                .deadlineWith(new TargetWithShooterCommand(container.getShooter(), container.getVision())));
+        command.addCommands(new FollowTrajectoryCommand(container.getDrivetrain(), trajectory));
     }
 
     private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new InstantCommand(() -> container.getIntake().setExtended(true)));
         command.addCommands(
                 new FollowTrajectoryCommand(container.getDrivetrain(), trajectory)
                         .deadlineWith(
-                                new SimpleIntakeCommand(container.getIntake()).withTimeout(0.25)
-                                        .andThen(
-                                                new SimpleIntakeCommand(container.getIntake())
-                                                        )));
-        command.addCommands(new InstantCommand(() -> container.getIntake().setExtended(false)));
+                                new SimpleIntakeCommand(container.getIntake())));
     }
 
 
