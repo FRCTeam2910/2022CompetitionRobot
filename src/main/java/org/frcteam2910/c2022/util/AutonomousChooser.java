@@ -5,7 +5,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frcteam2910.c2022.RobotContainer;
+import org.frcteam2910.c2022.commands.AutoShootCommand;
+import org.frcteam2910.c2022.commands.FollowTrajectoryCommand;
+import org.frcteam2910.c2022.commands.SimpleIntakeCommand;
+import org.frcteam2910.c2022.commands.TargetWithShooterCommand;
+import org.frcteam2910.common.control.Trajectory;
 
 
 public class AutonomousChooser {
@@ -42,6 +48,32 @@ public class AutonomousChooser {
         //Add code here
 
         return command;
+    }
+
+    private void shootAtTarget(SequentialCommandGroup command, RobotContainer container, double timeToWait) {
+        command.addCommands(
+                new TargetWithShooterCommand(container.getShooter(), container.getVision())
+                        .alongWith(new AutoShootCommand(container.getShooter(), container.getFeeder(), container.getDrivetrain(), container.getVision()))
+                        .alongWith(
+                                new WaitCommand(0.1).andThen(new AutonomousFeedCommand(container.getShooter(), container.getFeeder(), container.getVision())))
+                        .withTimeout(timeToWait));
+    }
+
+    private void follow(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
+        command.addCommands(new FollowTrajectoryCommand(container.getDrivetrain(), trajectory)
+                .deadlineWith(new TargetWithShooterCommand(container.getShooter(), container.getVision())));
+    }
+
+    private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
+        command.addCommands(new InstantCommand(() -> container.getIntake().setExtended(true)));
+        command.addCommands(
+                new FollowTrajectoryCommand(container.getDrivetrain(), trajectory)
+                        .deadlineWith(
+                                new SimpleIntakeCommand(container.getIntake()).withTimeout(0.25)
+                                        .andThen(
+                                                new SimpleIntakeCommand(container.getIntake())
+                                                        )));
+        command.addCommands(new InstantCommand(() -> container.getIntake().setExtended(false)));
     }
 
 

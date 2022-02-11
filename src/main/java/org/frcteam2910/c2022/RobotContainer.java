@@ -46,9 +46,25 @@ public class RobotContainer {
         return drivetrain;
     }
 
-    public ClimberSubsystem getClimber() {
+    public ShooterSubsystem getShooter(){
+        return shooter;
+    }
+
+    public IntakeSubsystem getIntake(){
+        return intake;
+    }
+
+    public ClimberSubsystem getClimber(){
         return climber;
     }
+
+    public FeederSubsystem getFeeder(){
+        return feeder;
+    }
+
+    public VisionSubsystem getVision() { return vision; }
+
+    public XboxController getController() { return controller; }
 
     public void configureButtonBindings() {
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
