@@ -71,7 +71,7 @@ public class ShooterSubsystem implements Subsystem {
 
     public boolean isHoodAtTargetAngle() {
         return Math.abs(hoodTargetPosition - hoodSim.getOutput(0)) < Constants.HOOD_ALLOWABLE_ERROR;
-    };
+    }
 
     public void setTargetFlywheelSpeed(double targetFlywheelSpeed){
         this.targetFlywheelSpeed = targetFlywheelSpeed;
