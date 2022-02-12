@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "Installing git hooks"
+rm .git/hooks/pre-commit
+ln -s -r git-hooks/pre-commit .git/hooks/pre-commit
