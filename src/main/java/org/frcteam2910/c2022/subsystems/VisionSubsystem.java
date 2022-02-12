@@ -2,6 +2,7 @@ package org.frcteam2910.c2022.subsystems;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.frcteam2910.c2022.Robot;
 import org.frcteam2910.common.math.MathUtils;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
@@ -58,6 +59,8 @@ public class VisionSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
+        if (Robot.isSimulation())
+            return;
         result = shooterLimelight.getLatestResult();
         if (result.hasTargets()) {
             shooterDistanceToTarget = PhotonUtils.calculateDistanceToTargetMeters(CAMERA_HEIGHT_METERS,

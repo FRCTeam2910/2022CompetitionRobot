@@ -5,22 +5,20 @@ import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 
 public class ClimberToPointCommand extends CommandBase {
     public final ClimberSubsystem climber;
-    public double setpoint;
+    public double height;
 
-    public ClimberToPointCommand(ClimberSubsystem climber, double setpoint) {
+    public ClimberToPointCommand(ClimberSubsystem climber, double height) {
         this.climber = climber;
-        this.setpoint = setpoint;
+        this.height = height;
     }
 
     @Override
     public void initialize() {
-        climber.setTargetHeight(setpoint);
-        climber.setManual(false);
+        climber.setTargetPosition(height);
     }
 
     @Override
     public boolean isFinished() {
-        System.out.println(climber.getManual());
-        return climber.isAtTargetHeight();
+        return climber.isAtTargetPosition();
     }
 }

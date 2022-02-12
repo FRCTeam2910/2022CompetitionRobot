@@ -28,11 +28,10 @@ public class RobotContainer {
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter, () -> controller.getRawAxis(0) * 12,
                 () -> controller.getRawAxis(1) * 12));
         intake.setDefaultCommand(new DefaultIntakeCommand(intake));
-        climber.setDefaultCommand(new DefaultClimberCommand(climber, () -> controller.getRawAxis(2)));
         drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
-                () -> controller.getRawAxis(3) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> controller.getRawAxis(4) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> controller.getRawAxis(5) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+                () -> -controller.getLeftX() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -controller.getLeftY() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -controller.getRightX() * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
         feeder.setDefaultCommand(new DefaultFeederCommand(feeder));
         configureButtonBindings();
     }
@@ -69,8 +68,9 @@ public class RobotContainer {
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
         new Button(() -> controller.getRightTriggerAxis() > 0.5)
                 .whileHeld(new AlignRobotToShootCommand(drivetrain, vision));
-        new Button(() -> controller.getYButton()).whenPressed(new ZeroClimberCommand(climber));
-        new Button(() -> controller.getXButton()).whenPressed(new ZeroHoodCommand(shooter));
+        new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
+        new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter));
+        new Button(() -> controller.getPOV() == 0).whileHeld(new ClimberToPointCommand(climber, 0.75));
         new Button(controller::getStartButton).whenPressed(
                 // a to b
                 new PrepareHoodTransferCommand(climber, shooter)
