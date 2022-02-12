@@ -7,7 +7,7 @@ public class ClimberToPointCommand extends CommandBase {
     public final ClimberSubsystem climber;
     public double setpoint;
 
-    public ClimberToPointCommand(ClimberSubsystem climber, double setpoint){
+    public ClimberToPointCommand(ClimberSubsystem climber, double setpoint) {
         this.climber = climber;
         this.setpoint = setpoint;
     }

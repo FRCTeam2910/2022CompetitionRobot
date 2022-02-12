@@ -12,7 +12,7 @@ public class ZeroClimberCommand extends CommandBase {
 
     private double zeroVelocityTimestamp;
 
-    public ZeroClimberCommand(ClimberSubsystem climber){
+    public ZeroClimberCommand(ClimberSubsystem climber) {
         this.climber = climber;
 
         addRequirements(climber);
@@ -26,8 +26,8 @@ public class ZeroClimberCommand extends CommandBase {
     @Override
     public void execute() {
         climber.setMotorSpeed(-0.1);
-        if(Math.abs(climber.getVelocity()) < 0.05){
-            if(zeroVelocityTimestamp == Long.MAX_VALUE) {
+        if (Math.abs(climber.getVelocity()) < 0.05) {
+            if (zeroVelocityTimestamp == Long.MAX_VALUE) {
                 zeroVelocityTimestamp = Timer.getFPGATimestamp();
             }
         } else {

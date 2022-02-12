@@ -25,15 +25,19 @@ public class FeederSubsystem implements Subsystem {
         motor.set(TalonFXControlMode.PercentOutput, motorSpeed);
     }
 
-    public void setFeederSpeed(double motorSpeed){
+    public void setFeederSpeed(double motorSpeed) {
         this.motorSpeed = motorSpeed;
     }
 
-    public double getFeederSpeed(){
+    public double getFeederSpeed() {
         return motorSpeed;
     }
 
-    public boolean getEntrySensor() { return entrySensor.get();}
+    public boolean getEntrySensor() {
+        return entrySensor.get();
+    }
 
-    public boolean getFullSensor() { return fullSensor.get();}
+    public boolean getFullSensor() {
+        return fullSensor.get();
+    }
 }

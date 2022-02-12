@@ -14,7 +14,6 @@ public class SetHoodAngleCommand extends CommandBase {
         addRequirements(shooter);
     }
 
-
     @Override
     public void initialize() {
         shooter.setHoodTargetPosition(targetAngle);

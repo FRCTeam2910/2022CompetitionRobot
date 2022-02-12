@@ -6,7 +6,7 @@ import org.frcteam2910.c2022.subsystems.IntakeSubsystem;
 public class DefaultIntakeCommand extends CommandBase {
     private final IntakeSubsystem intake;
 
-    public DefaultIntakeCommand(IntakeSubsystem intake){
+    public DefaultIntakeCommand(IntakeSubsystem intake) {
         this.intake = intake;
 
         addRequirements(intake);
