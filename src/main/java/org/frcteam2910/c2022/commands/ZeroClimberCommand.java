@@ -8,6 +8,9 @@ public class ZeroClimberCommand extends CommandBase {
 
     private static final long CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 250;
 
+    private static final double REVERSE_VOLTAGE = -2.0;
+    private static final double VELOCITY_THRESHOLD = 0.1;
+
     private final ClimberSubsystem climber;
 
     private double zeroVelocityTimestamp;
@@ -20,18 +23,18 @@ public class ZeroClimberCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        zeroVelocityTimestamp = Long.MAX_VALUE;
+        zeroVelocityTimestamp = Double.NaN;
     }
 
     @Override
     public void execute() {
-        climber.setMotorSpeed(-0.1);
-        if (Math.abs(climber.getVelocity()) < 0.05) {
-            if (zeroVelocityTimestamp == Long.MAX_VALUE) {
+        climber.setTargetVoltage(REVERSE_VOLTAGE);
+        if (Math.abs(climber.getCurrentVelocity()) < VELOCITY_THRESHOLD) {
+            if (Double.isFinite(zeroVelocityTimestamp)) {
                 zeroVelocityTimestamp = Timer.getFPGATimestamp();
             }
         } else {
-            zeroVelocityTimestamp = Long.MAX_VALUE;
+            zeroVelocityTimestamp = Double.NaN;
         }
     }
 
@@ -42,7 +45,9 @@ public class ZeroClimberCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        climber.setMotorSpeed(0.0);
-        climber.zeroClimber();
+        climber.setTargetVoltage(0.0);
+        if (!interrupted) {
+            climber.setZeroPosition();
+        }
     }
 }
