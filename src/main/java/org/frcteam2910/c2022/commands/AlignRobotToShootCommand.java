@@ -25,6 +25,8 @@ public class AlignRobotToShootCommand extends CommandBase {
             double currentAngle = drivetrain.getPose().getRotation().getRadians();
             double rotationalVelocity = controller.calculate(currentAngle, setPoint);
             drivetrain.drive( new ChassisSpeeds(0.0, 0.0, rotationalVelocity) );
+        } else {
+            drivetrain.drive( new ChassisSpeeds(0.0, 0.0, 0.0) );
         }
     }
 }

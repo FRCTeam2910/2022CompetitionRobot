@@ -46,5 +46,5 @@ public class Constants {
     public static final double FLYWHEEL_MANUAL_ADJUST_INTERVAL = 50.0;
 
     public static final double HOOD_MOTOR_TO_HOOD_GEAR_RATIO = 1;
-    public static final double HOOD_ALLOWABLE_ERROR = 1.0;
+    public static final double HOOD_ALLOWABLE_ERROR = Math.toRadians(1.0);
 }

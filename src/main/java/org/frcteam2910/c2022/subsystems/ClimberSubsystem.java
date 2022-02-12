@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.c2022.Constants;
+import org.frcteam2910.c2022.Robot;
 
 public class ClimberSubsystem implements Subsystem {
     private static final double ENCODER_TICKS_TO_METERS_RATIO = 1;
@@ -50,30 +51,33 @@ public class ClimberSubsystem implements Subsystem {
         shuffleboardTab.addNumber("height", climber::getPositionMeters);
         shuffleboardTab.addNumber("target height", () -> targetHeight);
         shuffleboardTab.addNumber("voltage", () -> voltage);
+
+        motor.configVoltageCompSaturation(12.0);
+        motor.enableVoltageCompensation(true);
     }
 
     @Override
     public void simulationPeriodic(){
         climber.setInputVoltage(voltage);
         climber.update(0.020);
-        position.setLength(climber.getPositionMeters() * 100);
-        motorOutput.setLength((motorSpeed + 1) * 50);
     }
 
     @Override
     public void periodic(){
         if (manual) {
             if(positionControl) {
-                voltage = positionPID.calculate(getClimberHeight(), targetHeight) * 12;
+                voltage = positionPID.calculate(getClimberHeight(), targetHeight);
             } else {
                 voltage = targetVelocity / MAX_VELOCITY * 12; // Feedforward
                 voltage *= 0.92; // Friction
-                voltage += velocityPID.calculate(motor.getSelectedSensorVelocity(), targetVelocity) * 12;
+                voltage += velocityPID.calculate(getVelocity(), targetVelocity);
             }
         } else {
-            voltage = positionPID.calculate(getClimberHeight(), targetHeight) * 12;
+            voltage = positionPID.calculate(getClimberHeight(), targetHeight);
         }
         motor.set(TalonFXControlMode.PercentOutput, voltage / 12);
+        position.setLength(climber.getPositionMeters() * 100);
+        motorOutput.setLength((motorSpeed + 1) * 50);
     }
 
     public void setMotorSpeed(double motorSpeed) {
@@ -120,7 +124,11 @@ public class ClimberSubsystem implements Subsystem {
     public PIDController getPID() { return positionPID; }
 
     public double getVelocity() {
-        return climber.getVelocityMetersPerSecond();
+        if(Robot.isSimulation()) {
+            return climber.getVelocityMetersPerSecond();
+        } else {
+            return motor.getSelectedSensorVelocity();
+        }
     }
 
     public void zeroClimber() {

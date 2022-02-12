@@ -48,7 +48,6 @@ public class RobotContainer {
     public void configureButtonBindings() {
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
         new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new AlignRobotToShootCommand(drivetrain, vision));
-        new Button(() -> controller.getRightBumper()).whileHeld(new ManualShootCommand(feeder, shooter));
         new Button(() -> controller.getYButton()).whenPressed(new ZeroClimberCommand(climber));
         new Button(() -> controller.getXButton()).whenPressed(new ZeroHoodCommand(shooter));
 //        //manual hood adjustment - 0: up, 180: down

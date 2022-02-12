@@ -10,6 +10,8 @@ public class SetHoodAngleCommand extends CommandBase {
     public SetHoodAngleCommand(ShooterSubsystem shooter, double targetAngle) {
         this.shooter = shooter;
         this.targetAngle = targetAngle;
+
+        addRequirements(shooter);
     }
 
 

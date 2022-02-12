@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.c2022.Constants;
+import org.frcteam2910.c2022.Robot;
 
 import java.util.OptionalDouble;
 
@@ -86,8 +87,16 @@ public class ShooterSubsystem implements Subsystem {
         return targetFlywheelSpeed;
     }
 
+    public double getFlywheelVelocity() {
+        if(Robot.isSimulation()) {
+            return flywheel.getAngularVelocityRadPerSec();
+        } else {
+            return flywheelPrimaryMotor.getActiveTrajectoryVelocity();
+        }
+    }
+
     public boolean isFlywheelAtTargetSpeed(){
-        return Math.abs(flywheel.getAngularVelocityRadPerSec() - targetFlywheelSpeed) < FLYWHEEL_ALLOWABLE_ERROR;
+        return Math.abs(getFlywheelVelocity() - targetFlywheelSpeed) < FLYWHEEL_ALLOWABLE_ERROR;
     }
 
     public OptionalDouble getHoodTargetPosition() {
@@ -120,7 +129,7 @@ public class ShooterSubsystem implements Subsystem {
             double targetAngle = getHoodTargetPosition().getAsDouble();
             hoodAngleMotor.set(TalonFXControlMode.Position, angleToTalonUnits(targetAngle));
         }
-        flywheelVoltage = flywheelVelocityController.calculate(flywheel.getAngularVelocityRadPerSec(), targetFlywheelSpeed) * 12;
+        flywheelVoltage = flywheelVelocityController.calculate(getFlywheelVelocity(), targetFlywheelSpeed);
 
         flywheelPrimaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage / 12.0);
         flywheelSecondaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage / 12.0);
