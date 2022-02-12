@@ -73,19 +73,19 @@ public class RobotContainer {
         new Button(() -> controller.getXButton()).whenPressed(new ZeroHoodCommand(shooter));
         new Button(() -> controller.getPOV() == 180.0).whenPressed(
                 //a to b
-            new ManualPositionToHoodReadyCommandGroup(climber, shooter)
+            new HoodToAlmostReadyCommandGroup(climber, shooter)
                     //b to e
                 .andThen(new HoodHookingCommandGroup(climber, shooter))
                     //e to f
                 .andThen(new TransferringBarsCommandGroup(climber, shooter))
                     //f to b
-                .andThen(new TransferStateToAlmostReadyCommandGroups(climber, shooter))
+                .andThen(new HoodToAlmostReadyCommandGroup(climber, shooter))
                     //b to e
                 .andThen(new HoodHookingCommandGroup(climber, shooter))
                     //e to f
                 .andThen(new TransferringBarsCommandGroup(climber, shooter))
                     //f to b
-                .andThen(new TransferStateToAlmostReadyCommandGroups(climber, shooter))
+                .andThen(new HoodToAlmostReadyCommandGroup(climber, shooter))
                     //b to e
                 .andThen(new HoodHookingCommandGroup(climber, shooter))
         );

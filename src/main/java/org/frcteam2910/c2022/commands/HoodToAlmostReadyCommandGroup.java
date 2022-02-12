@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
-public class TransferStateToAlmostReadyCommandGroups extends ParallelCommandGroup {
+public class HoodToAlmostReadyCommandGroup extends ParallelCommandGroup {
 
     public static final double CLIMBER_HEIGHT_TO_ALLOW_HOOD_PASSAGE = 0.5;
     public static final double HOOD_ANGLE_ALMOST_READY_TO_HOOK = Math.toRadians(70);
@@ -13,7 +13,7 @@ public class TransferStateToAlmostReadyCommandGroups extends ParallelCommandGrou
     public final ShooterSubsystem shooter;
     public final ClimberSubsystem climber;
 
-    public TransferStateToAlmostReadyCommandGroups(ClimberSubsystem climber, ShooterSubsystem shooter) {
+    public HoodToAlmostReadyCommandGroup(ClimberSubsystem climber, ShooterSubsystem shooter) {
         this.shooter = shooter;
         this.climber = climber;
         addCommands(
