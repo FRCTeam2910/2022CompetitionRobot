@@ -6,10 +6,8 @@ import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class TransferringBarsCommandGroup extends SequentialCommandGroup {
-    public static final double CLIMBER_HEIGHT_TO_ALLOW_HOOD_PASSAGE = 0.5;
     public static final double CLIMBER_TOP = 1.0;
     public static final double HOOD_ANGLE_FOR_CLIMBER_EXTENSION_TO_NEXT_BAR = Math.toRadians(45);
-    public static final double HOOD_ANGLE_READY_TO_HOOK = Math.toRadians(125);
 
     public final ClimberSubsystem climber;
     public final ShooterSubsystem shooter;
@@ -20,12 +18,8 @@ public class TransferringBarsCommandGroup extends SequentialCommandGroup {
         addCommands(
             //Move climber up off bar while also moving the hood to orient the robot correctly
             new ClimberToPointCommand(climber, CLIMBER_TOP)
-                .alongWith(new WaitCommand(0.5)),
-            new SetHoodAngleCommand(shooter, HOOD_ANGLE_FOR_CLIMBER_EXTENSION_TO_NEXT_BAR),
-            //Move climber down onto bar and move hood into position to hook again
-            new ClimberToPointCommand(climber, CLIMBER_HEIGHT_TO_ALLOW_HOOD_PASSAGE)
-                .alongWith(new WaitCommand(0.25)),
-            new SetHoodAngleCommand(shooter, HOOD_ANGLE_READY_TO_HOOK)
+                .alongWith(new WaitCommand(0.25))
+                    .andThen(new SetHoodAngleCommand(shooter, HOOD_ANGLE_FOR_CLIMBER_EXTENSION_TO_NEXT_BAR))
         );
     }
 }
