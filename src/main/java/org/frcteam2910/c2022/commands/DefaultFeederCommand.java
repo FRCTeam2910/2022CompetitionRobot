@@ -8,14 +8,14 @@ public class DefaultFeederCommand extends CommandBase {
 
     private final FeederSubsystem feeder;
 
-    public DefaultFeederCommand(FeederSubsystem feeder){
+    public DefaultFeederCommand(FeederSubsystem feeder) {
         this.feeder = feeder;
         addRequirements(feeder);
     }
 
     @Override
     public void execute() {
-        if(!feeder.getFullSensor() & feeder.getEntrySensor()){
+        if (!feeder.getFullSensor() & feeder.getEntrySensor()) {
             feeder.setFeederSpeed(MAX_FEEDER_SPEED);
         } else {
             feeder.setFeederSpeed(0.0);

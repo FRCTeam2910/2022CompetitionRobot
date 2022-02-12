@@ -15,7 +15,7 @@ public class ShootWhenReadyCommand extends CommandBase {
     private final VisionSubsystem vision;
     private Timer timer = new Timer();
 
-    public ShootWhenReadyCommand(FeederSubsystem feeder, ShooterSubsystem shooter, VisionSubsystem vision){
+    public ShootWhenReadyCommand(FeederSubsystem feeder, ShooterSubsystem shooter, VisionSubsystem vision) {
         this.feeder = feeder;
         this.shooter = shooter;
         this.vision = vision;
@@ -31,11 +31,11 @@ public class ShootWhenReadyCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if(vision.isOnTarget() & shooter.isFlywheelAtTargetSpeed() & shooter.isHoodAtTargetAngle()) {
+        if (vision.isOnTarget() & shooter.isFlywheelAtTargetSpeed() & shooter.isHoodAtTargetAngle()) {
             feeder.setFeederSpeed(FEEDER_SPEED);
             timer.reset();
         } else {
-            if(timer.hasElapsed(ALLOWABLE_TIME_OFF_TARGET)) {
+            if (timer.hasElapsed(ALLOWABLE_TIME_OFF_TARGET)) {
                 feeder.setFeederSpeed(0.0);
             }
         }

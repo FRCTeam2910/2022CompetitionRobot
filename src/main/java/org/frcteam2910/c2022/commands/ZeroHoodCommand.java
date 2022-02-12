@@ -5,13 +5,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class ZeroHoodCommand extends CommandBase {
-    private static final double ZERO_HOOD_VELOCITY_TIME = 250; //in ms, 5 sec
+    private static final double ZERO_HOOD_VELOCITY_TIME = 250; // in ms, 5 sec
 
     private final ShooterSubsystem shooterSubsystem;
 
     private double zeroHoodStartTime;
 
-    public ZeroHoodCommand(ShooterSubsystem shooterSubsystem){
+    public ZeroHoodCommand(ShooterSubsystem shooterSubsystem) {
         this.shooterSubsystem = shooterSubsystem;
 
         addRequirements(shooterSubsystem);

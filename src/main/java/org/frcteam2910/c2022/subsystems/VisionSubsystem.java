@@ -9,11 +9,11 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem implements Subsystem {
-    final double CAMERA_HEIGHT_METERS = 0.0; //find
+    final double CAMERA_HEIGHT_METERS = 0.0; // find
     final double TARGET_HEIGHT_METERS = Units.inchesToMeters(104);
-    final double CAMERA_PITCH_RADIANS = 0.0; //find
-    final double SHOOTER_LIMELIGHT_BASE_ANGLE = 0.0; //find, lowest angle of hood then add pitch
-    final double GOAL_RANGE_UNIT = 0.0; //find
+    final double CAMERA_PITCH_RADIANS = 0.0; // find
+    final double SHOOTER_LIMELIGHT_BASE_ANGLE = 0.0; // find, lowest angle of hood then add pitch
+    final double GOAL_RANGE_UNIT = 0.0; // find
     private static final double TARGET_ALLOWABLE_ERROR = Math.toRadians(2.5);
 
     private final DrivetrainSubsystem drivetrain;
@@ -50,11 +50,7 @@ public class VisionSubsystem implements Subsystem {
                 delta = 2.0 * Math.PI - delta;
             }
 
-            return MathUtils.epsilonEquals(
-                    delta,
-                    0,
-                    TARGET_ALLOWABLE_ERROR
-            );
+            return MathUtils.epsilonEquals(delta, 0, TARGET_ALLOWABLE_ERROR);
         } else {
             return false;
         }
@@ -64,12 +60,9 @@ public class VisionSubsystem implements Subsystem {
     public void periodic() {
         result = shooterLimelight.getLatestResult();
         if (result.hasTargets()) {
-            shooterDistanceToTarget = PhotonUtils.calculateDistanceToTargetMeters(
-                    CAMERA_HEIGHT_METERS,
-                    TARGET_HEIGHT_METERS,
-                    CAMERA_PITCH_RADIANS,
-                    Units.degreesToRadians(result.getBestTarget().getPitch())
-            );
+            shooterDistanceToTarget = PhotonUtils.calculateDistanceToTargetMeters(CAMERA_HEIGHT_METERS,
+                    TARGET_HEIGHT_METERS, CAMERA_PITCH_RADIANS,
+                    Units.degreesToRadians(result.getBestTarget().getPitch()));
 
             PhotonTrackedTarget target = shooterLimelight.getLatestResult().getBestTarget();
             shooterAngleToTarget = drivetrain.getPose().getRotation().getRadians() + Math.toRadians(target.getYaw());

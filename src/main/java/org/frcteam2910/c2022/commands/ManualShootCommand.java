@@ -8,7 +8,7 @@ public class ManualShootCommand extends CommandBase {
     private final FeederSubsystem feeder;
     private final ShooterSubsystem shooter;
 
-    public ManualShootCommand(FeederSubsystem feeder, ShooterSubsystem shooter){
+    public ManualShootCommand(FeederSubsystem feeder, ShooterSubsystem shooter) {
         this.feeder = feeder;
         this.shooter = shooter;
         addRequirements(shooter);

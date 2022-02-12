@@ -14,7 +14,8 @@ public class IntakeSubsystem implements Subsystem {
     private double motorSpeed = 0.0;
     private boolean extended = true;
 
-    public IntakeSubsystem() {}
+    public IntakeSubsystem() {
+    }
 
     @Override
     public void periodic() {

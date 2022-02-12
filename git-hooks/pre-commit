@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+echo "Checking if code is properly formatted"
+if ! ./gradlew spotlessCheck &> /dev/null; then
+  echo "Code is not formatted correctly, formatting code"
+	./gradlew spotlessApply &> /dev/null
+	echo "Finished formatting code"
+	echo "Please review code changes and commit again"
+	exit 1
+else
+  echo "Code is properly formatted"
+fi

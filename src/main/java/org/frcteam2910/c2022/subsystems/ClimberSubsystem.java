@@ -2,12 +2,9 @@ package org.frcteam2910.c2022.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -24,7 +21,8 @@ public class ClimberSubsystem implements Subsystem {
     private static final double ENCODER_TICKS_TO_METERS_RATIO = 1;
 
     private final DCMotor gearbox = DCMotor.getFalcon500(2);
-    private final ElevatorSim climber = new ElevatorSim(gearbox, 22.0, Units.lbsToKilograms(60.0), Units.inchesToMeters(1), 0.1, 1.1);
+    private final ElevatorSim climber = new ElevatorSim(gearbox, 22.0, Units.lbsToKilograms(60.0),
+            Units.inchesToMeters(1), 0.1, 1.1);
     private final TalonFX motor = new TalonFX(Constants.CLIMBER_MOTOR_PORT);
     private final PIDController positionPID = new PIDController(10.0, 0.0, 0.0);
     private final PIDController velocityPID = new PIDController(3.0, 0.0, 0.0);
@@ -32,7 +30,8 @@ public class ClimberSubsystem implements Subsystem {
     private final Mechanism2d mech2d = new Mechanism2d(100, 120);
     private final MechanismRoot2d mech2dRoot = mech2d.getRoot("Elevator Root", 10, 10);
     private final MechanismLigament2d position = mech2dRoot.append(new MechanismLigament2d("Position", 0, 90));
-    private final MechanismLigament2d motorOutput = mech2dRoot.append(new MechanismLigament2d("Motor Output", 0, 45, 10, new Color8Bit(150, 0, 255)));
+    private final MechanismLigament2d motorOutput = mech2dRoot
+            .append(new MechanismLigament2d("Motor Output", 0, 45, 10, new Color8Bit(150, 0, 255)));
 
     private double motorSpeed = 0.0;
     private double targetHeight = 0.0;
@@ -57,15 +56,15 @@ public class ClimberSubsystem implements Subsystem {
     }
 
     @Override
-    public void simulationPeriodic(){
+    public void simulationPeriodic() {
         climber.setInputVoltage(voltage);
         climber.update(0.020);
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
         if (manual) {
-            if(positionControl) {
+            if (positionControl) {
                 voltage = positionPID.calculate(getClimberHeight(), targetHeight);
             } else {
                 voltage = targetVelocity / MAX_VELOCITY * 12; // Feedforward
@@ -85,7 +84,7 @@ public class ClimberSubsystem implements Subsystem {
         this.positionControl = false;
         this.motorSpeed = motorSpeed;
     }
-    
+
     public void setTargetHeight(double targetHeight) {
         this.targetHeight = targetHeight;
         manual = false;
@@ -121,10 +120,12 @@ public class ClimberSubsystem implements Subsystem {
         return Math.abs(getClimberHeight() - targetHeight) < 0.01;
     }
 
-    public PIDController getPID() { return positionPID; }
+    public PIDController getPID() {
+        return positionPID;
+    }
 
     public double getVelocity() {
-        if(Robot.isSimulation()) {
+        if (Robot.isSimulation()) {
             return climber.getVelocityMetersPerSecond();
         } else {
             return motor.getSelectedSensorVelocity();
