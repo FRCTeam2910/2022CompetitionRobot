@@ -25,7 +25,7 @@ public class ShootWhenReadyCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        timer.stop();
+        timer.start();
         timer.reset();
     }
 
