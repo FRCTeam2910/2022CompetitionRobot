@@ -5,14 +5,14 @@ import edu.wpi.first.math.util.Units;
 public class Constants {
     public static final int CONTROLLER_PORT = 0;
 
-    public static final int INTAKE_MOTOR_PORT = 0;
-    public static final int INTAKE_SOLENOID_PORT = 0;
-    public static final int CLIMBER_MOTOR_PORT = 0;
-    public static final int FEEDER_MOTOR_PORT = 0;
-    public static final int FEEDER_SOLENOID_PORT = 0;
+    public static final int INTAKE_MOTOR_PORT = 9;
+    public static final int INTAKE_SOLENOID_PORT = 10;
+    public static final int CLIMBER_MOTOR_PORT = 11;
+    public static final int FEEDER_MOTOR_PORT = 12;
+    public static final int FEEDER_SOLENOID_PORT = 13;
 
-    public static final int FEEDER_SENSOR_FULL_PORT = 0;
-    public static final int FEEDER_SENSOR_ENTRY_PORT = 0;
+    public static final int FEEDER_SENSOR_FULL_PORT = 14;
+    public static final int FEEDER_SENSOR_ENTRY_PORT = 15;
 
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(22);
     public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(22);
@@ -38,10 +38,13 @@ public class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 4;
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(0.0);
 
-    public static final int HOOD_MOTOR_PORT = 0;
+    public static final int HOOD_MOTOR_PORT = 20;
+    public static final int FLYWHEEL_PRIMARY_MOTOR_PORT = 21;
+    public static final int FLYWHEEL_SECONDARY_MOTOR_PORT = 22;
 
     public static final double HOOD_MANUAL_ADJUST_INTERVAL = Math.toRadians(0.5);
     public static final double FLYWHEEL_MANUAL_ADJUST_INTERVAL = 50.0;
 
     public static final double HOOD_MOTOR_TO_HOOD_GEAR_RATIO = 1;
+    public static final double HOOD_ALLOWABLE_ERROR = Math.toRadians(1.0);
 }

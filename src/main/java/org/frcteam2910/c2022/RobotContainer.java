@@ -1,6 +1,5 @@
 package org.frcteam2910.c2022;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -48,26 +47,25 @@ public class RobotContainer {
 
     public void configureButtonBindings() {
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
-        new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new AutoShootCommand(shooter, feeder, drivetrain, vision));
-        new Button(() -> controller.getRightBumper()).whileHeld(new ManualShootCommand(feeder, shooter));
+        new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new AlignRobotToShootCommand(drivetrain, vision));
         new Button(() -> controller.getYButton()).whenPressed(new ZeroClimberCommand(climber));
         new Button(() -> controller.getXButton()).whenPressed(new ZeroHoodCommand(shooter));
 //        //manual hood adjustment - 0: up, 180: down
-//        new Button(() -> controller.getPOV() == 180.0).whenPressed(() -> shooter.setHoodAngle(
+//        new Button(() -> controller.getPOV() == 180.0).whenPressed(() -> shooter.setHoodTargetPosition(
 //                shooter.getHoodAngle() + Constants.HOOD_MANUAL_ADJUST_INTERVAL)
 //        );
 //
-//        new Button(() -> controller.getPOV() == 0.0).whenPressed(() -> shooter.setHoodAngle(
+//        new Button(() -> controller.getPOV() == 0.0).whenPressed(() -> shooter.setHoodTargetPosition(
 //                shooter.getHoodAngle() - Constants.HOOD_MANUAL_ADJUST_INTERVAL)
 //        );
 //
 //        //manual flywheel adjustment - 90: right, 270: left
-//        new Button(() -> controller.getPOV() == 90.0).whenPressed(() -> shooter.setVoltage(
-//                shooter.getFlywheelSpeed() + Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)
+//        new Button(() -> controller.getPOV() == 90.0).whenPressed(() -> shooter.setTargetFlywheelSpeed(
+//                shooter.getTargetFlywheelSpeed() + Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)
 //        );
 //
-//        new Button(() -> controller.getPOV() == 270.0).whenPressed(() -> shooter.setHoodAngle(
-//                shooter.getFlywheelSpeed() + Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)
+//        new Button(() -> controller.getPOV() == 270.0).whenPressed(() -> shooter.setTargetFlywheelSpeed(
+//                shooter.getTargetFlywheelSpeed() - Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)
 //        );
     }
 }

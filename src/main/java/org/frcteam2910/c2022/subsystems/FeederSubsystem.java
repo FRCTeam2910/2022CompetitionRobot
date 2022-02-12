@@ -10,8 +10,8 @@ import org.frcteam2910.c2022.Constants;
 
 public class FeederSubsystem implements Subsystem {
     private final TalonFX motor = new TalonFX(Constants.FEEDER_MOTOR_PORT);
-    private DigitalInput fullSensor = new DigitalInput(Constants.FEEDER_SENSOR_FULL_PORT);
-    private DigitalInput entrySensor = new DigitalInput(Constants.FEEDER_SENSOR_ENTRY_PORT);
+    private final DigitalInput fullSensor = new DigitalInput(Constants.FEEDER_SENSOR_FULL_PORT);
+    private final DigitalInput entrySensor = new DigitalInput(Constants.FEEDER_SENSOR_ENTRY_PORT);
     private Solenoid feederSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.FEEDER_SOLENOID_PORT);
 
     private double motorSpeed;

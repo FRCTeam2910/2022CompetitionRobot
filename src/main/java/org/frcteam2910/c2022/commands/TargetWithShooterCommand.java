@@ -29,13 +29,8 @@ public class TargetWithShooterCommand extends CommandBase {
     public void execute() {
         Vector2 angleAndSpeed = SHOOTER_TUNING.getInterpolated(new InterpolatingDouble(vision.getShooterDistanceToTarget()));
 
-        shooter.setHoodVoltage(angleAndSpeed.y*12);
+        shooter.setTargetFlywheelSpeed(angleAndSpeed.y);
         shooter.setHoodTargetPosition(angleAndSpeed.x);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        shooter.setVoltage(0.0);
     }
 }
 
