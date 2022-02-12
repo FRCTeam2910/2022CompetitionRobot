@@ -1,8 +1,13 @@
+import com.diffplug.spotless.LineEnding
+
+import java.nio.charset.StandardCharsets
+
 plugins {
     id "application"
     id "java"
     id "com.github.johnrengelman.shadow"
     id "edu.wpi.first.GradleRIO"
+    id "com.diffplug.spotless"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -74,3 +79,22 @@ wpi.sim.addDriverstation()
 wpi.java.configureExecutableTasks(shadowJar)
 wpi.java.configureTestTasks(test)
 wpi.java.debugJni.set(false)
+
+spotless {
+    java {
+        target fileTree('src') {
+            include "**/*.java"
+        }
+        toggleOffOn()
+
+        setLineEndings(LineEnding.UNIX)
+        setEncoding(StandardCharsets.UTF_8)
+        eclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+
+        importOrder('java', '', '\\#')
+                .wildcardsLast()
+        removeUnusedImports()
+    }
+}
