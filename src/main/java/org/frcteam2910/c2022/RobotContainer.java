@@ -71,6 +71,13 @@ public class RobotContainer {
                 .whileHeld(new AlignRobotToShootCommand(drivetrain, vision));
         new Button(() -> controller.getYButton()).whenPressed(new ZeroClimberCommand(climber));
         new Button(() -> controller.getXButton()).whenPressed(new ZeroHoodCommand(shooter));
+        new Button(() -> controller.getPOV() == 180.0).whenPressed(
+            new GetHoodReadyToHookCommandGroup(climber, shooter)
+            .andThen(new HoodHookingCommandGroup(climber, shooter))
+            .andThen(new TransferringBarsCommandGroup(climber, shooter))
+            .andThen(new HoodHookingCommandGroup(climber, shooter))
+            .andThen(new TransferringBarsCommandGroup(climber, shooter))
+        );
         // //manual hood adjustment - 0: up, 180: down
         // new Button(() -> controller.getPOV() == 180.0).whenPressed(() ->
         // shooter.setHoodTargetPosition(
