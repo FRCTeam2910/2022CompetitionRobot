@@ -12,10 +12,20 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.frcteam2910.c2022.Robot;
+import org.frcteam2910.c2022.util.Utilities;
+import org.frcteam2910.common.control.HolonomicMotionProfiledTrajectoryFollower;
+import org.frcteam2910.common.control.PidConstants;
+import org.frcteam2910.common.math.RigidTransform2;
+import org.frcteam2910.common.math.Vector2;
+import org.frcteam2910.common.util.DrivetrainFeedforwardConstants;
+import org.frcteam2910.common.util.HolonomicDriveSignal;
+import org.frcteam2910.common.util.HolonomicFeedforward;
 
 import static org.frcteam2910.c2022.Constants.*;
 
@@ -26,6 +36,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
             SdsModuleConfigurations.MK4_L3.getWheelDiameter() * Math.PI;
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
             Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
+
+    public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(
+            0.042746,
+            0.0032181,
+            0.30764
+    );
+
+    private final HolonomicMotionProfiledTrajectoryFollower follower = new HolonomicMotionProfiledTrajectoryFollower(
+            new PidConstants(0.4, 0.0, 0.025),
+            new PidConstants(5.0, 0.0, 0.0),
+            new HolonomicFeedforward(FEEDFORWARD_CONSTANTS)
+    );
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
             // Front left
@@ -113,6 +135,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public Pose2d getPose() {
         return estimator.getEstimatedPosition();
     }
+    
+    public HolonomicMotionProfiledTrajectoryFollower getFollower() { return follower; }
 
     /**
      * Sets the position of the robot to the position passed in with the current gyroscope rotation.
@@ -134,7 +158,41 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SwerveModuleState currentBackLeftModuleState = new SwerveModuleState(backLeftModule.getDriveVelocity(), new Rotation2d(backLeftModule.getSteerAngle()));
         SwerveModuleState currentBackRightModuleState = new SwerveModuleState(backRightModule.getDriveVelocity(), new Rotation2d(backRightModule.getSteerAngle()));
 
-        estimator.update(getGyroscopeRotation(), currentFrontLeftModuleState, currentFrontRightModuleState, currentBackLeftModuleState, currentBackRightModuleState);
+        ChassisSpeeds temp = kinematics.toChassisSpeeds(
+                currentFrontLeftModuleState,
+                currentFrontRightModuleState,
+                currentBackLeftModuleState,
+                currentBackRightModuleState);
+
+        estimator.update(
+                getGyroscopeRotation(),
+                currentFrontLeftModuleState,
+                currentFrontRightModuleState,
+                currentBackLeftModuleState,
+                currentBackRightModuleState);
+
+        var driveSignalOpt = follower.update(
+                Utilities.poseToRigidTransform(getPose()),
+                new Vector2(temp.vxMetersPerSecond, temp.vyMetersPerSecond),
+                temp.omegaRadiansPerSecond,
+                Timer.getFPGATimestamp(),
+                Robot.kDefaultPeriod);
+
+        if (driveSignalOpt.isPresent()) {
+            HolonomicDriveSignal driveSignal = driveSignalOpt.get();
+            if(driveSignalOpt.get().isFieldOriented()){
+                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                        driveSignal.getTranslation().x,
+                        driveSignal.getTranslation().y,
+                        driveSignal.getRotation(),
+                        getPose().getRotation());
+            } else{
+                chassisSpeeds = new ChassisSpeeds(
+                        driveSignal.getTranslation().x,
+                        driveSignal.getTranslation().y,
+                        driveSignal.getRotation());
+            }
+        }
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
