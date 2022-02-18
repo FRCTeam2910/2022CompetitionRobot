@@ -89,7 +89,6 @@ public class AutonomousChooser {
                 .alongWith(new AlignRobotToShootCommand(container.getDrivetrain(), container.getVision()))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getFeeder(),
                         container.getShooter(), container.getVision())))
-                .alongWith(new TargetWithShooterCommand(container.getShooter(), container.getVision()))
                 .withTimeout(timeToWait));
     }
 
