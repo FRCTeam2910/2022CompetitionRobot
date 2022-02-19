@@ -21,6 +21,7 @@ import org.frcteam2910.c2022.Robot;
 import org.frcteam2910.c2022.util.Utilities;
 import org.frcteam2910.common.control.HolonomicMotionProfiledTrajectoryFollower;
 import org.frcteam2910.common.control.PidConstants;
+import org.frcteam2910.common.control.*;
 import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.util.DrivetrainFeedforwardConstants;
 import org.frcteam2910.common.util.HolonomicDriveSignal;
@@ -38,6 +39,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(
             0.042746, 0.0032181, 0.30764);
+
+    public static final TrajectoryConstraint[] TRAJECTORY_CONSTRAINTS = {
+            new FeedforwardConstraint(11.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(),
+                    FEEDFORWARD_CONSTANTS.getAccelerationConstant(), false),
+            new MaxAccelerationConstraint(12.5 * 12.0), new CentripetalAccelerationConstraint(15.0 * 12.0)};
 
     private final HolonomicMotionProfiledTrajectoryFollower follower = new HolonomicMotionProfiledTrajectoryFollower(
             new PidConstants(0.4, 0.0, 0.025), new PidConstants(5.0, 0.0, 0.0),

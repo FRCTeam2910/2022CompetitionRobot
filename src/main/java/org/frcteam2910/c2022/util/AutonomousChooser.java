@@ -1,6 +1,8 @@
 package org.frcteam2910.c2022.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -11,39 +13,75 @@ import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.common.control.Trajectory;
 
 public class AutonomousChooser {
-    private SendableChooser<AutonomousMode> autonomousModeChooser = new SendableChooser<>();
+    private final AutonomousTrajectories trajectories;
 
-    public AutonomousChooser() {
+    private final SendableChooser<AutonomousMode> autonomousModeChooser = new SendableChooser<>();
+
+    public AutonomousChooser(AutonomousTrajectories trajectories) {
+        this.trajectories = trajectories;
+
         autonomousModeChooser.setDefaultOption("1 Ball Auto", AutonomousMode.ONE_BALL);
         autonomousModeChooser.addOption("3 Ball Auto", AutonomousMode.THREE_BALL);
-        autonomousModeChooser.addOption("5 Ball Auto", AutonomousMode.FIVE_BALL);
+        autonomousModeChooser.addOption("4 Ball Auto", AutonomousMode.FOUR_BALL);
     }
 
     public SendableChooser<AutonomousMode> getAutonomousModeChooser() {
         return autonomousModeChooser;
     }
-    public Command get1BallAuto() {
+
+    public Command get1BallAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        // Add code here
+        // TODO: Update code For starting position
+        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
+
+        shootAtTarget(command, container, 1.5);
+        follow(command, container, trajectories.getOneBallAutoPartOne());
 
         return command;
     }
 
-    public Command get3BallAuto() {
+    public Command get3BallAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        // Add code here
+        // TODO: Update code For starting position
+        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
+
+        followAndIntake(command, container, trajectories.getThreeBallAutoPartOne());
+        follow(command, container, trajectories.getThreeBallAutoPartTwo());
+        shootAtTarget(command, container, 1.5);
+        followAndIntake(command, container, trajectories.getThreeBallAutoPartThree());
+        shootAtTarget(command, container, 1.5);
 
         return command;
     }
 
-    public Command get5BallAuto() {
+    public Command get4BallAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        // Add code here
+        // TODO: Update code For starting position
+        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
+
+        followAndIntake(command, container, trajectories.getFourBallAutoPartOne());
+        follow(command, container, trajectories.getFourBallAutoPartTwo());
+        shootAtTarget(command, container, 1.5);
+        followAndIntake(command, container, trajectories.getFourBallAutoPartThree());
+        follow(command, container, trajectories.getFourBallAutoPartFour());
+        shootAtTarget(command, container, 1.5);
 
         return command;
+    }
+
+    public Command getCommand(RobotContainer container) {
+        switch (autonomousModeChooser.getSelected()) {
+            case ONE_BALL :
+                return get1BallAuto(container);
+            case THREE_BALL :
+                return get3BallAuto(container);
+            case FOUR_BALL :
+                return get4BallAuto(container);
+        }
+        return get4BallAuto(container);
     }
 
     private void shootAtTarget(SequentialCommandGroup command, RobotContainer container, double timeToWait) {
@@ -69,6 +107,6 @@ public class AutonomousChooser {
     }
 
     private enum AutonomousMode {
-        ONE_BALL, THREE_BALL, FIVE_BALL
+        ONE_BALL, THREE_BALL, FOUR_BALL
     }
 }
