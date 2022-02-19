@@ -9,8 +9,8 @@ public class TraverseToNextBarCommand extends ParallelCommandGroup {
     public static final double CLIMBER_TOP = 1.0;
     public static final double HOOD_ANGLE_FOR_CLIMBER_EXTENSION_TO_NEXT_BAR = Math.toRadians(45);
 
-    public final ClimberSubsystem climber;
-    public final ShooterSubsystem shooter;
+    private final ClimberSubsystem climber;
+    private final ShooterSubsystem shooter;
 
     public TraverseToNextBarCommand(ClimberSubsystem climber, ShooterSubsystem shooter) {
         this.climber = climber;

@@ -72,21 +72,21 @@ public class RobotContainer {
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter));
         new Button(() -> controller.getPOV() == 0).whileHeld(new ClimberToPointCommand(climber, 0.75));
         new Button(controller::getStartButton).whenPressed(
-                // a to b
+                // a to c
                 new PrepareHoodTransferCommand(climber, shooter)
-                        // b to e
+                        // c to e
+                        .andThen(new TransferBarToHoodCommand(climber, shooter))
+                        // c to f
+                        .andThen(new TraverseToNextBarCommand(climber, shooter))
+                        // f to c
+                        .andThen(new PrepareHoodTransferCommand(climber, shooter))
+                        // c to e
                         .andThen(new TransferBarToHoodCommand(climber, shooter))
                         // e to f
                         .andThen(new TraverseToNextBarCommand(climber, shooter))
-                        // f to b
+                        // f to c
                         .andThen(new PrepareHoodTransferCommand(climber, shooter))
-                        // b to e
-                        .andThen(new TransferBarToHoodCommand(climber, shooter))
-                        // e to f
-                        .andThen(new TraverseToNextBarCommand(climber, shooter))
-                        // f to b
-                        .andThen(new PrepareHoodTransferCommand(climber, shooter))
-                        // b to e
+                        // c to e
                         .andThen(new TransferBarToHoodCommand(climber, shooter)));
         // //manual hood adjustment - 0: up, 180: down
         // new Button(() -> controller.getPOV() == 180.0).whenPressed(() ->
