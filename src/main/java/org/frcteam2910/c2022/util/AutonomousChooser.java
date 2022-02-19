@@ -15,7 +15,7 @@ import org.frcteam2910.common.control.Trajectory;
 public class AutonomousChooser {
     private final AutonomousTrajectories trajectories;
 
-    private SendableChooser<AutonomousMode> autonomousModeChooser = new SendableChooser<>();
+    private final SendableChooser<AutonomousMode> autonomousModeChooser = new SendableChooser<>();
 
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
@@ -28,14 +28,12 @@ public class AutonomousChooser {
     public SendableChooser<AutonomousMode> getAutonomousModeChooser() {
         return autonomousModeChooser;
     }
+
     public Command get1BallAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0))); // TODO:
-                                                                                                            // Update
-                                                                                                            // Code For
-                                                                                                            // Beginning
-                                                                                                            // Position
+        // TODO: Update code For starting position
+        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
 
         shootAtTarget(command, container, 1.5);
         follow(command, container, trajectories.getOneBallAutoPartOne());
@@ -46,11 +44,8 @@ public class AutonomousChooser {
     public Command get3BallAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0))); // TODO:
-                                                                                                            // Update
-                                                                                                            // Code For
-                                                                                                            // Beginning
-                                                                                                            // Position
+        // TODO: Update code For starting position
+        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
 
         followAndIntake(command, container, trajectories.getThreeBallAutoPartOne());
         follow(command, container, trajectories.getThreeBallAutoPartTwo());
@@ -64,11 +59,8 @@ public class AutonomousChooser {
     public Command get4BallAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0))); // TODO:
-                                                                                                            // Update
-                                                                                                            // Code For
-                                                                                                            // Beginning
-                                                                                                            // Position
+        // TODO: Update code For starting position
+        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
 
         followAndIntake(command, container, trajectories.getFourBallAutoPartOne());
         follow(command, container, trajectories.getFourBallAutoPartTwo());
