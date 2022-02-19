@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.frcteam2910.c2022.Robot;
 import org.frcteam2910.c2022.util.Utilities;
+import org.frcteam2910.common.control.*;
+import org.frcteam2910.common.math.RigidTransform2;
 import org.frcteam2910.common.control.HolonomicMotionProfiledTrajectoryFollower;
 import org.frcteam2910.common.control.PidConstants;
 import org.frcteam2910.common.math.Vector2;
@@ -38,6 +40,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(
             0.042746, 0.0032181, 0.30764);
+
+    public static final TrajectoryConstraint[] TRAJECTORY_CONSTRAINTS = {
+            new FeedforwardConstraint(11.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(), FEEDFORWARD_CONSTANTS.getAccelerationConstant(), false),
+            new MaxAccelerationConstraint(12.5 * 12.0),
+            new CentripetalAccelerationConstraint(15.0 * 12.0)
+    };
 
     private final HolonomicMotionProfiledTrajectoryFollower follower = new HolonomicMotionProfiledTrajectoryFollower(
             new PidConstants(0.4, 0.0, 0.025), new PidConstants(5.0, 0.0, 0.0),
@@ -135,37 +143,48 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SwerveModuleState currentBackRightModuleState = new SwerveModuleState(backRightModule.getDriveVelocity(),
                 new Rotation2d(backRightModule.getSteerAngle()));
 
-        ChassisSpeeds temp = kinematics.toChassisSpeeds(currentFrontLeftModuleState, currentFrontRightModuleState,
-                currentBackLeftModuleState, currentBackRightModuleState);
+        ChassisSpeeds temp = kinematics.toChassisSpeeds(
+                currentFrontLeftModuleState,
+                currentFrontRightModuleState,
+                currentBackLeftModuleState,
+                currentBackRightModuleState);
 
-        estimator.update(getGyroscopeRotation(), currentFrontLeftModuleState, currentFrontRightModuleState,
-                currentBackLeftModuleState, currentBackRightModuleState);
+        estimator.update(
+                getGyroscopeRotation(),
+                currentFrontLeftModuleState,
+                currentFrontRightModuleState,
+                currentBackLeftModuleState,
+                currentBackRightModuleState);
 
-        var driveSignalOpt = follower.update(Utilities.poseToRigidTransform(getPose()),
-                new Vector2(temp.vxMetersPerSecond, temp.vyMetersPerSecond), temp.omegaRadiansPerSecond,
-                Timer.getFPGATimestamp(), Robot.kDefaultPeriod);
+        var driveSignalOpt = follower.update(
+                Utilities.poseToRigidTransform(getPose()),
+                new Vector2(temp.vxMetersPerSecond, temp.vyMetersPerSecond),
+                temp.omegaRadiansPerSecond,
+                Timer.getFPGATimestamp(),
+                Robot.kDefaultPeriod);
 
         if (driveSignalOpt.isPresent()) {
             HolonomicDriveSignal driveSignal = driveSignalOpt.get();
-            if (driveSignalOpt.get().isFieldOriented()) {
-                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(driveSignal.getTranslation().x,
-                        driveSignal.getTranslation().y, driveSignal.getRotation(), getPose().getRotation());
-            } else {
-                chassisSpeeds = new ChassisSpeeds(driveSignal.getTranslation().x, driveSignal.getTranslation().y,
+            if(driveSignalOpt.get().isFieldOriented()){
+                chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                        driveSignal.getTranslation().x,
+                        driveSignal.getTranslation().y,
+                        driveSignal.getRotation(),
+                        getPose().getRotation());
+            } else{
+                chassisSpeeds = new ChassisSpeeds(
+                        driveSignal.getTranslation().x,
+                        driveSignal.getTranslation().y,
                         driveSignal.getRotation());
             }
         }
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-        frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                states[0].angle.getRadians());
-        frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                states[1].angle.getRadians());
-        backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                states[2].angle.getRadians());
-        backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-                states[3].angle.getRadians());
+        frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
+        frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
+        backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
+        backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
     }
 
 }
