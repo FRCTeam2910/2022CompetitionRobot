@@ -9,6 +9,7 @@ import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
 
 public class RobotContainer {
+    // private final static double SHOOTING_TIMEOUT = 10.0;
 
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ShooterSubsystem shooter = new ShooterSubsystem();
