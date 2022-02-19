@@ -2,13 +2,13 @@ package org.frcteam2910.c2022.subsystems;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
@@ -20,6 +20,11 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.c2022.Constants;
 import org.frcteam2910.c2022.Robot;
+import org.frcteam2910.common.control.MotionProfileFollower;
+import org.frcteam2910.common.control.PidConstants;
+import org.frcteam2910.common.control.PidController;
+import org.frcteam2910.common.motion.MotionProfile;
+import org.frcteam2910.common.motion.TrapezoidalMotionProfile;
 
 public class ClimberSubsystem implements Subsystem {
     private static final DCMotor MOTOR = DCMotor.getFalcon500(2);
@@ -27,19 +32,24 @@ public class ClimberSubsystem implements Subsystem {
     private static final double MASS = Units.lbsToKilograms(60.0);
     private static final double RADIUS = Units.inchesToMeters(1.0);
 
+    private static final double VELOCITY_CONSTANT = 1.0 / (RADIUS * REDUCTION * MOTOR.KvRadPerSecPerVolt);
+    private static final double ACCELERATION_CONSTANT = (MOTOR.rOhms * RADIUS * MASS * REDUCTION) / (MOTOR.KtNMPerAmp);
+
     private static final double MAX_HEIGHT = 1.0;
 
     private static final double ALLOWABLE_POSITION_ERROR = Units.inchesToMeters(2.0);
 
-    private static final double POSITION_COEFFICIENT = 1;
-    private static final double VELOCITY_COEFFICIENT = POSITION_COEFFICIENT / 10.0;
+    private static final double SENSOR_POSITION_COEFFICIENT = REDUCTION * RADIUS / 2048.0;
+    private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT / 10.0;
 
-    private final LinearSystem<N2, N1, N1> plant = LinearSystemId.createElevatorSystem(MOTOR, MASS, RADIUS,
-            1.0 / REDUCTION);
+    private static final MotionProfile.Constraints MOTION_CONSTRAINTS = new MotionProfile.Constraints(
+            11.0 * VELOCITY_CONSTANT * 0.2, 11.0 * ACCELERATION_CONSTANT * 0.8);
+
+    private final LinearSystem<N2, N1, N1> plant = LinearSystemId.identifyPositionSystem(VELOCITY_CONSTANT,
+            ACCELERATION_CONSTANT);
     private final ElevatorSim simulation = new ElevatorSim(plant, MOTOR, 1.0 / REDUCTION, RADIUS, 0.0,
             MAX_HEIGHT * 1.1);
     private final TalonFX motor = new TalonFX(Constants.CLIMBER_MOTOR_PORT);
-    private final PIDController positionPID = new PIDController(25.0, 0.0, 0.0);
 
     private final Mechanism2d mech2d = new Mechanism2d(100, 120);
     private final MechanismRoot2d mech2dRoot = mech2d.getRoot("Elevator Root", 10, 10);
@@ -47,8 +57,10 @@ public class ClimberSubsystem implements Subsystem {
     private final MechanismLigament2d motorOutput = mech2dRoot
             .append(new MechanismLigament2d("Motor Output", 0, 45, 10, new Color8Bit(150, 0, 255)));
 
+    private final MotionProfileFollower motionFollower = new MotionProfileFollower(
+            new PidController(new PidConstants(25.0, 0.0, 0.0)), VELOCITY_CONSTANT, ACCELERATION_CONSTANT);
+
     private Mode mode = Mode.VOLTAGE;
-    private double targetPosition = 0.0;
     private double targetVoltage = 0.0;
     private double inputVoltage = 0.0;
 
@@ -57,7 +69,7 @@ public class ClimberSubsystem implements Subsystem {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Climber");
         shuffleboardTab.addNumber("velocity", simulation::getVelocityMetersPerSecond);
         shuffleboardTab.addNumber("height", simulation::getPositionMeters);
-        shuffleboardTab.addNumber("target height", () -> targetPosition);
+        shuffleboardTab.addNumber("target height", this::getTargetPosition);
         shuffleboardTab.addNumber("voltage", () -> inputVoltage);
 
         motor.configVoltageCompSaturation(12.0);
@@ -72,9 +84,13 @@ public class ClimberSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
+        final double now = Timer.getFPGATimestamp();
+        final double dt = Robot.kDefaultPeriod;
+
         switch (mode) {
             case POSITION :
-                inputVoltage = positionPID.calculate(getCurrentPosition(), targetPosition);
+                inputVoltage = motionFollower.update(getCurrentPosition(), now, dt);
+
                 break;
             case VOLTAGE :
                 inputVoltage = targetVoltage;
@@ -87,19 +103,21 @@ public class ClimberSubsystem implements Subsystem {
     }
 
     public double getTargetPosition() {
-        return targetPosition;
+        if (mode == Mode.POSITION) {
+            return motionFollower.getCurrentMotionProfile().getEnd().position;
+        }
+        return 0.0;
     }
 
     public void setTargetPosition(double targetPosition) {
-        this.targetPosition = targetPosition;
-        if (mode != Mode.POSITION) {
-            positionPID.reset();
-            mode = Mode.POSITION;
-        }
+        motionFollower
+                .follow(new TrapezoidalMotionProfile(new MotionProfile.Goal(getCurrentPosition(), getCurrentVelocity()),
+                        new MotionProfile.Goal(targetPosition, 0.0), MOTION_CONSTRAINTS));
+        mode = Mode.POSITION;
     }
 
     public boolean isAtTargetPosition() {
-        return Math.abs(getCurrentPosition() - targetPosition) < ALLOWABLE_POSITION_ERROR;
+        return Math.abs(getCurrentPosition() - getTargetPosition()) < ALLOWABLE_POSITION_ERROR;
     }
 
     public void setTargetVoltage(double targetVoltage) {
@@ -111,7 +129,7 @@ public class ClimberSubsystem implements Subsystem {
         if (Robot.isSimulation()) {
             return simulation.getPositionMeters();
         } else {
-            return motor.getSelectedSensorPosition() * POSITION_COEFFICIENT;
+            return motor.getSelectedSensorPosition() * SENSOR_POSITION_COEFFICIENT;
         }
     }
 
@@ -119,7 +137,7 @@ public class ClimberSubsystem implements Subsystem {
         if (Robot.isSimulation()) {
             return simulation.getVelocityMetersPerSecond();
         } else {
-            return motor.getSelectedSensorVelocity() * VELOCITY_COEFFICIENT;
+            return motor.getSelectedSensorVelocity() * SENSOR_VELOCITY_COEFFICIENT;
         }
     }
 
