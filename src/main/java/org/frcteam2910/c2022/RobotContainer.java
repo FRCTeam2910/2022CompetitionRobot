@@ -16,7 +16,7 @@ public class RobotContainer {
     private final IntakeSubsystem intake = new IntakeSubsystem();
     private final FeederSubsystem feeder = new FeederSubsystem();
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
-    private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
+    private final VisionSubsystem vision = new VisionSubsystem(drivetrain, shooter);
 
     private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
 

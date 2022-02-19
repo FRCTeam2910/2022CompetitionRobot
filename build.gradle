@@ -54,6 +54,8 @@ dependencies {
     implementation wpi.java.vendor.java()
     implementation project(":common:robot")
 
+    implementation 'org.georegression:georegression:0.24'
+
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)
 
