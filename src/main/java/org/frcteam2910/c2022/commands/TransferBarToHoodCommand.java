@@ -14,8 +14,7 @@ public class TransferBarToHoodCommand extends SequentialCommandGroup {
     public TransferBarToHoodCommand(ClimberSubsystem climber, ShooterSubsystem shooter) {
         this.climber = climber;
         this.shooter = shooter;
-        addCommands(
-                new ClimberToPointCommand(climber, CLIMBER_BOTTOM),
+        addCommands(new ClimberToPointCommand(climber, CLIMBER_BOTTOM),
                 // Hook hood
                 new SetHoodAngleCommand(shooter, HOOD_HOOK_ANGLE));
     }

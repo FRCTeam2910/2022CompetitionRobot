@@ -18,8 +18,7 @@ public class TraverseToNextBarCommand extends ParallelCommandGroup {
         addCommands(
                 // Move climber up off bar while also moving the hood to orient the robot
                 // correctly
-                new ClimberToPointCommand(climber, CLIMBER_TOP),
-                new WaitCommand(0.25)
+                new ClimberToPointCommand(climber, CLIMBER_TOP), new WaitCommand(0.25)
                         .andThen(new SetHoodAngleCommand(shooter, HOOD_ANGLE_FOR_CLIMBER_EXTENSION_TO_NEXT_BAR)));
     }
 }

@@ -17,7 +17,7 @@ public class AlignRobotToShootCommand extends CommandBase {
         this.drivetrain = drivetrain;
         this.vision = vision;
 
-        controller.setInputRange(0, 2*Math.PI);
+        controller.setInputRange(0, 2 * Math.PI);
         controller.setContinuous(true);
 
         addRequirements(drivetrain);
@@ -30,12 +30,12 @@ public class AlignRobotToShootCommand extends CommandBase {
 
     @Override
     public void execute() {
-            double setPoint = Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getY());
-            double currentAngle = drivetrain.getPose().getRotation().getRadians();
+        double setPoint = Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getY());
+        double currentAngle = drivetrain.getPose().getRotation().getRadians();
 
-            controller.setSetpoint(setPoint);
-            double rotationalVelocity = controller.calculate(currentAngle, Robot.kDefaultPeriod);
-            drivetrain.drive(new ChassisSpeeds(0.0, 0.0, rotationalVelocity));
+        controller.setSetpoint(setPoint);
+        double rotationalVelocity = controller.calculate(currentAngle, Robot.kDefaultPeriod);
+        drivetrain.drive(new ChassisSpeeds(0.0, 0.0, rotationalVelocity));
     }
 
     @Override
