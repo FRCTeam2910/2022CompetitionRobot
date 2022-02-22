@@ -44,10 +44,11 @@ public class AutonomousChooser {
         return command;
     }
 
-    public Command getFenderRedAuto(RobotContainer container){
+    public Command getFenderRedAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0))); // TODO: Update Code For Beginning Position
+        // TODO: Update Code for beginning position
+        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
 
         shootAtTarget(command, container, 1.5);
         follow(command, container, trajectories.getFenderRedPartOne());
@@ -55,7 +56,7 @@ public class AutonomousChooser {
         return command;
     }
 
-    public Command get2BallWhiteAuto(RobotContainer container){
+    public Command get2BallWhiteAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
@@ -66,7 +67,7 @@ public class AutonomousChooser {
         return command;
     }
 
-    public Command get2BallPurpleAuto(RobotContainer container){
+    public Command get2BallPurpleAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
@@ -120,7 +121,7 @@ public class AutonomousChooser {
                 return get2BallWhiteAuto(container);
             case THREE_BALL_ORANGE :
                 return get3BallOrangeAuto(container);
-            case FOUR_BALL_ORANGE:
+            case FOUR_BALL_ORANGE :
                 return get4BallOrangeAuto(container);
         }
         return get4BallOrangeAuto(container);
@@ -148,11 +149,6 @@ public class AutonomousChooser {
     }
 
     private enum AutonomousMode {
-        FENDER_RED,
-        FENDER_BLUE,
-        TWO_BALL_WHITE,
-        TWO_BALL_PURPLE,
-        THREE_BALL_ORANGE,
-        FOUR_BALL_ORANGE
+        FENDER_RED, FENDER_BLUE, TWO_BALL_WHITE, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FOUR_BALL_ORANGE
     }
 }
