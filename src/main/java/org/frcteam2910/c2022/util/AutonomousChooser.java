@@ -114,6 +114,10 @@ public class AutonomousChooser {
                 return getFenderBlueAuto(container);
             case FENDER_RED :
                 return getFenderRedAuto(container);
+            case TWO_BALL_PURPLE :
+                return get2BallPurpleAuto(container);
+            case TWO_BALL_WHITE :
+                return get2BallWhiteAuto(container);
             case THREE_BALL_ORANGE :
                 return get3BallOrangeAuto(container);
             case FOUR_BALL_ORANGE:
