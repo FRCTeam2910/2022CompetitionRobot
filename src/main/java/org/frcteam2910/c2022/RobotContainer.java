@@ -2,18 +2,21 @@ package org.frcteam2910.c2022;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
 
 public class RobotContainer {
+    // private final static double SHOOTING_TIMEOUT = 10.0;
 
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ShooterSubsystem shooter = new ShooterSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
     private final FeederSubsystem feeder = new FeederSubsystem();
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
-    private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
+    private final VisionSubsystem vision = new VisionSubsystem(drivetrain, shooter);
 
     private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
 
@@ -66,11 +69,18 @@ public class RobotContainer {
 
     public void configureButtonBindings() {
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
-        new Button(() -> controller.getRightTriggerAxis() > 0.5)
-                .whileHeld(new AlignRobotToShootCommand(drivetrain, vision));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter));
-        new Button(() -> controller.getPOV() == 0).whileHeld(new ClimberToPointCommand(climber, 0.75));
+        new Button(controller::getRightBumper).whenPressed(new TargetWithShooterCommand(shooter, drivetrain)
+                .alongWith(new AlignRobotToShootCommand(drivetrain, vision))
+                .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision)))
+                .alongWith(new TargetWithShooterCommand(shooter, drivetrain))
+        // .withTimeout(SHOOTING_TIMEOUT));
+        );
+        new Button(() -> controller.getPOV() == 0)
+                .whenPressed(new ConditionalCommand(new ClimberToPointCommand(climber, 0.75),
+                        new ClimberToPointCommand(climber, 1.0), () -> climber.getCurrentPosition() > 0.9));
+        new Button(() -> controller.getPOV() == 180).whenPressed(new ClimberToPointCommand(climber, 0.0));
         new Button(controller::getStartButton).whenPressed(
                 // a to c
                 new PrepareHoodTransferCommand(climber, shooter)
