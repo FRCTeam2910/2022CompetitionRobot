@@ -28,8 +28,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(vision);
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
 
-        shooter.setDefaultCommand(new DefaultShooterCommand(shooter, () -> controller.getRawAxis(0) * 12,
-                () -> controller.getRawAxis(1) * 12));
+        shooter.setDefaultCommand(new DefaultShooterCommand(shooter));
         intake.setDefaultCommand(new DefaultIntakeCommand(intake));
         drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
                 () -> -controller.getLeftX() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,

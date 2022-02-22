@@ -17,7 +17,7 @@ public class FenderShootCommand extends CommandBase {
         this.shooter = shooter;
         this.feeder = feeder;
 
-        addRequirements(feeder);
+        addRequirements(feeder, shooter);
     }
 
     @Override
@@ -25,12 +25,13 @@ public class FenderShootCommand extends CommandBase {
         // To aim when bumpers are flat against the hub wall
         shooter.setHoodTargetPosition(SHOOTER_ANGLE);
         shooter.setTargetFlywheelSpeed(FLYWHEEL_SPEED);
-        feeder.setFeederSpeed(FEEDER_SPEED);
+        if (shooter.isHoodAtTargetAngle() && shooter.isFlywheelAtTargetSpeed()) {
+            feeder.setFeederSpeed(FEEDER_SPEED);
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
-        shooter.setTargetFlywheelSpeed(0.0);
         feeder.setFeederSpeed(0.0);
     }
 }
