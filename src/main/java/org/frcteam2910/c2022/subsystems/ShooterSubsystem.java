@@ -142,7 +142,12 @@ public class ShooterSubsystem implements Subsystem {
     }
 
     public double getHoodTargetPosition() {
-        return motionFollower.getCurrentMotionProfile().getEnd().position;
+        MotionProfile profile = motionFollower.getCurrentMotionProfile();
+        if (profile != null) {
+            return profile.getEnd().position;
+        } else {
+            return 0.0;
+        }
     }
 
     public boolean isHoodZeroed() {
