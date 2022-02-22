@@ -9,8 +9,6 @@ import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
 
 public class RobotContainer {
-    // private final static double SHOOTING_TIMEOUT = 10.0;
-
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ShooterSubsystem shooter = new ShooterSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
@@ -74,9 +72,7 @@ public class RobotContainer {
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter));
         new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, vision)
                 .alongWith(new AlignRobotToShootCommand(drivetrain, vision))
-                .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision)))
-        // .withTimeout(SHOOTING_TIMEOUT));
-        );
+                .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
         new Button(controller::getBButton).whenPressed(new ResetFeederCommand(feeder));
         new Button(() -> controller.getPOV() == 0)
                 .whenPressed(new ConditionalCommand(new ClimberToPointCommand(climber, 0.75),
