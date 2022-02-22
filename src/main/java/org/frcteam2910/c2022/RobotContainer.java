@@ -69,14 +69,15 @@ public class RobotContainer {
 
     public void configureButtonBindings() {
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
+        new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new ManualFeedToShooterCommand(feeder));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter));
-        new Button(controller::getRightBumper).whenPressed(new TargetWithShooterCommand(shooter, vision)
+        new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, vision)
                 .alongWith(new AlignRobotToShootCommand(drivetrain, vision))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision)))
-                .alongWith(new TargetWithShooterCommand(shooter, vision))
         // .withTimeout(SHOOTING_TIMEOUT));
         );
+        new Button(controller::getBButton).whenPressed(new ResetFeederCommand(feeder));
         new Button(() -> controller.getPOV() == 0)
                 .whenPressed(new ConditionalCommand(new ClimberToPointCommand(climber, 0.75),
                         new ClimberToPointCommand(climber, 1.0), () -> climber.getCurrentPosition() > 0.9));
