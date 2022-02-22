@@ -23,7 +23,6 @@ public class VisionSubsystem implements Subsystem {
     private static final double LIMELIGHT_HEIGHT = 0.0;
 
     private final DrivetrainSubsystem drivetrain;
-    private final ShooterSubsystem shooter;
 
     private final PhotonCamera shooterLimelight = new PhotonCamera("photonvision");
 
@@ -35,7 +34,6 @@ public class VisionSubsystem implements Subsystem {
 
     public VisionSubsystem(DrivetrainSubsystem drivetrain, ShooterSubsystem shooter) {
         this.drivetrain = drivetrain;
-        this.shooter = shooter;
 
         ShuffleboardTab tab = Shuffleboard.getTab("Vision");
         tab.addBoolean("shooter has targets", () -> shooterHasTargets).withPosition(0, 0).withSize(1, 1);
@@ -100,23 +98,5 @@ public class VisionSubsystem implements Subsystem {
 
             angleToTarget = drivetrain.getPose().getRotation().getRadians() + centerX;
         }
-
-        // result = shooterLimelight.getLatestResult();
-        // if (result.hasTargets()) {
-        // shooterDistanceToTarget = PhotonUtils.calculateDistanceToTargetMeters(
-        // CAMERA_HEIGHT_METERS,
-        // TARGET_HEIGHT_METERS,
-        // CAMERA_PITCH_RADIANS,
-        // Units.degreesToRadians(result.getBestTarget().getPitch())
-        // );
-        //
-        // PhotonTrackedTarget target =
-        // shooterLimelight.getLatestResult().getBestTarget();
-        // shooterAngleToTarget = drivetrain.getPose().getRotation().getRadians() +
-        // Math.toRadians(target.getYaw());
-        // } else {
-        // shooterDistanceToTarget = Double.NaN;
-        // shooterAngleToTarget = Double.NaN;
-        // }
     }
 }
