@@ -28,8 +28,7 @@ public class RobotContainer {
         CommandScheduler.getInstance().registerSubsystem(vision);
         CommandScheduler.getInstance().registerSubsystem(drivetrain);
 
-        shooter.setDefaultCommand(new DefaultShooterCommand(shooter, () -> controller.getRawAxis(0) * 12,
-                () -> controller.getRawAxis(1) * 12));
+        shooter.setDefaultCommand(new DefaultShooterCommand(shooter));
         intake.setDefaultCommand(new DefaultIntakeCommand(intake));
         drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
                 () -> -controller.getLeftX() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
@@ -71,6 +70,8 @@ public class RobotContainer {
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter));
+        new Button(controller::getAButton).whileHeld(new FenderShootCommand(feeder, shooter));
+        new Button(() -> controller.getPOV() == 0).whileHeld(new ClimberToPointCommand(climber, 0.75));
         new Button(controller::getRightBumper).whenPressed(new TargetWithShooterCommand(shooter, drivetrain)
                 .alongWith(new AlignRobotToShootCommand(drivetrain, vision))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision)))
