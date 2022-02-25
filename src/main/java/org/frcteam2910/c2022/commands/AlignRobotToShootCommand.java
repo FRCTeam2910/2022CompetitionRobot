@@ -40,6 +40,6 @@ public class AlignRobotToShootCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        super.end(interrupted);
+        drivetrain.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
     }
 }
