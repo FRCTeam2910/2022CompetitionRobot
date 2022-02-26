@@ -6,13 +6,16 @@ import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class ZeroHoodCommand extends CommandBase {
     private static final double ZERO_HOOD_VELOCITY_TIME = 250; // in ms, 5 sec
+    private static final double HOOD_MAX_ANGLE = 90;
 
     private final ShooterSubsystem shooterSubsystem;
 
     private double zeroHoodStartTime;
+    private boolean forward;
 
-    public ZeroHoodCommand(ShooterSubsystem shooterSubsystem) {
+    public ZeroHoodCommand(ShooterSubsystem shooterSubsystem, boolean forward) {
         this.shooterSubsystem = shooterSubsystem;
+        this.forward = forward;
 
         addRequirements(shooterSubsystem);
     }
@@ -20,7 +23,11 @@ public class ZeroHoodCommand extends CommandBase {
     @Override
     public void initialize() {
         shooterSubsystem.setHoodZeroed(false);
-        shooterSubsystem.setHoodVoltage(-2.0);
+        if (forward) {
+            shooterSubsystem.setHoodVoltage(2.0);
+        } else {
+            shooterSubsystem.setHoodVoltage(-2.0);
+        }
     }
 
     @Override
@@ -40,6 +47,10 @@ public class ZeroHoodCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.setHoodVoltage(0.0);
-        shooterSubsystem.zeroHoodMotor();
+        if (forward) {
+            shooterSubsystem.setHoodMotorSensorPosition(HOOD_MAX_ANGLE);
+        } else {
+            shooterSubsystem.setHoodMotorSensorPosition(0.0);
+        }
     }
 }

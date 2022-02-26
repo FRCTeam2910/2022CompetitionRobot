@@ -15,7 +15,7 @@ public class DefaultFeederCommand extends CommandBase {
 
     @Override
     public void execute() {
-        if (!feeder.getFullSensor() & feeder.getEntrySensor()) {
+        if (!feeder.isFull() & feeder.isBallAtEntry()) {
             feeder.setFeederSpeed(MAX_FEEDER_SPEED);
         } else {
             feeder.setFeederSpeed(0.0);

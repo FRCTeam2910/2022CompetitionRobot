@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
+import org.frcteam2910.common.robot.Utilities;
 
 public class RobotContainer {
     private final ClimberSubsystem climber = new ClimberSubsystem();
@@ -29,9 +30,12 @@ public class RobotContainer {
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter));
         intake.setDefaultCommand(new DefaultIntakeCommand(intake));
         drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
-                () -> -controller.getLeftX() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -controller.getLeftY() * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -controller.getRightX() * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+                () -> -Utilities.deadband(controller.getLeftY(), 0.1)
+                        * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -Utilities.deadband(controller.getLeftX(), 0.1)
+                        * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -Utilities.deadband(controller.getRightX(), 0.1)
+                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
         feeder.setDefaultCommand(new DefaultFeederCommand(feeder));
         configureButtonBindings();
     }
@@ -68,7 +72,7 @@ public class RobotContainer {
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
         new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new ManualFeedToShooterCommand(feeder));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
-        new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter));
+        new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, false));
         new Button(controller::getAButton).whileHeld(new FenderShootCommand(feeder, shooter));
         new Button(() -> controller.getPOV() == 0).whileHeld(new ClimberToPointCommand(climber, 0.75));
         new Button(controller::getRightBumper).whenPressed(new TargetWithShooterCommand(shooter, drivetrain)

@@ -1,6 +1,6 @@
 package org.frcteam2910.c2022.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.Pigeon2;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -60,7 +60,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
     private final SwerveDrivePoseEstimator estimator;
 
-    private final PigeonIMU pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
+    private final Pigeon2 pigeon = new Pigeon2(DRIVETRAIN_PIGEON_ID);
 
     private final SwerveModule frontLeftModule;
     private final SwerveModule frontRightModule;
@@ -91,10 +91,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 VecBuilder.fill(0.02, 0.02, 0.01), // estimator values (x, y, rotation) std-devs
                 VecBuilder.fill(0.01), // Gyroscope rotation std-dev
                 VecBuilder.fill(0.1, 0.1, 0.01)); // Vision (x, y, rotation) std-devs
+
+        tab.addNumber("Odometry X", () -> getPose().getX());
+        tab.addNumber("Odometry Y", () -> getPose().getY());
+        tab.addNumber("Odometry Angle", () -> getPose().getRotation().getDegrees());
+        tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
+
     }
 
     private Rotation2d getGyroscopeRotation() {
-        return Rotation2d.fromDegrees(pigeon.getFusedHeading());
+        return Rotation2d.fromDegrees(pigeon.getYaw());
     }
 
     /**

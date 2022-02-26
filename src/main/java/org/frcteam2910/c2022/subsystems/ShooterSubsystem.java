@@ -1,6 +1,5 @@
 package org.frcteam2910.c2022.subsystems;
 
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.numbers.N1;
@@ -154,8 +153,8 @@ public class ShooterSubsystem implements Subsystem {
         return isHoodZeroed;
     }
 
-    public void zeroHoodMotor() {
-        hoodAngleMotor.setSelectedSensorPosition(0.0);
+    public void setHoodMotorSensorPosition(double position) {
+        hoodAngleMotor.setSelectedSensorPosition(position / SENSOR_POSITION_COEFFICIENT);
     }
 
     public void simulationPeriodic() {
@@ -175,7 +174,9 @@ public class ShooterSubsystem implements Subsystem {
 
         flywheelVoltage = flywheelVelocityController.calculate(getFlywheelVelocity(), targetFlywheelSpeed);
 
-        flywheelPrimaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage / 12.0);
-        flywheelSecondaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage / 12.0);
+        // flywheelPrimaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage /
+        // 12.0);
+        // flywheelSecondaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage
+        // / 12.0);
     }
 }

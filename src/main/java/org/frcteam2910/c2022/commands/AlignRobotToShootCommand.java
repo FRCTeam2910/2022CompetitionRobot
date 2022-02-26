@@ -30,7 +30,7 @@ public class AlignRobotToShootCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double setPoint = Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getY());
+        double setPoint = Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getX());
         double currentAngle = drivetrain.getPose().getRotation().getRadians();
 
         controller.setSetpoint(setPoint);

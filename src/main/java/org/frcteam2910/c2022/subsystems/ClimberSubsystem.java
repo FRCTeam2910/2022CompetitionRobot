@@ -1,6 +1,5 @@
 package org.frcteam2910.c2022.subsystems;
 
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -49,7 +48,7 @@ public class ClimberSubsystem implements Subsystem {
             ACCELERATION_CONSTANT);
     private final ElevatorSim simulation = new ElevatorSim(plant, MOTOR, 1.0 / REDUCTION, RADIUS, 0.0,
             MAX_HEIGHT * 1.1);
-    private final TalonFX motor = new TalonFX(Constants.CLIMBER_MOTOR_PORT);
+    private final TalonFX motor = new TalonFX(Constants.CLIMBER_LEFT_MOTOR_PORT);
 
     private final Mechanism2d mech2d = new Mechanism2d(100, 120);
     private final MechanismRoot2d mech2dRoot = mech2d.getRoot("Elevator Root", 10, 10);
@@ -97,7 +96,7 @@ public class ClimberSubsystem implements Subsystem {
                 break;
         }
 
-        motor.set(TalonFXControlMode.PercentOutput, inputVoltage / 12);
+        // motor.set(TalonFXControlMode.PercentOutput, inputVoltage / 12);
         position.setLength(simulation.getPositionMeters() * 100);
         motorOutput.setLength((inputVoltage / 12.0 + 1) * 50);
     }

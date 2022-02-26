@@ -50,7 +50,11 @@ public class VisionSubsystem implements Subsystem {
     }
 
     public boolean shooterHasTargets() {
-        return result.hasTargets();
+        if (result == null) {
+            return false;
+        } else {
+            return result.hasTargets();
+        }
     }
 
     public boolean isOnTarget() {
@@ -69,34 +73,38 @@ public class VisionSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        List<PhotonTrackedTarget> targets = result.getTargets();
-        List<Point2D_F64> bottomCorners = new ArrayList<>();
-        List<Point2D_F64> topCorners = new ArrayList<>();
-        for (int i = 0; i < targets.size(); i++) {
-            List<TargetCorner> corners = targets.get(i).getCorners();
-            corners.sort((a, b) -> Double.compare(a.y, b.y));
+        result = shooterLimelight.getLatestResult();
 
-            bottomCorners.add(new Point2D_F64(corners.get(0).x, corners.get(0).y));
-            bottomCorners.add(new Point2D_F64(corners.get(1).x, corners.get(1).y));
+        if (result != null && result.hasTargets()) {
+            List<PhotonTrackedTarget> targets = result.getTargets();
+            List<Point2D_F64> bottomCorners = new ArrayList<>();
+            List<Point2D_F64> topCorners = new ArrayList<>();
+            for (int i = 0; i < targets.size(); i++) {
+                List<TargetCorner> corners = targets.get(i).getCorners();
+                corners.sort((a, b) -> Double.compare(a.y, b.y));
 
-            topCorners.add(new Point2D_F64(corners.get(2).x, corners.get(2).y));
-            topCorners.add(new Point2D_F64(corners.get(3).x, corners.get(3).y));
-        }
+                bottomCorners.add(new Point2D_F64(corners.get(0).x, corners.get(0).y));
+                bottomCorners.add(new Point2D_F64(corners.get(1).x, corners.get(1).y));
 
-        FitEllipseAlgebraic_F64 topEllipse = new FitEllipseAlgebraic_F64();
-        if (topEllipse.process(topCorners)) {
-            double a = topEllipse.getEllipse().A;
-            double c = topEllipse.getEllipse().C;
-            double d = topEllipse.getEllipse().D;
-            double e = topEllipse.getEllipse().E;
+                topCorners.add(new Point2D_F64(corners.get(2).x, corners.get(2).y));
+                topCorners.add(new Point2D_F64(corners.get(3).x, corners.get(3).y));
+            }
 
-            double centerX = d / 2 * a;
-            double centerY = -e / 2 * c;
+            FitEllipseAlgebraic_F64 topEllipse = new FitEllipseAlgebraic_F64();
+            if (topEllipse.process(topCorners)) {
+                double a = topEllipse.getEllipse().A;
+                double c = topEllipse.getEllipse().C;
+                double d = topEllipse.getEllipse().D;
+                double e = topEllipse.getEllipse().E;
 
-            double theta = LIMELIGHT_MOUNTING_ANGLE + centerY;
-            distanceToTarget = (TARGET_HEIGHT_METERS - LIMELIGHT_HEIGHT) / Math.tan(theta);
+                double centerX = d / 2 * a;
+                double centerY = -e / 2 * c;
 
-            angleToTarget = drivetrain.getPose().getRotation().getRadians() + centerX;
+                double theta = LIMELIGHT_MOUNTING_ANGLE + centerY;
+                distanceToTarget = (TARGET_HEIGHT_METERS - LIMELIGHT_HEIGHT) / Math.tan(theta);
+
+                angleToTarget = drivetrain.getPose().getRotation().getRadians() + centerX;
+            }
         }
     }
 }
