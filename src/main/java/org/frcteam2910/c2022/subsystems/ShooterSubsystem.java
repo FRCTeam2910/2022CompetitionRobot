@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022.subsystems;
 
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.numbers.N1;
@@ -59,15 +60,24 @@ public class ShooterSubsystem implements Subsystem {
             new PidController(new PidConstants(1.0, 0.0, 0.0)), VELOCITY_CONSTANT, ACCELERATION_CONSTANT);
 
     public ShooterSubsystem() {
+        // hoodAngleMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice());
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Shooter");
         shuffleboardTab.addNumber("Flywheel Speed",
                 () -> Units.radiansPerSecondToRotationsPerMinute(getFlywheelSpeed()));
         shuffleboardTab.addNumber("Hood Angle", () -> Math.toDegrees(getHoodAngle()));
 
+        flywheelPrimaryMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 50);
+        flywheelPrimaryMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 50);
+        flywheelSecondaryMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        flywheelSecondaryMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
+        hoodAngleMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        hoodAngleMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 50);
+
         flywheelPrimaryMotor.configVoltageCompSaturation(12.0);
         flywheelSecondaryMotor.configVoltageCompSaturation(12.0);
         flywheelPrimaryMotor.enableVoltageCompensation(true);
         flywheelSecondaryMotor.enableVoltageCompensation(true);
+
     }
 
     public double getFlywheelSpeed() {

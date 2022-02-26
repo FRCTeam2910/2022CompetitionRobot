@@ -48,7 +48,8 @@ public class ClimberSubsystem implements Subsystem {
             ACCELERATION_CONSTANT);
     private final ElevatorSim simulation = new ElevatorSim(plant, MOTOR, 1.0 / REDUCTION, RADIUS, 0.0,
             MAX_HEIGHT * 1.1);
-    private final TalonFX motor = new TalonFX(Constants.CLIMBER_LEFT_MOTOR_PORT);
+    private final TalonFX leftMotor = new TalonFX(Constants.CLIMBER_LEFT_MOTOR_PORT);
+    private final TalonFX rightMotor = new TalonFX(Constants.CLIMBER_RIGHT_MOTOR_PORT);
 
     private final Mechanism2d mech2d = new Mechanism2d(100, 120);
     private final MechanismRoot2d mech2dRoot = mech2d.getRoot("Elevator Root", 10, 10);
@@ -71,8 +72,11 @@ public class ClimberSubsystem implements Subsystem {
         shuffleboardTab.addNumber("target height", this::getTargetPosition);
         shuffleboardTab.addNumber("voltage", () -> inputVoltage);
 
-        motor.configVoltageCompSaturation(12.0);
-        motor.enableVoltageCompensation(true);
+        leftMotor.configVoltageCompSaturation(12.0);
+        rightMotor.configVoltageCompSaturation(12.0);
+        leftMotor.enableVoltageCompensation(true);
+        rightMotor.enableVoltageCompensation(true);
+        rightMotor.setInverted(true);
     }
 
     @Override
@@ -89,14 +93,14 @@ public class ClimberSubsystem implements Subsystem {
         switch (mode) {
             case POSITION :
                 inputVoltage = motionFollower.update(getCurrentPosition(), now, dt);
-
                 break;
             case VOLTAGE :
                 inputVoltage = targetVoltage;
                 break;
         }
 
-        // motor.set(TalonFXControlMode.PercentOutput, inputVoltage / 12);
+        // rightMotor.set(TalonFXControlMode.PercentOutput, inputVoltage / 12);
+        // leftMotor.set(TalonFXControlMode.PercentOutput, inputVoltage / 12);
         position.setLength(simulation.getPositionMeters() * 100);
         motorOutput.setLength((inputVoltage / 12.0 + 1) * 50);
     }
@@ -128,7 +132,7 @@ public class ClimberSubsystem implements Subsystem {
         if (Robot.isSimulation()) {
             return simulation.getPositionMeters();
         } else {
-            return motor.getSelectedSensorPosition() * SENSOR_POSITION_COEFFICIENT;
+            return leftMotor.getSelectedSensorPosition() * SENSOR_POSITION_COEFFICIENT;
         }
     }
 
@@ -136,13 +140,14 @@ public class ClimberSubsystem implements Subsystem {
         if (Robot.isSimulation()) {
             return simulation.getVelocityMetersPerSecond();
         } else {
-            return motor.getSelectedSensorVelocity() * SENSOR_VELOCITY_COEFFICIENT;
+            return leftMotor.getSelectedSensorVelocity() * SENSOR_VELOCITY_COEFFICIENT;
         }
     }
 
     public void setZeroPosition() {
         if (Robot.isReal()) {
-            motor.setSelectedSensorPosition(0.0);
+            leftMotor.setSelectedSensorPosition(0.0);
+            rightMotor.setSelectedSensorPosition(0.0);
         }
     }
 

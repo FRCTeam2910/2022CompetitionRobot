@@ -7,14 +7,14 @@ public class Constants {
 
     public static final int INTAKE_LEFT_MOTOR_PORT = 12;
     public static final int INTAKE_RIGHT_MOTOR_PORT = 13;
-    public static final int INTAKE_SOLENOID_PORT = 10;
+    public static final int INTAKE_SOLENOID_PORT = 0;
     public static final int CLIMBER_LEFT_MOTOR_PORT = 16;
     public static final int CLIMBER_RIGHT_MOTOR_PORT = 11;
     public static final int FEEDER_MOTOR_PORT = 10;
     public static final int FEEDER_SOLENOID_PORT = 13;
 
-    public static final int FEEDER_SENSOR_FULL_PORT = 14;
-    public static final int FEEDER_SENSOR_ENTRY_PORT = 15;
+    public static final int FEEDER_SENSOR_FULL_PORT = 1;
+    public static final int FEEDER_SENSOR_ENTRY_PORT = 0;
 
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(22);
     public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(22);

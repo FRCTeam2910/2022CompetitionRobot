@@ -97,6 +97,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         tab.addNumber("Odometry Angle", () -> getPose().getRotation().getDegrees());
         tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
 
+        // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);
+        // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel,
+        // 255);
+        pigeon.configFactoryDefault();
     }
 
     private Rotation2d getGyroscopeRotation() {

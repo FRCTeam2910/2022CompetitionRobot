@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022;
 
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -18,6 +19,8 @@ public class RobotContainer {
     private final VisionSubsystem vision = new VisionSubsystem(drivetrain, shooter);
 
     private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
+
+    private final PneumaticHub pneumatics = new PneumaticHub();
 
     public RobotContainer() {
         CommandScheduler.getInstance().registerSubsystem(climber);
@@ -38,6 +41,8 @@ public class RobotContainer {
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
         feeder.setDefaultCommand(new DefaultFeederCommand(feeder));
         configureButtonBindings();
+
+        pneumatics.enableCompressorAnalog(115, 120);
     }
 
     public DrivetrainSubsystem getDrivetrain() {
@@ -69,7 +74,7 @@ public class RobotContainer {
     }
 
     public void configureButtonBindings() {
-        new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new SimpleIntakeCommand(intake));
+        new Button(controller::getLeftBumper).whileHeld(new SimpleIntakeCommand(intake));
         new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new ManualFeedToShooterCommand(feeder));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, false));
