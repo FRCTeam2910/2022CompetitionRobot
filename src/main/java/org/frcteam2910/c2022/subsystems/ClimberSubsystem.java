@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022.subsystems;
 
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
@@ -71,6 +72,11 @@ public class ClimberSubsystem implements Subsystem {
         shuffleboardTab.addNumber("height", simulation::getPositionMeters);
         shuffleboardTab.addNumber("target height", this::getTargetPosition);
         shuffleboardTab.addNumber("voltage", () -> inputVoltage);
+
+        rightMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        rightMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
+        leftMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        leftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
 
         leftMotor.configVoltageCompSaturation(12.0);
         rightMotor.configVoltageCompSaturation(12.0);

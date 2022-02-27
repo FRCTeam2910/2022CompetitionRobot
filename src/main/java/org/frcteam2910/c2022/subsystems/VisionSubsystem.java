@@ -19,12 +19,13 @@ public class VisionSubsystem implements Subsystem {
     final double TARGET_HEIGHT_METERS = Units.inchesToMeters(104);
 
     private static final double TARGET_ALLOWABLE_ERROR = Math.toRadians(2.5);
-    private static final double LIMELIGHT_MOUNTING_ANGLE = 0.0;
-    private static final double LIMELIGHT_HEIGHT = 0.0;
+    private static final double LIMELIGHT_FORWARD = Units.inchesToMeters(5.22);
+    private static final double LIMELIGHT_MOUNTING_ANGLE = Math.toRadians(45.0);
+    private static final double LIMELIGHT_HEIGHT = Units.inchesToMeters(17.5);
 
     private final DrivetrainSubsystem drivetrain;
 
-    private final PhotonCamera shooterLimelight = new PhotonCamera("photonvision");
+    private final PhotonCamera shooterLimelight = new PhotonCamera("gloworm");
 
     private boolean shooterHasTargets = false;
     private double distanceToTarget = Double.NaN;

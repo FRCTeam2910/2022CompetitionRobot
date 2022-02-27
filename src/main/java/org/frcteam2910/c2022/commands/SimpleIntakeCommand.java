@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.IntakeSubsystem;
 
 public class SimpleIntakeCommand extends CommandBase {
-    private static final double INTAKE_SPEED = 0.5;
+    private static final double INTAKE_SPEED = 1.0;
 
     private final IntakeSubsystem intake;
 

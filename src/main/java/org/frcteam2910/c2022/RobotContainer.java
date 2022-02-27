@@ -78,7 +78,7 @@ public class RobotContainer {
         new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new ManualFeedToShooterCommand(feeder));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, false));
-        new Button(controller::getAButton).whileHeld(new FenderShootCommand(feeder, shooter));
+        new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new FenderShootCommand(feeder, shooter));
         new Button(() -> controller.getPOV() == 0).whileHeld(new ClimberToPointCommand(climber, 0.75));
         new Button(controller::getRightBumper).whenPressed(new TargetWithShooterCommand(shooter, drivetrain)
                 .alongWith(new AlignRobotToShootCommand(drivetrain, vision))
@@ -88,6 +88,7 @@ public class RobotContainer {
                 .whenPressed(new ConditionalCommand(new ClimberToPointCommand(climber, 0.75),
                         new ClimberToPointCommand(climber, 1.0), () -> climber.getCurrentPosition() > 0.9));
         new Button(() -> controller.getPOV() == 180).whenPressed(new ClimberToPointCommand(climber, 0.0));
+        new Button(() -> controller.getBackButton()).whenPressed(() -> drivetrain.zeroRotation());
         new Button(controller::getStartButton).whenPressed(
                 // a to c
                 new PrepareHoodTransferCommand(climber, shooter)
