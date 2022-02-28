@@ -2,7 +2,6 @@ package org.frcteam2910.c2022.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -10,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frcteam2910.c2022.RobotContainer;
 import org.frcteam2910.c2022.commands.*;
+import org.frcteam2910.common.control.Path;
 import org.frcteam2910.common.control.Trajectory;
 
 public class AutonomousChooser {
@@ -24,7 +24,6 @@ public class AutonomousChooser {
         autonomousModeChooser.addOption("Fender (Red)", AutonomousMode.FENDER_RED);
         autonomousModeChooser.addOption("Two Ball (White)", AutonomousMode.TWO_BALL_WHITE);
         autonomousModeChooser.addOption("Two Ball (Purple)", AutonomousMode.TWO_BALL_PURPLE);
-        autonomousModeChooser.addOption("3 Ball (Orange)", AutonomousMode.THREE_BALL_ORANGE);
         autonomousModeChooser.addOption("4 Ball (Orange)", AutonomousMode.FOUR_BALL_ORANGE);
     }
 
@@ -35,8 +34,7 @@ public class AutonomousChooser {
     public Command getFenderBlueAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        // TODO: Update code For starting position
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
+        resetRobotPose(command, container, trajectories.getFenderBluePartOne());
 
         shootAtTarget(command, container, 1.5);
         follow(command, container, trajectories.getFenderBluePartOne());
@@ -47,8 +45,7 @@ public class AutonomousChooser {
     public Command getFenderRedAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        // TODO: Update Code for beginning position
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
+        resetRobotPose(command, container, trajectories.getFenderRedPartOne());
 
         shootAtTarget(command, container, 1.5);
         follow(command, container, trajectories.getFenderRedPartOne());
@@ -59,7 +56,7 @@ public class AutonomousChooser {
     public Command get2BallWhiteAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
+        resetRobotPose(command, container, trajectories.getTwoBallWhitePartOne());
 
         followAndIntake(command, container, trajectories.getTwoBallWhitePartOne());
         shootAtTarget(command, container, 1.5);
@@ -70,24 +67,9 @@ public class AutonomousChooser {
     public Command get2BallPurpleAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
+        resetRobotPose(command, container, trajectories.getTwoBallPurplePartOne());
 
         followAndIntake(command, container, trajectories.getTwoBallPurplePartOne());
-        shootAtTarget(command, container, 1.5);
-
-        return command;
-    }
-
-    public Command get3BallOrangeAuto(RobotContainer container) {
-        SequentialCommandGroup command = new SequentialCommandGroup();
-
-        // TODO: Update code For starting position
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
-
-        followAndIntake(command, container, trajectories.getThreeBallOrangeAutoPartOne());
-        follow(command, container, trajectories.getThreeBallOrangeAutoPartTwo());
-        shootAtTarget(command, container, 1.5);
-        followAndIntake(command, container, trajectories.getThreeBallOrangeAutoPartThree());
         shootAtTarget(command, container, 1.5);
 
         return command;
@@ -96,14 +78,12 @@ public class AutonomousChooser {
     public Command get4BallOrangeAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        // TODO: Update code For starting position
-        resetRobotPose(command, container, new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0)));
+        resetRobotPose(command, container, trajectories.getFourBallOrangeAutoPartOne());
 
         followAndIntake(command, container, trajectories.getFourBallOrangeAutoPartOne());
-        follow(command, container, trajectories.getFourBallOrangeAutoPartTwo());
         shootAtTarget(command, container, 1.5);
-        followAndIntake(command, container, trajectories.getFourBallOrangeAutoPartThree());
-        follow(command, container, trajectories.getFourBallOrangeAutoPartFour());
+        followAndIntake(command, container, trajectories.getFourBallOrangeAutoPartTwo());
+        follow(command, container, trajectories.getFourBallOrangeAutoPartThree());
         shootAtTarget(command, container, 1.5);
 
         return command;
@@ -119,8 +99,6 @@ public class AutonomousChooser {
                 return get2BallPurpleAuto(container);
             case TWO_BALL_WHITE :
                 return get2BallWhiteAuto(container);
-            case THREE_BALL_ORANGE :
-                return get3BallOrangeAuto(container);
             case FOUR_BALL_ORANGE :
                 return get4BallOrangeAuto(container);
         }
@@ -145,11 +123,13 @@ public class AutonomousChooser {
                 new SimpleIntakeCommand(container.getIntake(), container.getFeeder(), container.getController())));
     }
 
-    public void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Pose2d pose) {
-        command.addCommands(new InstantCommand(() -> container.getDrivetrain().setPose(pose)));
+    public void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
+        Path.State start = trajectory.getPath().calculate(0.0);
+        command.addCommands(new InstantCommand(() -> container.getDrivetrain().setPose(new Pose2d(start.getPosition().x,
+                start.getPosition().y, new Rotation2d(start.getRotation().toRadians())))));
     }
 
     private enum AutonomousMode {
-        FENDER_RED, FENDER_BLUE, TWO_BALL_WHITE, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FOUR_BALL_ORANGE
+        FENDER_RED, FENDER_BLUE, TWO_BALL_WHITE, TWO_BALL_PURPLE, FOUR_BALL_ORANGE
     }
 }
