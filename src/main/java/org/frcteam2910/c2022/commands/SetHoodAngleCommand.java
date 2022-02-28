@@ -5,7 +5,7 @@ import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class SetHoodAngleCommand extends CommandBase {
     private final ShooterSubsystem shooter;
-    private double targetAngle;
+    private final double targetAngle;
 
     public SetHoodAngleCommand(ShooterSubsystem shooter, double targetAngle) {
         this.shooter = shooter;

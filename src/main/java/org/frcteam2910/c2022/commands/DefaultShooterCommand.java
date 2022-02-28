@@ -17,5 +17,11 @@ public class DefaultShooterCommand extends CommandBase {
     public void initialize() {
         shooter.setHoodTargetPosition(Math.toRadians(0.0));
         shooter.setTargetFlywheelSpeed(FLYWHEEL_IDLE_SPEED);
+        shooter.enableCurrentLimits(true);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        shooter.enableCurrentLimits(false);
     }
 }

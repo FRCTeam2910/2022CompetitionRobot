@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.FeederSubsystem;
 
 public class DefaultFeederCommand extends CommandBase {
-    private static final double MAX_FEEDER_SPEED = 1.0;
+    private static final double MAX_FEEDER_SPEED = 0.75;
 
     private final FeederSubsystem feeder;
 

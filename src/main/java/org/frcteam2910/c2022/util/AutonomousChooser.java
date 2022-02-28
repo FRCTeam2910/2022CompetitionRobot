@@ -128,11 +128,12 @@ public class AutonomousChooser {
     }
 
     private void shootAtTarget(SequentialCommandGroup command, RobotContainer container, double timeToWait) {
-        command.addCommands(new TargetWithShooterCommand(container.getShooter(), container.getDrivetrain())
-                .alongWith(new AlignRobotToShootCommand(container.getDrivetrain(), container.getVision()))
-                .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getFeeder(),
-                        container.getShooter(), container.getVision())))
-                .withTimeout(timeToWait));
+        command.addCommands(
+                new TargetWithShooterCommand(container.getShooter(), container.getDrivetrain(), container.getVision())
+                        .alongWith(new AlignRobotToShootCommand(container.getDrivetrain(), container.getVision()))
+                        .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getFeeder(),
+                                container.getShooter(), container.getVision())))
+                        .withTimeout(timeToWait));
     }
 
     private void follow(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
@@ -140,8 +141,8 @@ public class AutonomousChooser {
     }
 
     private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new FollowTrajectoryCommand(container.getDrivetrain(), trajectory)
-                .deadlineWith(new SimpleIntakeCommand(container.getIntake())));
+        command.addCommands(new FollowTrajectoryCommand(container.getDrivetrain(), trajectory).deadlineWith(
+                new SimpleIntakeCommand(container.getIntake(), container.getFeeder(), container.getController())));
     }
 
     public void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Pose2d pose) {

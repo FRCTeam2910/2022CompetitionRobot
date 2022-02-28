@@ -1,18 +1,14 @@
 package org.frcteam2910.c2022.subsystems;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import georegression.fitting.curves.FitEllipseAlgebraic_F64;
 import georegression.struct.point.Point2D_F64;
 import org.frcteam2910.common.math.MathUtils;
-import org.photonvision.PhotonCamera;
+import org.frcteam2910.common.util.MovingAverage;
 import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
 public class VisionSubsystem implements Subsystem {
@@ -23,23 +19,42 @@ public class VisionSubsystem implements Subsystem {
     private static final double LIMELIGHT_MOUNTING_ANGLE = Math.toRadians(45.0);
     private static final double LIMELIGHT_HEIGHT = Units.inchesToMeters(17.5);
 
+    private static final double CAMERA_HEIGHT_PIXELS = 720;
+    private static final double CAMERA_WIDTH_PIXELS = 960;
+
+    private static final double HORIZONTAL_FOV = Math.toRadians(59.6);
+    private static final double VERTICAL_FOV = Math.toRadians(45.7);
+
     private final DrivetrainSubsystem drivetrain;
 
-    private final PhotonCamera shooterLimelight = new PhotonCamera("gloworm");
+    // private final PhotonCamera shooterLimelight = new PhotonCamera("gloworm");
 
     private boolean shooterHasTargets = false;
     private double distanceToTarget = Double.NaN;
     private double angleToTarget = Double.NaN;
+    private MovingAverage averageDistance = new MovingAverage(10);
+    private double theta;
+    private double centerXPixels;
+    private double centerYPixels;
+    private double centerXAngle;
+    private double centerYAngle;
 
     private PhotonPipelineResult result;
 
-    public VisionSubsystem(DrivetrainSubsystem drivetrain, ShooterSubsystem shooter) {
+    public VisionSubsystem(DrivetrainSubsystem drivetrain) {
         this.drivetrain = drivetrain;
 
         ShuffleboardTab tab = Shuffleboard.getTab("Vision");
         tab.addBoolean("shooter has targets", () -> shooterHasTargets).withPosition(0, 0).withSize(1, 1);
         tab.addNumber("distance to target", () -> distanceToTarget).withPosition(1, 0).withSize(1, 1);
-        tab.addNumber("angle to target", () -> angleToTarget).withPosition(2, 0).withSize(1, 1);
+        tab.addNumber("angle to target", () -> Units.radiansToDegrees(angleToTarget)).withPosition(2, 0).withSize(1, 1);
+        tab.addNumber("avg distance to target", () -> averageDistance.get()).withPosition(3, 0).withSize(1, 1);
+        tab.addNumber("theta", () -> Math.toDegrees(theta));
+        tab.addNumber("center X Pixels", () -> centerXPixels);
+        tab.addNumber("center Y Pixels", () -> centerYPixels);
+        tab.addNumber("center X Angle", () -> Math.toDegrees(centerXAngle));
+        tab.addNumber("center Y Angle", () -> Math.toDegrees(centerYAngle));
+        tab.addBoolean("Is Vision on Target", () -> isOnTarget());
     }
 
     public double getDistanceToTarget() {
@@ -51,11 +66,7 @@ public class VisionSubsystem implements Subsystem {
     }
 
     public boolean shooterHasTargets() {
-        if (result == null) {
-            return false;
-        } else {
-            return result.hasTargets();
-        }
+        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0) > 0.5;
     }
 
     public boolean isOnTarget() {
@@ -74,38 +85,61 @@ public class VisionSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        result = shooterLimelight.getLatestResult();
+        boolean hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0) > 0.5;
+        // result = shooterLimelight.getLatestResult();
 
-        if (result != null && result.hasTargets()) {
-            List<PhotonTrackedTarget> targets = result.getTargets();
-            List<Point2D_F64> bottomCorners = new ArrayList<>();
-            List<Point2D_F64> topCorners = new ArrayList<>();
-            for (int i = 0; i < targets.size(); i++) {
-                List<TargetCorner> corners = targets.get(i).getCorners();
-                corners.sort((a, b) -> Double.compare(a.y, b.y));
+        double pitch = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+        double yaw = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
 
-                bottomCorners.add(new Point2D_F64(corners.get(0).x, corners.get(0).y));
-                bottomCorners.add(new Point2D_F64(corners.get(1).x, corners.get(1).y));
-
-                topCorners.add(new Point2D_F64(corners.get(2).x, corners.get(2).y));
-                topCorners.add(new Point2D_F64(corners.get(3).x, corners.get(3).y));
-            }
-
-            FitEllipseAlgebraic_F64 topEllipse = new FitEllipseAlgebraic_F64();
-            if (topEllipse.process(topCorners)) {
-                double a = topEllipse.getEllipse().A;
-                double c = topEllipse.getEllipse().C;
-                double d = topEllipse.getEllipse().D;
-                double e = topEllipse.getEllipse().E;
-
-                double centerX = d / 2 * a;
-                double centerY = -e / 2 * c;
-
-                double theta = LIMELIGHT_MOUNTING_ANGLE + centerY;
-                distanceToTarget = (TARGET_HEIGHT_METERS - LIMELIGHT_HEIGHT) / Math.tan(theta);
-
-                angleToTarget = drivetrain.getPose().getRotation().getRadians() + centerX;
-            }
+        if (hasTarget) {
+            theta = Math.toRadians(pitch) + LIMELIGHT_MOUNTING_ANGLE;
+            distanceToTarget = (TARGET_HEIGHT_METERS - LIMELIGHT_HEIGHT) / Math.tan(theta);
+            angleToTarget = drivetrain.getPose().getRotation().getRadians() + Math.toRadians(yaw);
         }
+
+        // result = shooterLimelight.getLatestResult();
+        //
+        // if (result != null && result.hasTargets()) {
+        // List<PhotonTrackedTarget> targets = result.getTargets();
+        // List<Point2D_F64> bottomCorners = new ArrayList<>();
+        // List<Point2D_F64> topCorners = new ArrayList<>();
+        // for (int i = 0; i < targets.size(); i++) {
+        // List<TargetCorner> corners = targets.get(i).getCorners();
+        // corners.sort((a, b) -> Double.compare(a.y, b.y));
+        //
+        // bottomCorners.add(convertToPoint(corners.get(0)));
+        // bottomCorners.add(convertToPoint(corners.get(1)));
+        //
+        // topCorners.add(convertToPoint(corners.get(2)));
+        // topCorners.add(convertToPoint(corners.get(3)));
+        // }
+        //
+        // FitEllipseAlgebraic_F64 topEllipse = new FitEllipseAlgebraic_F64();
+        // if (topEllipse.process(topCorners)) {
+        // double a = topEllipse.getEllipse().A;
+        // double c = topEllipse.getEllipse().C;
+        // double d = topEllipse.getEllipse().D;
+        // double e = topEllipse.getEllipse().E;
+        //
+        // centerXPixels = d / 2 * a;
+        // centerYPixels = -e / 2 * c;
+        //
+        // centerXAngle = ((centerXPixels / CAMERA_WIDTH_PIXELS) - 0.5) *
+        // HORIZONTAL_FOV;
+        // centerYAngle = -((centerYPixels / CAMERA_HEIGHT_PIXELS) - 0.5) *
+        // VERTICAL_FOV;
+        //
+        // theta = centerYAngle + LIMELIGHT_MOUNTING_ANGLE;
+        // distanceToTarget = (TARGET_HEIGHT_METERS - LIMELIGHT_HEIGHT) /
+        // Math.tan(theta);
+        // averageDistance.add(distanceToTarget);
+        // angleToTarget = drivetrain.getPose().getRotation().getRadians() +
+        // centerXAngle;
+        // }
+        // }
+    }
+
+    private Point2D_F64 convertToPoint(TargetCorner corner) {
+        return new Point2D_F64(corner.x, corner.y);
     }
 }

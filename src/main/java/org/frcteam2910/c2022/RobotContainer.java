@@ -16,7 +16,7 @@ public class RobotContainer {
     private final IntakeSubsystem intake = new IntakeSubsystem();
     private final FeederSubsystem feeder = new FeederSubsystem();
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
-    private final VisionSubsystem vision = new VisionSubsystem(drivetrain, shooter);
+    private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
 
     private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
 
@@ -32,12 +32,8 @@ public class RobotContainer {
 
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter));
         intake.setDefaultCommand(new DefaultIntakeCommand(intake));
-        drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain,
-                () -> -Utilities.deadband(controller.getLeftY(), 0.1)
-                        * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -Utilities.deadband(controller.getLeftX(), 0.1)
-                        * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -Utilities.deadband(controller.getRightX(), 0.1)
+        drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain, this::getTranslationXInput,
+                this::getTranslationYInput, () -> -Utilities.deadband(controller.getRightX(), 0.1)
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
         feeder.setDefaultCommand(new DefaultFeederCommand(feeder));
         configureButtonBindings();
@@ -74,21 +70,22 @@ public class RobotContainer {
     }
 
     public void configureButtonBindings() {
-        new Button(controller::getLeftBumper).whileHeld(new SimpleIntakeCommand(intake));
-        new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new ManualFeedToShooterCommand(feeder));
+        new Button(controller::getLeftBumper).whileHeld(new SimpleIntakeCommand(intake, feeder, controller));
+        new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new FenderShootCommand(feeder, shooter));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, false));
-        new Button(() -> controller.getLeftTriggerAxis() > 0.5).whileHeld(new FenderShootCommand(feeder, shooter));
+        new Button(controller::getAButton).whileHeld(new ManualFeedToShooterCommand(feeder));
+        new Button(() -> controller.getLeftTriggerAxis() > 0.5).whenPressed(new ResetFeederCommand(feeder, intake));
         new Button(() -> controller.getPOV() == 0).whileHeld(new ClimberToPointCommand(climber, 0.75));
-        new Button(controller::getRightBumper).whenPressed(new TargetWithShooterCommand(shooter, drivetrain)
-                .alongWith(new AlignRobotToShootCommand(drivetrain, vision))
+        new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, drivetrain, vision)
+                .alongWith(new AlignRobotToShootCommand(drivetrain, vision, this::getTranslationXInput,
+                        this::getTranslationYInput))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
-        new Button(controller::getBButton).whenPressed(new ResetFeederCommand(feeder));
         new Button(() -> controller.getPOV() == 0)
                 .whenPressed(new ConditionalCommand(new ClimberToPointCommand(climber, 0.75),
                         new ClimberToPointCommand(climber, 1.0), () -> climber.getCurrentPosition() > 0.9));
         new Button(() -> controller.getPOV() == 180).whenPressed(new ClimberToPointCommand(climber, 0.0));
-        new Button(() -> controller.getBackButton()).whenPressed(() -> drivetrain.zeroRotation());
+        new Button(controller::getBackButton).whenPressed(drivetrain::zeroRotation);
         new Button(controller::getStartButton).whenPressed(
                 // a to c
                 new PrepareHoodTransferCommand(climber, shooter)
@@ -109,12 +106,12 @@ public class RobotContainer {
         // //manual hood adjustment - 0: up, 180: down
         // new Button(() -> controller.getPOV() == 180.0).whenPressed(() ->
         // shooter.setHoodTargetPosition(
-        // shooter.getHoodAngle() + Constants.HOOD_MANUAL_ADJUST_INTERVAL)
+        // shooter.getHoodTargetPosition() - Constants.HOOD_MANUAL_ADJUST_INTERVAL)
         // );
         //
         // new Button(() -> controller.getPOV() == 0.0).whenPressed(() ->
         // shooter.setHoodTargetPosition(
-        // shooter.getHoodAngle() - Constants.HOOD_MANUAL_ADJUST_INTERVAL)
+        // shooter.getHoodTargetPosition() + Constants.HOOD_MANUAL_ADJUST_INTERVAL)
         // );
         //
         // //manual flywheel adjustment - 90: right, 270: left
@@ -127,5 +124,13 @@ public class RobotContainer {
         // shooter.setTargetFlywheelSpeed(
         // shooter.getTargetFlywheelSpeed() - Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)
         // );
+    }
+
+    private double getTranslationXInput() {
+        return -Utilities.deadband(controller.getLeftY(), 0.1) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+    }
+
+    private double getTranslationYInput() {
+        return -Utilities.deadband(controller.getLeftX(), 0.1) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
     }
 }
