@@ -27,7 +27,7 @@ public class AutonomousChooser {
         autonomousModeChooser.addOption("4 Ball (Orange)", AutonomousMode.FOUR_BALL_ORANGE);
     }
 
-    public SendableChooser<AutonomousMode> getAutonomousModeChooser() {
+    public SendableChooser<AutonomousMode> getModeChooser() {
         return autonomousModeChooser;
     }
 

@@ -1,6 +1,5 @@
 package org.frcteam2910.c2022;
 
-import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -8,9 +7,14 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
+import org.frcteam2910.c2022.util.AutonomousChooser;
+import org.frcteam2910.c2022.util.AutonomousTrajectories;
+import org.frcteam2910.c2022.util.DriverReadout;
 import org.frcteam2910.common.robot.Utilities;
 
 public class RobotContainer {
+    private final Superstructure superstructure = new Superstructure();
+
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ShooterSubsystem shooter = new ShooterSubsystem();
     private final IntakeSubsystem intake = new IntakeSubsystem();
@@ -18,9 +22,10 @@ public class RobotContainer {
     private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
     private final VisionSubsystem vision = new VisionSubsystem(drivetrain);
 
-    private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
+    private final AutonomousChooser autonomousChooser = new AutonomousChooser(
+            new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS));
 
-    private final PneumaticHub pneumatics = new PneumaticHub();
+    private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
 
     public RobotContainer() {
         CommandScheduler.getInstance().registerSubsystem(climber);
@@ -37,8 +42,6 @@ public class RobotContainer {
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
         feeder.setDefaultCommand(new DefaultFeederCommand(feeder));
         configureButtonBindings();
-
-        pneumatics.enableCompressorAnalog(115, 120);
     }
 
     public DrivetrainSubsystem getDrivetrain() {
@@ -132,5 +135,13 @@ public class RobotContainer {
 
     private double getTranslationYInput() {
         return -Utilities.deadband(controller.getLeftX(), 0.1) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+    }
+
+    public AutonomousChooser getAutonomousChooser() {
+        return autonomousChooser;
+    }
+
+    public Superstructure getSuperstructure() {
+        return superstructure;
     }
 }
