@@ -70,9 +70,9 @@ public class AutonomousChooser {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, trajectories.getTwoBallWhitePartOne());
-        command.addCommands(new ZeroHoodCommand(container.getShooter(), true));
 
-        followAndIntake(command, container, trajectories.getTwoBallWhitePartOne());
+        command.addCommands(followAndIntake(container, trajectories.getTwoBallWhitePartOne())
+                .alongWith(new ZeroHoodCommand(container.getShooter(), true)));
         shootAtTarget(command, container, 1.5);
 
         return command;
@@ -82,9 +82,9 @@ public class AutonomousChooser {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, trajectories.getTwoBallPurplePartOne());
-        command.addCommands(new ZeroHoodCommand(container.getShooter(), true));
 
-        followAndIntake(command, container, trajectories.getTwoBallPurplePartOne());
+        command.addCommands(followAndIntake(container, trajectories.getTwoBallPurplePartOne())
+                .alongWith(new ZeroHoodCommand(container.getShooter(), true)));
         shootAtTarget(command, container, 1.5);
 
         return command;
@@ -95,9 +95,10 @@ public class AutonomousChooser {
 
         resetRobotPose(command, container, trajectories.getFourBallOrangeAutoPartOne());
 
-        followAndIntake(command, container, trajectories.getFourBallOrangeAutoPartOne());
+        command.addCommands(followAndIntake(container, trajectories.getFourBallOrangeAutoPartOne())
+                .alongWith(new ZeroHoodCommand(container.getShooter(), true)));
         shootAtTarget(command, container, 1.5);
-        followAndIntake(command, container, trajectories.getFourBallOrangeAutoPartTwo());
+        command.addCommands(followAndIntake(container, trajectories.getFourBallOrangeAutoPartTwo()));
         follow(command, container, trajectories.getFourBallOrangeAutoPartThree());
         shootAtTarget(command, container, 1.5);
 
@@ -135,10 +136,10 @@ public class AutonomousChooser {
         command.addCommands(new FollowTrajectoryCommand(container.getDrivetrain(), trajectory));
     }
 
-    private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
-        command.addCommands(new FollowTrajectoryCommand(container.getDrivetrain(), trajectory).deadlineWith(
+    private Command followAndIntake(RobotContainer container, Trajectory trajectory) {
+        return new FollowTrajectoryCommand(container.getDrivetrain(), trajectory).deadlineWith(
                 new SimpleIntakeCommand(container.getIntake(), container.getFeeder(), container.getController()),
-                new DefaultFeederCommand(container.getFeeder())));
+                new DefaultFeederCommand(container.getFeeder()));
     }
 
     public void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
