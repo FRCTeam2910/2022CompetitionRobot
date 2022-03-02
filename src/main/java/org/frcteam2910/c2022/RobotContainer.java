@@ -82,10 +82,12 @@ public class RobotContainer {
                 .alongWith(new AlignRobotToShootCommand(drivetrain, vision, this::getTranslationXInput,
                         this::getTranslationYInput))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
-        new Button(() -> controller.getPOV() == 0)
-                .whenPressed(new ConditionalCommand(new ClimberToPointCommand(climber, 0.75),
-                        new ClimberToPointCommand(climber, 1.0), () -> climber.getCurrentPosition() > 0.9));
-        new Button(() -> controller.getPOV() == 180).whenPressed(new ClimberToPointCommand(climber, 0.0));
+        new Button(() -> controller.getPOV() == 0).whenPressed(new ConditionalCommand(
+                new ClimberToPointCommand(climber, ClimberSubsystem.MAX_HEIGHT),
+                new ClimberToPointCommand(climber, ClimberSubsystem.MID_RUNG_HEIGHT), () -> climber
+                        .getCurrentHeight() > (ClimberSubsystem.MAX_HEIGHT + ClimberSubsystem.MID_RUNG_HEIGHT) / 2.0));
+        new Button(() -> controller.getPOV() == 180)
+                .whenPressed(new ClimberToPointCommand(climber, ClimberSubsystem.MIN_HEIGHT));
         new Button(controller::getBackButton).whenPressed(drivetrain::zeroRotation);
         new Button(controller::getStartButton).whenPressed(new AutoClimbCommand(climber, shooter));
         // //manual hood adjustment - 0: up, 180: down

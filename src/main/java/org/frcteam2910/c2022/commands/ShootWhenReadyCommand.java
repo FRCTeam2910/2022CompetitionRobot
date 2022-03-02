@@ -40,6 +40,6 @@ public class ShootWhenReadyCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        shooter.setTargetFlywheelSpeed(0.0);
+        shooter.setTargetFlywheelVelocity(0.0);
     }
 }

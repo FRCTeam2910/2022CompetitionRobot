@@ -15,8 +15,8 @@ public class DefaultShooterCommand extends CommandBase {
     }
 
     public void initialize() {
-        shooter.setHoodTargetPosition(Math.toRadians(0.0));
-        shooter.setTargetFlywheelSpeed(FLYWHEEL_IDLE_SPEED);
+        shooter.setHoodTargetAngle(Math.toRadians(0.0));
+        shooter.setTargetFlywheelVelocity(FLYWHEEL_IDLE_SPEED);
         shooter.enableCurrentLimits(true);
     }
 

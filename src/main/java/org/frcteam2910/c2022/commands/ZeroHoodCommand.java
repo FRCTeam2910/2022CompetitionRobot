@@ -55,9 +55,9 @@ public class ZeroHoodCommand extends CommandBase {
         if (!interrupted) {
             shooterSubsystem.setHoodZeroed(true);
             if (forward) {
-                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MAX_ANGLE);
+                shooterSubsystem.resetHoodAngle(ShooterSubsystem.HOOD_MAX_ANGLE);
             } else {
-                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(-1.0));
+                shooterSubsystem.resetHoodAngle(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(-1.0));
             }
         }
     }
