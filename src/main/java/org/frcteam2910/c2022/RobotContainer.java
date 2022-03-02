@@ -9,7 +9,6 @@ import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
 import org.frcteam2910.c2022.util.AutonomousChooser;
 import org.frcteam2910.c2022.util.AutonomousTrajectories;
-import org.frcteam2910.common.robot.Utilities;
 
 public class RobotContainer {
     private final Superstructure superstructure = new Superstructure();
@@ -36,9 +35,8 @@ public class RobotContainer {
 
         shooter.setDefaultCommand(new DefaultShooterCommand(shooter));
         intake.setDefaultCommand(new DefaultIntakeCommand(intake));
-        drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain, this::getTranslationXInput,
-                this::getTranslationYInput, () -> -Utilities.deadband(controller.getRightX(), 0.1)
-                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+        drivetrain.setDefaultCommand(new DefaultDriveCommand(drivetrain, this::getForwardInput, this::getStrafeInput,
+                this::getRotationInput));
         feeder.setDefaultCommand(new DefaultFeederCommand(feeder));
         configureButtonBindings();
     }
@@ -79,8 +77,8 @@ public class RobotContainer {
         new Button(controller::getAButton).whileHeld(new ManualFeedToShooterCommand(feeder));
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whenPressed(new ResetFeederCommand(feeder, intake));
         new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, drivetrain, vision)
-                .alongWith(new AlignRobotToShootCommand(drivetrain, vision, this::getTranslationXInput,
-                        this::getTranslationYInput))
+                .alongWith(
+                        new AlignRobotToShootCommand(drivetrain, vision, this::getForwardInput, this::getStrafeInput))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
         new Button(() -> controller.getPOV() == 0).whenPressed(new ConditionalCommand(
                 new ClimberToPointCommand(climber, ClimberSubsystem.MAX_HEIGHT),
@@ -113,12 +111,28 @@ public class RobotContainer {
         // );
     }
 
-    private double getTranslationXInput() {
-        return -Utilities.deadband(controller.getLeftY(), 0.1) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+    private static double deadband(double value, double tolerance) {
+        if (Math.abs(value) < tolerance)
+            return 0.0;
+
+        return Math.copySign(value, (value - tolerance) / (1.0 - tolerance));
     }
 
-    private double getTranslationYInput() {
-        return -Utilities.deadband(controller.getLeftX(), 0.1) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+    private static double square(double value) {
+        return Math.copySign(value * value, value);
+    }
+
+    private double getForwardInput() {
+        return -square(deadband(controller.getLeftY(), 0.1)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+    }
+
+    private double getStrafeInput() {
+        return -square(deadband(controller.getLeftX(), 0.1)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+    }
+
+    private double getRotationInput() {
+        return -square(deadband(controller.getRightX(), 0.1))
+                * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND;
     }
 
     public AutonomousChooser getAutonomousChooser() {
