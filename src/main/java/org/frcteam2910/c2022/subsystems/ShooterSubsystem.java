@@ -20,6 +20,12 @@ import org.frcteam2910.c2022.Robot;
 import org.frcteam2910.common.motion.MotionProfile;
 
 public class ShooterSubsystem implements Subsystem {
+    public static final double HOOD_MAX_ANGLE = Math.toRadians(85.2);
+    public static final double HOOD_TRANSFER_ANGLE = Math.toRadians(80.0);
+    public static final double HOOD_TRAVERSE_RETRACT_ANGLE = Math.toRadians(60.0);
+    public static final double HOOD_TRAVERSE_EXTEND_ANGLE = Math.toRadians(45.0);
+    public static final double HOOD_MIN_ANGLE = Math.toRadians(0.0);
+
     private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
     private static final double HOOD_GEAR_REDUCTION = (14.0 / 54.0) * (18.0 / 38.0) * (20.0 / 36.0) * (10.0 / 220.0);
     private static final double FLYWHEEL_GEAR_REDUCTION = 1.0;

@@ -27,6 +27,14 @@ import org.frcteam2910.common.motion.MotionProfile;
 import org.frcteam2910.common.motion.TrapezoidalMotionProfile;
 
 public class ClimberSubsystem implements Subsystem {
+    public static final double MAX_HEIGHT = Units.feetToMeters(5.0);
+    public static final double MID_RUNG_HEIGHT = Units.feetToMeters(4.5);
+    public static final double TRAVERSE_EXTEND_HEIGHT = Units.feetToMeters(3.0);
+    public static final double TRAVERSE_RUNG_HEIGHT = Units.feetToMeters(2.5);
+    public static final double HOOD_PASSAGE_HEIGHT = Units.feetToMeters(1.0);
+    public static final double HOOD_TRANSFER_HEIGHT = Units.feetToMeters(0.5);
+    public static final double MIN_HEIGHT = Units.feetToMeters(0.0);
+
     private static final DCMotor MOTOR = DCMotor.getFalcon500(2);
     private static final double REDUCTION = 1.0 / 22.0;
     private static final double MASS = Units.lbsToKilograms(60.0);
@@ -34,8 +42,6 @@ public class ClimberSubsystem implements Subsystem {
 
     private static final double VELOCITY_CONSTANT = 1.0 / (RADIUS * REDUCTION * MOTOR.KvRadPerSecPerVolt);
     private static final double ACCELERATION_CONSTANT = (MOTOR.rOhms * RADIUS * MASS * REDUCTION) / (MOTOR.KtNMPerAmp);
-
-    private static final double MAX_HEIGHT = 1.0;
 
     private static final double ALLOWABLE_POSITION_ERROR = Units.inchesToMeters(2.0);
 
