@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -38,15 +39,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
             / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
 
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(
-            0.042746, 0.0032181, 0.30764);
+            2.1515, 0.29394, 0.13592);
 
     public static final TrajectoryConstraint[] TRAJECTORY_CONSTRAINTS = {
             new FeedforwardConstraint(11.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(),
                     FEEDFORWARD_CONSTANTS.getAccelerationConstant(), false),
-            new MaxAccelerationConstraint(12.5 * 12.0), new CentripetalAccelerationConstraint(15.0 * 12.0)};
+            new MaxAccelerationConstraint(3.0), new CentripetalAccelerationConstraint(3.0)};
 
     private final HolonomicMotionProfiledTrajectoryFollower follower = new HolonomicMotionProfiledTrajectoryFollower(
-            new PidConstants(0.4, 0.0, 0.025), new PidConstants(5.0, 0.0, 0.0),
+            new PidConstants(15.0, 0.0, 0.25), new PidConstants(5.0, 0.0, 0.0),
             new HolonomicFeedforward(FEEDFORWARD_CONSTANTS));
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
@@ -66,6 +67,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule frontRightModule;
     private final SwerveModule backLeftModule;
     private final SwerveModule backRightModule;
+
+    private ChassisSpeeds currentVelocity = new ChassisSpeeds();
 
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -92,8 +95,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 VecBuilder.fill(0.01), // Gyroscope rotation std-dev
                 VecBuilder.fill(0.1, 0.1, 0.01)); // Vision (x, y, rotation) std-devs
 
-        tab.addNumber("Odometry X", () -> getPose().getX());
-        tab.addNumber("Odometry Y", () -> getPose().getY());
+        tab.addNumber("Odometry X", () -> Units.metersToFeet(getPose().getX()));
+        tab.addNumber("Odometry Y", () -> Units.metersToFeet(getPose().getY()));
         tab.addNumber("Odometry Angle", () -> getPose().getRotation().getDegrees());
         tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
 
@@ -126,6 +129,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return follower;
     }
 
+    public ChassisSpeeds getCurrentVelocity() {
+        return currentVelocity;
+    }
+
     /**
      * Sets the position of the robot to the position passed in with the current
      * gyroscope rotation.
@@ -151,15 +158,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SwerveModuleState currentBackRightModuleState = new SwerveModuleState(backRightModule.getDriveVelocity(),
                 new Rotation2d(backRightModule.getSteerAngle()));
 
-        ChassisSpeeds temp = kinematics.toChassisSpeeds(currentFrontLeftModuleState, currentFrontRightModuleState,
+        currentVelocity = kinematics.toChassisSpeeds(currentFrontLeftModuleState, currentFrontRightModuleState,
                 currentBackLeftModuleState, currentBackRightModuleState);
 
         estimator.update(getGyroscopeRotation(), currentFrontLeftModuleState, currentFrontRightModuleState,
                 currentBackLeftModuleState, currentBackRightModuleState);
 
         var driveSignalOpt = follower.update(Utilities.poseToRigidTransform(getPose()),
-                new Vector2(temp.vxMetersPerSecond, temp.vyMetersPerSecond), temp.omegaRadiansPerSecond,
-                Timer.getFPGATimestamp(), Robot.kDefaultPeriod);
+                new Vector2(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond),
+                currentVelocity.omegaRadiansPerSecond, Timer.getFPGATimestamp(), Robot.kDefaultPeriod);
 
         if (driveSignalOpt.isPresent()) {
             HolonomicDriveSignal driveSignal = driveSignalOpt.get();

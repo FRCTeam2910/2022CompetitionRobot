@@ -6,8 +6,8 @@ import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class ZeroHoodCommand extends CommandBase {
     private static final double ZERO_HOOD_VELOCITY_TIME = 0.5; // in sec
-    private static final double HOOD_MAX_ANGLE = 90;
-    private static final double HOOD_VOLTAGE = 2.5;
+    private static final double HOOD_MAX_ANGLE = Math.toRadians(85.2);
+    private static final double HOOD_VOLTAGE = 1.5;
 
     private static final double HOOD_ALLOWABLE_ZERO_VELOCITY = Math.toRadians(0.1);
 
@@ -28,7 +28,7 @@ public class ZeroHoodCommand extends CommandBase {
         shooterSubsystem.setHoodZeroed(false);
         zeroHoodStartTime = Double.NaN;
         if (forward) {
-            shooterSubsystem.setHoodVoltage(HOOD_VOLTAGE);
+            shooterSubsystem.setHoodVoltage(HOOD_VOLTAGE / 2.0);
         } else {
             shooterSubsystem.setHoodVoltage(-HOOD_VOLTAGE);
         }

@@ -21,6 +21,7 @@ public class AutonomousChooser {
         this.trajectories = trajectories;
 
         autonomousModeChooser.setDefaultOption("Fender (Blue)", AutonomousMode.FENDER_BLUE);
+        autonomousModeChooser.addOption("Test Auto", AutonomousMode.TEST_AUTO);
         autonomousModeChooser.addOption("Fender (Red)", AutonomousMode.FENDER_RED);
         autonomousModeChooser.addOption("Two Ball (White)", AutonomousMode.TWO_BALL_WHITE);
         autonomousModeChooser.addOption("Two Ball (Purple)", AutonomousMode.TWO_BALL_PURPLE);
@@ -31,12 +32,23 @@ public class AutonomousChooser {
         return autonomousModeChooser;
     }
 
+    public Command getTestAuto(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectories.getTestAutoPartOne());
+
+        follow(command, container, trajectories.getTestAutoPartOne());
+
+        return command;
+    }
+
     public Command getFenderBlueAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, trajectories.getFenderBluePartOne());
+        command.addCommands(new ZeroHoodCommand(container.getShooter(), true));
 
-        shootAtTarget(command, container, 1.5);
+        command.addCommands(new FenderShootCommand(container.getFeeder(), container.getShooter()).withTimeout(1.5));
         follow(command, container, trajectories.getFenderBluePartOne());
 
         return command;
@@ -46,8 +58,9 @@ public class AutonomousChooser {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, trajectories.getFenderRedPartOne());
+        command.addCommands(new ZeroHoodCommand(container.getShooter(), true));
 
-        shootAtTarget(command, container, 1.5);
+        command.addCommands(new FenderShootCommand(container.getFeeder(), container.getShooter()).withTimeout(1.5));
         follow(command, container, trajectories.getFenderRedPartOne());
 
         return command;
@@ -57,6 +70,7 @@ public class AutonomousChooser {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, trajectories.getTwoBallWhitePartOne());
+        command.addCommands(new ZeroHoodCommand(container.getShooter(), true));
 
         followAndIntake(command, container, trajectories.getTwoBallWhitePartOne());
         shootAtTarget(command, container, 1.5);
@@ -68,6 +82,7 @@ public class AutonomousChooser {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, trajectories.getTwoBallPurplePartOne());
+        command.addCommands(new ZeroHoodCommand(container.getShooter(), true));
 
         followAndIntake(command, container, trajectories.getTwoBallPurplePartOne());
         shootAtTarget(command, container, 1.5);
@@ -91,6 +106,8 @@ public class AutonomousChooser {
 
     public Command getCommand(RobotContainer container) {
         switch (autonomousModeChooser.getSelected()) {
+            case TEST_AUTO :
+                return getTestAuto(container);
             case FENDER_BLUE :
                 return getFenderBlueAuto(container);
             case FENDER_RED :
@@ -120,7 +137,8 @@ public class AutonomousChooser {
 
     private void followAndIntake(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
         command.addCommands(new FollowTrajectoryCommand(container.getDrivetrain(), trajectory).deadlineWith(
-                new SimpleIntakeCommand(container.getIntake(), container.getFeeder(), container.getController())));
+                new SimpleIntakeCommand(container.getIntake(), container.getFeeder(), container.getController()),
+                new DefaultFeederCommand(container.getFeeder())));
     }
 
     public void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
@@ -130,6 +148,6 @@ public class AutonomousChooser {
     }
 
     private enum AutonomousMode {
-        FENDER_RED, FENDER_BLUE, TWO_BALL_WHITE, TWO_BALL_PURPLE, FOUR_BALL_ORANGE
+        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_WHITE, TWO_BALL_PURPLE, FOUR_BALL_ORANGE
     }
 }

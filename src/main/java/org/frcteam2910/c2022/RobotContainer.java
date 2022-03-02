@@ -9,7 +9,6 @@ import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
 import org.frcteam2910.c2022.util.AutonomousChooser;
 import org.frcteam2910.c2022.util.AutonomousTrajectories;
-import org.frcteam2910.c2022.util.DriverReadout;
 import org.frcteam2910.common.robot.Utilities;
 
 public class RobotContainer {
@@ -76,10 +75,9 @@ public class RobotContainer {
         new Button(controller::getLeftBumper).whileHeld(new SimpleIntakeCommand(intake, feeder, controller));
         new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new FenderShootCommand(feeder, shooter));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
-        new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, false));
+        new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, true));
         new Button(controller::getAButton).whileHeld(new ManualFeedToShooterCommand(feeder));
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whenPressed(new ResetFeederCommand(feeder, intake));
-        new Button(() -> controller.getPOV() == 0).whileHeld(new ClimberToPointCommand(climber, 0.75));
         new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, drivetrain, vision)
                 .alongWith(new AlignRobotToShootCommand(drivetrain, vision, this::getTranslationXInput,
                         this::getTranslationYInput))

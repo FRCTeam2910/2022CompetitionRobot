@@ -116,6 +116,8 @@ public class ShooterSubsystem implements Subsystem {
         flywheelPrimaryMotor.enableVoltageCompensation(true);
         flywheelSecondaryMotor.enableVoltageCompensation(true);
 
+        flywheelPrimaryMotor.setNeutralMode(NeutralMode.Coast);
+        flywheelSecondaryMotor.setNeutralMode(NeutralMode.Coast);
         flywheelPrimaryMotor.setInverted(true);
         flywheelSecondaryMotor.setInverted(true);
 
@@ -227,6 +229,14 @@ public class ShooterSubsystem implements Subsystem {
         configuration.enable = enabled;
         flywheelPrimaryMotor.configSupplyCurrentLimit(configuration);
         flywheelSecondaryMotor.configSupplyCurrentLimit(configuration);
+    }
+
+    public void setHoodBrakeMode(boolean brake) {
+        if (brake) {
+            hoodAngleMotor.setNeutralMode(NeutralMode.Brake);
+        } else {
+            hoodAngleMotor.setNeutralMode(NeutralMode.Coast);
+        }
     }
 
     @Override
