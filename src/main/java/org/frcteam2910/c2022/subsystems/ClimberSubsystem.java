@@ -1,5 +1,6 @@
 package org.frcteam2910.c2022.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -21,29 +22,29 @@ import org.frcteam2910.common.math.MathUtils;
 import org.frcteam2910.common.motion.MotionProfile;
 
 public class ClimberSubsystem implements Subsystem {
-    public static final double MAX_HEIGHT = Units.feetToMeters(5.0);
-    public static final double MID_RUNG_HEIGHT = Units.feetToMeters(4.5);
-    public static final double TRAVERSE_EXTEND_HEIGHT = Units.feetToMeters(3.0);
-    public static final double TRAVERSE_RUNG_HEIGHT = Units.feetToMeters(2.5);
-    public static final double HOOD_PASSAGE_HEIGHT = Units.feetToMeters(1.0);
-    public static final double HOOD_TRANSFER_HEIGHT = Units.feetToMeters(0.5);
+    public static final double MAX_HEIGHT = Units.inchesToMeters(39.05);
+    public static final double MID_RUNG_HEIGHT = Units.inchesToMeters(36.55);
+    public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(34.0);
+    public static final double TRAVERSE_RUNG_HEIGHT = Units.inchesToMeters(25.0);
+    public static final double HOOD_PASSAGE_HEIGHT = Units.inchesToMeters(10.25);
+    public static final double HOOD_TRANSFER_HEIGHT = Units.inchesToMeters(6.25);
     public static final double MIN_HEIGHT = Units.feetToMeters(0.0);
 
     private static final DCMotor MOTOR = DCMotor.getFalcon500(2);
-    private static final double REDUCTION = 1.0 / 22.0;
+    private static final double REDUCTION = (12.0 / 40.0) * (18.0 / 46.0) * (18.0 / 48.0);
     private static final double MASS = Units.lbsToKilograms(60.0);
-    private static final double RADIUS = Units.inchesToMeters(1.0);
+    private static final double RADIUS = Units.inchesToMeters(0.91);
 
     private static final double VELOCITY_CONSTANT = 1.0 / (RADIUS * REDUCTION * MOTOR.KvRadPerSecPerVolt);
     private static final double ACCELERATION_CONSTANT = (MOTOR.rOhms * RADIUS * MASS * REDUCTION) / (MOTOR.KtNMPerAmp);
 
-    private static final double ALLOWABLE_POSITION_ERROR = Units.inchesToMeters(2.0);
+    private static final double ALLOWABLE_POSITION_ERROR = Units.inchesToMeters(0.5);
 
-    private static final double SENSOR_POSITION_COEFFICIENT = REDUCTION * RADIUS / 2048.0;
-    private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT / 10.0;
+    private static final double SENSOR_POSITION_COEFFICIENT = REDUCTION * RADIUS * 2 * Math.PI / 2048.0;
+    private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT * 10.0;
 
     private static final MotionProfile.Constraints MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            11.0 * VELOCITY_CONSTANT * 0.2, 11.0 * ACCELERATION_CONSTANT * 0.8);
+            Units.feetToMeters(2.0), Units.feetToMeters(4.0));
 
     private final LinearSystem<N2, N1, N1> plant = LinearSystemId.identifyPositionSystem(VELOCITY_CONSTANT,
             ACCELERATION_CONSTANT);
@@ -53,6 +54,7 @@ public class ClimberSubsystem implements Subsystem {
     private final TalonFX rightMotor = new TalonFX(Constants.CLIMBER_RIGHT_MOTOR_PORT);
 
     private Mode mode = Mode.VOLTAGE;
+    private boolean zeroed = false;
     private double targetHeight = 0.0;
     private double targetVoltage = 0.0;
 
@@ -61,11 +63,12 @@ public class ClimberSubsystem implements Subsystem {
         shuffleboardTab.addNumber("Target Height", () -> Units.metersToFeet(getTargetHeight()));
         shuffleboardTab.addNumber("Height", () -> Units.metersToFeet(getCurrentHeight()));
         shuffleboardTab.addNumber("Velocity", () -> Units.metersToFeet(getCurrentVelocity()));
+        shuffleboardTab.addNumber("Voltage", () -> targetVoltage);
 
         TalonFXConfiguration configuration = new TalonFXConfiguration();
         configuration.motionCruiseVelocity = MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT;
         configuration.motionAcceleration = MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT;
-        configuration.slot0.kP = 0.0;
+        configuration.slot0.kP = 0.25;
         configuration.slot0.kI = 0.0;
         configuration.slot0.kD = 0.0;
         configuration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
@@ -75,6 +78,8 @@ public class ClimberSubsystem implements Subsystem {
 
         leftMotor.configAllSettings(configuration);
         rightMotor.configAllSettings(configuration);
+        leftMotor.setNeutralMode(NeutralMode.Brake);
+        rightMotor.setNeutralMode(NeutralMode.Brake);
 
         rightMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
         rightMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
@@ -127,6 +132,14 @@ public class ClimberSubsystem implements Subsystem {
         mode = Mode.VOLTAGE;
     }
 
+    public void setZeroed(boolean zeroed) {
+        this.zeroed = zeroed;
+    }
+
+    public boolean isClimberZeroed() {
+        return zeroed;
+    }
+
     public double getCurrentHeight() {
         if (Robot.isSimulation()) {
             return simulation.getPositionMeters();
@@ -145,8 +158,8 @@ public class ClimberSubsystem implements Subsystem {
 
     public void setZeroPosition() {
         if (Robot.isReal()) {
-            leftMotor.setSelectedSensorPosition(0.0);
-            rightMotor.setSelectedSensorPosition(0.0);
+            leftMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.25) / SENSOR_POSITION_COEFFICIENT);
+            rightMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.25) / SENSOR_POSITION_COEFFICIENT);
         }
     }
 

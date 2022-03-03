@@ -1,6 +1,7 @@
 package org.frcteam2910.c2022.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
@@ -10,9 +11,11 @@ public class AutoClimbCommand extends SequentialCommandGroup {
     public AutoClimbCommand(ClimberSubsystem climber, ShooterSubsystem shooter) {
         // Climber is currently hooked on the mid rung, but the robot is on the ground
 
+        addCommands(new InstantCommand(shooter::disableFlywheel));
+
         // Prepare to transfer mid rung to hood
         addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT)
-                .alongWith(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_MAX_ANGLE)));
+                .alongWith(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE)));
 
         // Transfer mid rung to hood
         addCommands(transferToHood(climber, shooter));
@@ -24,6 +27,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         addCommands(traverseToNextRung(climber, shooter));
         // Transfer high rung to hood
         addCommands(transferToHood(climber, shooter));
+        addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRANSFER_ANGLE, true, true));
     }
 
     private static Command transferToHood(ClimberSubsystem climber, ShooterSubsystem shooter) {
@@ -43,16 +47,16 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         SequentialCommandGroup group = new SequentialCommandGroup();
 
         // Angle the robot to extend the climber
-        group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE));
+        group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE, false));
         // Extend the climber slightly past the next rung
         group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_EXTEND_HEIGHT));
         // Angle the robot so the climber hooks will grab the next rung
-        group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_RETRACT_ANGLE));
+        group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_RETRACT_ANGLE, false));
         // Retract the climber, and move the hood to the transfer position after the
         // climber grabs onto the next rung
         group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT).alongWith(
                 new WaitUntilCommand(() -> climber.getCurrentHeight() < ClimberSubsystem.TRAVERSE_RUNG_HEIGHT)
-                        .andThen(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_MAX_ANGLE))));
+                        .andThen(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE))));
 
         return group;
     }

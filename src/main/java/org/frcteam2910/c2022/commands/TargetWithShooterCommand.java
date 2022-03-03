@@ -48,7 +48,7 @@ public class TargetWithShooterCommand extends CommandBase {
         double distance = vision.getDistanceToTarget();
         Vector2 angleAndSpeed = SHOOTER_TUNING.getInterpolated(new InterpolatingDouble(distance));
 
-        shooter.setTargetFlywheelVelocity(angleAndSpeed.y);
-        shooter.setHoodTargetAngle(angleAndSpeed.x);
+        shooter.setTargetFlywheelSpeed(angleAndSpeed.y);
+        shooter.setHoodTargetPosition(angleAndSpeed.x);
     }
 }

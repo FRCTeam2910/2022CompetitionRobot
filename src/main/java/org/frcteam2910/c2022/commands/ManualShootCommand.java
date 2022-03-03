@@ -17,12 +17,12 @@ public class ManualShootCommand extends CommandBase {
     @Override
     public void execute() {
         feeder.setFeederSpeed(0.5);
-        shooter.setTargetFlywheelVelocity(0.5);
+        shooter.setTargetFlywheelSpeed(0.5);
     }
 
     @Override
     public void end(boolean interrupted) {
         feeder.setFeederSpeed(0.0);
-        shooter.setTargetFlywheelVelocity(0.0);
+        shooter.setTargetFlywheelSpeed(0.0);
     }
 }

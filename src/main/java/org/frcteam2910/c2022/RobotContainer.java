@@ -73,7 +73,7 @@ public class RobotContainer {
         new Button(controller::getLeftBumper).whileHeld(new SimpleIntakeCommand(intake, feeder, controller));
         new Button(() -> controller.getRightTriggerAxis() > 0.5).whileHeld(new FenderShootCommand(feeder, shooter));
         new Button(controller::getYButton).whenPressed(new ZeroClimberCommand(climber));
-        new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, true));
+        new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, false));
         new Button(controller::getAButton).whileHeld(new ManualFeedToShooterCommand(feeder));
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whenPressed(new ResetFeederCommand(feeder, intake));
         new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, drivetrain, vision)
@@ -81,8 +81,8 @@ public class RobotContainer {
                         new AlignRobotToShootCommand(drivetrain, vision, this::getForwardInput, this::getStrafeInput))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
         new Button(() -> controller.getPOV() == 0).whenPressed(new ConditionalCommand(
-                new ClimberToPointCommand(climber, ClimberSubsystem.MAX_HEIGHT),
-                new ClimberToPointCommand(climber, ClimberSubsystem.MID_RUNG_HEIGHT), () -> climber
+                new ClimberToPointCommand(climber, ClimberSubsystem.MID_RUNG_HEIGHT),
+                new ClimberToPointCommand(climber, ClimberSubsystem.MAX_HEIGHT), () -> climber
                         .getCurrentHeight() > (ClimberSubsystem.MAX_HEIGHT + ClimberSubsystem.MID_RUNG_HEIGHT) / 2.0));
         new Button(() -> controller.getPOV() == 180)
                 .whenPressed(new ClimberToPointCommand(climber, ClimberSubsystem.MIN_HEIGHT));

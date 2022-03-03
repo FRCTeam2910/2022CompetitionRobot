@@ -9,7 +9,7 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -21,9 +21,10 @@ import org.frcteam2910.common.motion.MotionProfile;
 
 public class ShooterSubsystem implements Subsystem {
     public static final double HOOD_MAX_ANGLE = Math.toRadians(85.2);
-    public static final double HOOD_TRANSFER_ANGLE = Math.toRadians(80.0);
-    public static final double HOOD_TRAVERSE_RETRACT_ANGLE = Math.toRadians(60.0);
-    public static final double HOOD_TRAVERSE_EXTEND_ANGLE = Math.toRadians(45.0);
+    public static final double HOOD_PREPARE_TRANSFER_ANGLE = Math.toRadians(84.2);
+    public static final double HOOD_TRANSFER_ANGLE = Math.toRadians(76.4);
+    public static final double HOOD_TRAVERSE_RETRACT_ANGLE = Math.toRadians(52.0);
+    public static final double HOOD_TRAVERSE_EXTEND_ANGLE = Math.toRadians(10.0);
     public static final double HOOD_MIN_ANGLE = Math.toRadians(0.0);
 
     private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
@@ -42,8 +43,10 @@ public class ShooterSubsystem implements Subsystem {
     private static final double FLYWHEEL_SENSOR_POSITION_COEFFICIENT = (FLYWHEEL_GEAR_REDUCTION / 2048.0) * 2 * Math.PI;
     private static final double FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT = FLYWHEEL_SENSOR_POSITION_COEFFICIENT * 10.0;
 
-    private static final MotionProfile.Constraints MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Math.toRadians(100.0), Math.toDegrees(350));
+    private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
+            Math.toRadians(100.0), Math.toRadians(500));
+    private static final MotionProfile.Constraints SLOW_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
+            Math.toRadians(100.0), Math.toRadians(75));
 
     private final TalonFX hoodAngleMotor = new TalonFX(Constants.HOOD_MOTOR_PORT);
     private final LinearSystem<N2, N1, N1> hoodPlant = LinearSystemId
@@ -55,28 +58,34 @@ public class ShooterSubsystem implements Subsystem {
     private final TalonFX flywheelPrimaryMotor = new TalonFX(Constants.FLYWHEEL_PRIMARY_MOTOR_PORT);
     private final TalonFX flywheelSecondaryMotor = new TalonFX(Constants.FLYWHEEL_SECONDARY_MOTOR_PORT);
 
-    private boolean hoodZeroed = false;
+    private double flywheelVoltage;
+    private double hoodVoltage;
+    private double hoodTargetAngle = Math.toRadians(5.0);
+    private boolean isHoodZeroed = false;
+    private boolean flywheelDisabled = false;
+    private double targetFlywheelSpeed;
 
-    private FlywheelMode flywheelMode = FlywheelMode.DISABLED;
-    private double flywheelVoltage = 0.0;
-    private double flywheelTargetVelocity = 0.0;
-
-    private HoodMode hoodMode = HoodMode.DISABLED;
-    private double hoodVoltage = 0.0;
-    private double hoodTargetAngle = 0.0;
+    // private final MotionProfileFollower hoodMotionFollower = new
+    // MotionProfileFollower(
+    // new PidController(new PidConstants(100.0, 0.0, 1.0)), HOOD_VELOCITY_CONSTANT,
+    // HOOD_ACCELERATION_CONSTANT);
 
     public ShooterSubsystem() {
+        // hoodAngleMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice());
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Shooter");
         shuffleboardTab.addNumber("Flywheel Speed",
                 () -> Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
         shuffleboardTab.addNumber("Target Flywheel Speed",
-                () -> Units.radiansPerSecondToRotationsPerMinute(getTargetFlywheelVelocity()));
-        shuffleboardTab.addNumber("Hood Target Angle", () -> Math.toDegrees(getHoodTargetAngle()));
+                () -> Units.radiansPerSecondToRotationsPerMinute(getTargetFlywheelSpeed()));
+        shuffleboardTab.addNumber("Hood Target Angle", () -> Math.toDegrees(getHoodTargetPosition()));
         shuffleboardTab.addNumber("Hood Angle", () -> Math.toDegrees(getHoodAngle()));
         shuffleboardTab.addNumber("Hood Velocity", () -> Math.toDegrees(getHoodVelocity()));
+        // shuffleboardTab.addNumber("Last Motion Profile State Velocity",
+        // () -> Math.toDegrees(hoodMotionFollower.getLastState().map(state ->
+        // state.velocity).orElse(0.0)));
         shuffleboardTab.addNumber("Hood Voltage", () -> hoodVoltage);
-        shuffleboardTab.addBoolean("Is Hood at Angle", this::isHoodAtTargetAngle);
-        shuffleboardTab.addBoolean("Is Flywheel at Speed", this::isFlywheelAtTargetSpeed);
+        shuffleboardTab.addBoolean("Is Hood at Angle", () -> isHoodAtTargetAngle());
+        shuffleboardTab.addBoolean("Is Flywheel at Speed", () -> isFlywheelAtTargetSpeed());
 
         TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
         flywheelConfiguration.supplyCurrLimit.currentLimit = 5.0;
@@ -97,10 +106,11 @@ public class ShooterSubsystem implements Subsystem {
         flywheelSecondaryMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
         TalonFXConfiguration hoodConfiguration = new TalonFXConfiguration();
-        hoodConfiguration.motionCruiseVelocity = MOTION_CONSTRAINTS.maxVelocity / HOOD_SENSOR_VELOCITY_COEFFICIENT;
-        hoodConfiguration.motionAcceleration = MOTION_CONSTRAINTS.maxAcceleration / HOOD_SENSOR_VELOCITY_COEFFICIENT;
+        hoodConfiguration.motionCruiseVelocity = FAST_MOTION_CONSTRAINTS.maxVelocity / HOOD_SENSOR_VELOCITY_COEFFICIENT;
+        hoodConfiguration.motionAcceleration = FAST_MOTION_CONSTRAINTS.maxAcceleration
+                / HOOD_SENSOR_VELOCITY_COEFFICIENT;
         hoodConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        hoodConfiguration.slot0.kP = 0.5;
+        hoodConfiguration.slot0.kP = 0.4;
         hoodConfiguration.slot0.kI = 0.0;
         hoodConfiguration.slot0.kD = 0.0;
         hoodConfiguration.supplyCurrLimit.currentLimit = 15.0;
@@ -125,38 +135,24 @@ public class ShooterSubsystem implements Subsystem {
         flywheelSecondaryMotor.follow(flywheelPrimaryMotor);
     }
 
-    public void setFlywheelVoltage(double flywheelVoltage) {
-        this.flywheelVoltage = flywheelVoltage;
-        this.flywheelMode = FlywheelMode.VOLTAGE;
-    }
-
-    public double getFlywheelVelocity() {
-        if (Robot.isSimulation()) {
-            return flywheel.getAngularVelocityRadPerSec();
-        } else {
-            return flywheelPrimaryMotor.getSelectedSensorVelocity() * FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT;
-        }
-    }
-
-    public void setTargetFlywheelVelocity(double flywheelTargetVelocity) {
-        this.flywheelTargetVelocity = flywheelTargetVelocity;
-        this.flywheelMode = FlywheelMode.VELOCITY;
-    }
-
-    public double getTargetFlywheelVelocity() {
-        return flywheelTargetVelocity;
-    }
-
-    public boolean isFlywheelAtTargetSpeed() {
-        return Math.abs(getFlywheelVelocity() - getTargetFlywheelVelocity()) < FLYWHEEL_ALLOWABLE_ERROR;
-    }
-
     public double getHoodAngle() {
         if (Robot.isSimulation()) {
             return hoodSim.getAngleRads();
         } else {
             return hoodAngleMotor.getSelectedSensorPosition() * HOOD_SENSOR_POSITION_COEFFICIENT;
         }
+    }
+
+    public void setFlywheelVoltage(double flywheelVoltage) {
+        this.flywheelVoltage = flywheelVoltage;
+    }
+
+    public void setHoodVoltage(double hoodVoltage) {
+        this.hoodVoltage = hoodVoltage;
+    }
+
+    public double getHoodVoltage() {
+        return hoodVoltage;
     }
 
     public double getHoodVelocity() {
@@ -167,34 +163,67 @@ public class ShooterSubsystem implements Subsystem {
         }
     }
 
-    public void setHoodTargetAngle(double hoodTargetAngle) {
-        this.hoodTargetAngle = hoodTargetAngle;
-        this.hoodMode = HoodMode.POSITION;
-    }
-
-    public double getHoodTargetAngle() {
-        return hoodTargetAngle;
-    }
-
-    public void setHoodVoltage(double hoodVoltage) {
-        this.hoodVoltage = hoodVoltage;
-        this.hoodMode = HoodMode.VOLTAGE;
-    }
-
     public void setHoodZeroed(boolean zeroed) {
-        this.hoodZeroed = zeroed;
-    }
-
-    public boolean isHoodZeroed() {
-        return hoodZeroed;
+        this.isHoodZeroed = zeroed;
     }
 
     public boolean isHoodAtTargetAngle() {
-        return Math.abs(getHoodTargetAngle() - getHoodAngle()) < Constants.HOOD_ALLOWABLE_ERROR;
+        if (Robot.isSimulation()) {
+            return Math.abs(getHoodTargetPosition() - hoodSim.getAngleRads()) < Constants.HOOD_ALLOWABLE_ERROR;
+        } else {
+            return Math.abs(getHoodTargetPosition() - getHoodAngle()) < Constants.HOOD_ALLOWABLE_ERROR;
+        }
     }
 
-    public void resetHoodAngle(double angle) {
-        hoodAngleMotor.setSelectedSensorPosition(angle / HOOD_SENSOR_POSITION_COEFFICIENT);
+    public void setTargetFlywheelSpeed(double targetFlywheelSpeed) {
+        this.targetFlywheelSpeed = targetFlywheelSpeed;
+    }
+
+    public double getTargetFlywheelSpeed() {
+        return targetFlywheelSpeed;
+    }
+
+    public double getFlywheelVelocity() {
+        if (Robot.isSimulation()) {
+            return flywheel.getAngularVelocityRadPerSec();
+        } else {
+            return flywheelPrimaryMotor.getSelectedSensorVelocity() * FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT;
+        }
+    }
+
+    public boolean isFlywheelAtTargetSpeed() {
+        return Math.abs(getFlywheelVelocity() - targetFlywheelSpeed) < FLYWHEEL_ALLOWABLE_ERROR;
+    }
+
+    public void setHoodTargetPosition(double position) {
+        hoodTargetAngle = position;
+        // double startingPosition = hoodMotionFollower.getLastState().map(state ->
+        // state.position).orElse(getHoodAngle());
+        // double startingVelocity = hoodMotionFollower.getLastState().map(state ->
+        // state.velocity)
+        // .orElse(getHoodVelocity());
+        //
+        // hoodMotionFollower.follow(new TrapezoidalMotionProfile(new
+        // MotionProfile.Goal(getHoodAngle(), 0.0),
+        // new MotionProfile.Goal(position, 0.0), MOTION_CONSTRAINTS));
+    }
+
+    public double getHoodTargetPosition() {
+        return hoodTargetAngle;
+        // MotionProfile profile = hoodMotionFollower.getCurrentMotionProfile();
+        // if (profile != null) {
+        // return profile.getEnd().position;
+        // } else {
+        // return 0.0;
+        // }
+    }
+
+    public boolean isHoodZeroed() {
+        return isHoodZeroed;
+    }
+
+    public void setHoodMotorSensorPosition(double position) {
+        hoodAngleMotor.setSelectedSensorPosition(position / HOOD_SENSOR_POSITION_COEFFICIENT);
     }
 
     public void simulationPeriodic() {
@@ -223,42 +252,41 @@ public class ShooterSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        switch (flywheelMode) {
-            case DISABLED :
-                flywheelPrimaryMotor.set(TalonFXControlMode.Disabled, 0.0);
-                break;
-            case VELOCITY :
-                flywheelPrimaryMotor.set(TalonFXControlMode.Velocity,
-                        flywheelTargetVelocity / FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT, DemandType.ArbitraryFeedForward,
-                        FLYWHEEL_VELOCITY_CONSTANT * flywheelTargetVelocity / 12.0);
-                break;
-            case VOLTAGE :
-                flywheelPrimaryMotor.set(TalonFXControlMode.PercentOutput, flywheelVoltage / 12.0);
+        final double now = Timer.getFPGATimestamp();
+        final double dt = Robot.kDefaultPeriod;
+
+        if (isHoodZeroed) {
+            // hoodVoltage = hoodMotionFollower.update(getHoodAngle(), now, dt);
+            hoodAngleMotor.set(TalonFXControlMode.MotionMagic, hoodTargetAngle / HOOD_SENSOR_POSITION_COEFFICIENT);
+        } else {
+            hoodAngleMotor.set(TalonFXControlMode.PercentOutput, hoodVoltage / 12);
         }
 
-        switch (hoodMode) {
-            case DISABLED :
-                hoodAngleMotor.set(TalonFXControlMode.Disabled, 0.0);
-                break;
-            case POSITION :
-                if (isHoodZeroed()) {
-                    hoodAngleMotor.set(TalonFXControlMode.MotionMagic,
-                            hoodTargetAngle / HOOD_SENSOR_POSITION_COEFFICIENT);
-                } else {
-                    DriverStation.reportWarning("Attempted to set hood angle when it was not zeroed", false);
-                }
-                break;
-            case VOLTAGE :
-                hoodAngleMotor.set(TalonFXControlMode.PercentOutput, hoodVoltage / 12);
-                break;
+        if (flywheelDisabled) {
+            flywheelPrimaryMotor.set(TalonFXControlMode.PercentOutput, 0.0);
+        } else {
+            double feedForward = FLYWHEEL_VELOCITY_CONSTANT * targetFlywheelSpeed / 12.0;
+            flywheelPrimaryMotor.set(TalonFXControlMode.Velocity,
+                    targetFlywheelSpeed / FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT, DemandType.ArbitraryFeedForward,
+                    feedForward);
         }
     }
 
-    private enum FlywheelMode {
-        DISABLED, VELOCITY, VOLTAGE
+    public void setFastHoodConfig(boolean fast) {
+        if (fast) {
+            hoodAngleMotor
+                    .configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / HOOD_SENSOR_VELOCITY_COEFFICIENT);
+            hoodAngleMotor.configMotionAcceleration(
+                    FAST_MOTION_CONSTRAINTS.maxAcceleration / HOOD_SENSOR_VELOCITY_COEFFICIENT);
+        } else {
+            hoodAngleMotor
+                    .configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / HOOD_SENSOR_VELOCITY_COEFFICIENT);
+            hoodAngleMotor.configMotionAcceleration(
+                    SLOW_MOTION_CONSTRAINTS.maxAcceleration / HOOD_SENSOR_VELOCITY_COEFFICIENT);
+        }
     }
 
-    private enum HoodMode {
-        DISABLED, POSITION, VOLTAGE
+    public void disableFlywheel() {
+        flywheelDisabled = true;
     }
 }

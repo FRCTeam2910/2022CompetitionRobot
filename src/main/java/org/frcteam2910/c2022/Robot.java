@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.frcteam2910.c2022.commands.CharacterizeDrivetrainCommand;
+import org.frcteam2910.c2022.commands.ZeroClimberCommand;
 import org.frcteam2910.c2022.commands.ZeroHoodCommand;
 import org.frcteam2910.c2022.util.DriverReadout;
 
@@ -33,6 +34,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        if (!robotContainer.getClimber().isClimberZeroed()) {
+            new ZeroClimberCommand(robotContainer.getClimber()).schedule();
+        }
         if (!robotContainer.getShooter().isHoodZeroed()) {
             new ZeroHoodCommand(robotContainer.getShooter(), false).schedule();
         }

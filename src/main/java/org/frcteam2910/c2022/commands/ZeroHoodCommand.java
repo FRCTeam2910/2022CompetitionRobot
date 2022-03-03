@@ -13,7 +13,7 @@ public class ZeroHoodCommand extends CommandBase {
     private final ShooterSubsystem shooterSubsystem;
 
     private double zeroHoodStartTime = Double.NaN;
-    private boolean forward;
+    private final boolean forward;
 
     public ZeroHoodCommand(ShooterSubsystem shooterSubsystem, boolean forward) {
         this.shooterSubsystem = shooterSubsystem;
@@ -55,9 +55,9 @@ public class ZeroHoodCommand extends CommandBase {
         if (!interrupted) {
             shooterSubsystem.setHoodZeroed(true);
             if (forward) {
-                shooterSubsystem.resetHoodAngle(ShooterSubsystem.HOOD_MAX_ANGLE);
+                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MAX_ANGLE);
             } else {
-                shooterSubsystem.resetHoodAngle(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(-1.0));
+                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(1.0));
             }
         }
     }

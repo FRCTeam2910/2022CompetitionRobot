@@ -22,8 +22,8 @@ public class FenderShootCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        shooter.setHoodTargetAngle(SHOOTER_ANGLE);
-        shooter.setTargetFlywheelVelocity(FLYWHEEL_SPEED);
+        shooter.setHoodTargetPosition(SHOOTER_ANGLE);
+        shooter.setTargetFlywheelSpeed(FLYWHEEL_SPEED);
     }
 
     @Override
