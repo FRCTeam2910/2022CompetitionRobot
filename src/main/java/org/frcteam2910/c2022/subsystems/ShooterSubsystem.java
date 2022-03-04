@@ -28,9 +28,9 @@ public class ShooterSubsystem implements Subsystem {
     public static final double HOOD_MIN_ANGLE = Math.toRadians(0.0);
 
     private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
-    private static final double HOOD_GEAR_REDUCTION = (14.0 / 54.0) * (18.0 / 38.0) * (20.0 / 36.0) * (10.0 / 220.0);
+    private static final double HOOD_GEAR_REDUCTION = (14.0 / 54.0) * (18.0 / 38.0) * (36.0 / 20.0) * (10.0 / 220.0);
     private static final double FLYWHEEL_GEAR_REDUCTION = 1.0;
-    private static final double FLYWHEEL_ALLOWABLE_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(150);
+    private static final double FLYWHEEL_ALLOWABLE_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(100);
 
     private static final DCMotor HOOD_MOTOR = DCMotor.getFalcon500(1);
     private static final double HOOD_VELOCITY_CONSTANT = 5.5657;
@@ -44,9 +44,9 @@ public class ShooterSubsystem implements Subsystem {
     private static final double FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT = FLYWHEEL_SENSOR_POSITION_COEFFICIENT * 10.0;
 
     private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Math.toRadians(100.0), Math.toRadians(500));
+            Math.toRadians(380.0), Math.toRadians(1000));
     private static final MotionProfile.Constraints SLOW_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Math.toRadians(100.0), Math.toRadians(75));
+            Math.toRadians(380.0), Math.toRadians(150));
 
     private final TalonFX hoodAngleMotor = new TalonFX(Constants.HOOD_MOTOR_PORT);
     private final LinearSystem<N2, N1, N1> hoodPlant = LinearSystemId

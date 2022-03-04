@@ -27,7 +27,7 @@ public class ZeroHoodCommand extends CommandBase {
         shooterSubsystem.setHoodZeroed(false);
         zeroHoodStartTime = Double.NaN;
         if (forward) {
-            shooterSubsystem.setHoodVoltage(HOOD_VOLTAGE / 2.0);
+            shooterSubsystem.setHoodVoltage(HOOD_VOLTAGE);
         } else {
             shooterSubsystem.setHoodVoltage(-HOOD_VOLTAGE);
         }
@@ -57,7 +57,7 @@ public class ZeroHoodCommand extends CommandBase {
             if (forward) {
                 shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MAX_ANGLE);
             } else {
-                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(1.0));
+                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(0.5));
             }
         }
     }

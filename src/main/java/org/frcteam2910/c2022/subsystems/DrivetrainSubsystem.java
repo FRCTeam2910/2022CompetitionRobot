@@ -20,8 +20,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.frcteam2910.c2022.Robot;
 import org.frcteam2910.c2022.util.Utilities;
-import org.frcteam2910.common.control.HolonomicMotionProfiledTrajectoryFollower;
-import org.frcteam2910.common.control.PidConstants;
 import org.frcteam2910.common.control.*;
 import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.util.DrivetrainFeedforwardConstants;
@@ -38,16 +36,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
 
-    public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(
-            2.1515, 0.29394, 0.13592);
+    public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(0.891,
+            0.15, 0.13592);
 
     public static final TrajectoryConstraint[] TRAJECTORY_CONSTRAINTS = {
-            new FeedforwardConstraint(11.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(),
+            new FeedforwardConstraint(4.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(),
                     FEEDFORWARD_CONSTANTS.getAccelerationConstant(), false),
-            new MaxAccelerationConstraint(3.0), new CentripetalAccelerationConstraint(3.0)};
+            new MaxAccelerationConstraint(5.0), new CentripetalAccelerationConstraint(3.0)};
 
     private final HolonomicMotionProfiledTrajectoryFollower follower = new HolonomicMotionProfiledTrajectoryFollower(
-            new PidConstants(15.0, 0.0, 0.25), new PidConstants(5.0, 0.0, 0.0),
+            new PidConstants(5.0, 0.0, 0.0), new PidConstants(5.0, 0.0, 0.0),
             new HolonomicFeedforward(FEEDFORWARD_CONSTANTS));
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
@@ -98,6 +96,21 @@ public class DrivetrainSubsystem extends SubsystemBase {
         tab.addNumber("Odometry X", () -> Units.metersToFeet(getPose().getX()));
         tab.addNumber("Odometry Y", () -> Units.metersToFeet(getPose().getY()));
         tab.addNumber("Odometry Angle", () -> getPose().getRotation().getDegrees());
+        tab.addNumber("Velocity X", () -> Units.metersToFeet(getCurrentVelocity().vxMetersPerSecond));
+        tab.addNumber("Trajectory Position X", () -> {
+            var lastState = follower.getLastState();
+            if (lastState == null)
+                return 0;
+
+            return Units.metersToFeet(lastState.getPathState().getPosition().x);
+        });
+        tab.addNumber("Trajectory Velocity X", () -> {
+            var lastState = follower.getLastState();
+            if (lastState == null)
+                return 0;
+
+            return Units.metersToFeet(lastState.getVelocity());
+        });
         tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
 
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);

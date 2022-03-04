@@ -22,7 +22,7 @@ public class AutonomousChooser {
         autonomousModeChooser.setDefaultOption("Fender (Blue)", AutonomousMode.FENDER_BLUE);
         autonomousModeChooser.addOption("Test Auto", AutonomousMode.TEST_AUTO);
         autonomousModeChooser.addOption("Fender (Red)", AutonomousMode.FENDER_RED);
-        autonomousModeChooser.addOption("Two Ball (White)", AutonomousMode.TWO_BALL_WHITE);
+        autonomousModeChooser.addOption("Two Ball (Green)", AutonomousMode.TWO_BALL_GREEN);
         autonomousModeChooser.addOption("Two Ball (Purple)", AutonomousMode.TWO_BALL_PURPLE);
         autonomousModeChooser.addOption("Three Ball (Orange)", AutonomousMode.THREE_BALL_ORANGE);
         autonomousModeChooser.addOption("Five Ball (Orange)", AutonomousMode.FIVE_BALL_ORANGE);
@@ -69,9 +69,9 @@ public class AutonomousChooser {
     public Command get2BallWhiteAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, trajectories.getTwoBallWhitePartOne());
+        resetRobotPose(command, container, trajectories.getTwoBallGreenPartOne());
 
-        command.addCommands(followAndIntake(container, trajectories.getTwoBallWhitePartOne())
+        command.addCommands(followAndIntake(container, trajectories.getTwoBallGreenPartOne())
                 .alongWith(new ZeroHoodCommand(container.getShooter(), true)));
         shootAtTarget(command, container, 1.5);
 
@@ -97,7 +97,7 @@ public class AutonomousChooser {
 
         // Grab the second ball and move to the shooting position
         // Zero the hood along the way
-        command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartOne())
+        command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartOne(), () -> false, 0.25)
                 .andThen(follow(container, trajectories.getThreeBallOrangePartTwo()))
                 .alongWith(new ZeroHoodCommand(container.getShooter(), true)));
 
@@ -108,7 +108,7 @@ public class AutonomousChooser {
         command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartThree()));
 
         // Shoot the 3rd ball
-        shootAtTarget(command, container, 0.75);
+        shootAtTarget(command, container, 1.5);
 
         return command;
     }
@@ -142,7 +142,7 @@ public class AutonomousChooser {
                 return getFenderRedAuto(container);
             case TWO_BALL_PURPLE :
                 return get2BallPurpleAuto(container);
-            case TWO_BALL_WHITE :
+            case TWO_BALL_GREEN :
                 return get2BallWhiteAuto(container);
             case THREE_BALL_ORANGE :
                 return get3BallOrangeAuto(container);
@@ -184,6 +184,6 @@ public class AutonomousChooser {
     }
 
     private enum AutonomousMode {
-        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_WHITE, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FIVE_BALL_ORANGE
+        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_GREEN, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FIVE_BALL_ORANGE
     }
 }
