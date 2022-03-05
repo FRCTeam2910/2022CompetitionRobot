@@ -17,14 +17,15 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         // Transfer mid rung to hood
         addCommands(transferToHood(climber, shooter));
         // Move from mid rung to high rung
-        addCommands(traverseToNextRung(climber, shooter, false));
+        addCommands(traverseToNextRung(climber, shooter, false, false));
         // Transfer high rung to hood
         addCommands(transferToHood(climber, shooter));
         // Move from high rung to traverse rung
-        addCommands(traverseToNextRung(climber, shooter, true));
+        addCommands(traverseToNextRung(climber, shooter, true, true));
         // Transfer high rung to hood
-        addCommands(transferToHood(climber, shooter));
-        addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRANSFER_ANGLE, true, true));
+        // addCommands(transferToHood(climber, shooter));
+        // addCommands(new SetHoodAngleCommand(shooter,
+        // ShooterSubsystem.HOOD_TRANSFER_ANGLE, true, true));
     }
 
     private static Command transferToHood(ClimberSubsystem climber, ShooterSubsystem shooter) {
@@ -40,11 +41,15 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         return group;
     }
 
-    private static Command traverseToNextRung(ClimberSubsystem climber, ShooterSubsystem shooter, boolean transversal) {
+    private static Command traverseToNextRung(ClimberSubsystem climber, ShooterSubsystem shooter, boolean transversal,
+            boolean wait) {
         SequentialCommandGroup group = new SequentialCommandGroup();
 
         // Angle the robot to extend the climber
         group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE, false));
+        if (wait) {
+            group.addCommands(new WaitCommand(1.5));
+        }
         // Extend the climber slightly past the next rung
         group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_EXTEND_HEIGHT));
         // Angle the robot so the climber hooks will grab the next rung
@@ -52,14 +57,13 @@ public class AutoClimbCommand extends SequentialCommandGroup {
 
         if (transversal) {
             group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT));
-            group.addCommands(new WaitCommand(5.0));
+        } else {
+            // Retract the climber, and move the hood to the transfer position after the
+            // climber grabs onto the next rung
+            group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT).alongWith(
+                    new WaitUntilCommand(() -> climber.getCurrentHeight() < ClimberSubsystem.TRAVERSE_RUNG_HEIGHT)
+                            .andThen(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE))));
         }
-
-        // Retract the climber, and move the hood to the transfer position after the
-        // climber grabs onto the next rung
-        group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT).alongWith(
-                new WaitUntilCommand(() -> climber.getCurrentHeight() < ClimberSubsystem.TRAVERSE_RUNG_HEIGHT)
-                        .andThen(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE))));
 
         return group;
     }
