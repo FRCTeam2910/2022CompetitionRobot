@@ -163,6 +163,14 @@ public class ClimberSubsystem implements Subsystem {
         }
     }
 
+    // public void setFastClimberConfig(boolean fast){
+    // if(fast){
+    //
+    // } else {
+    //
+    // }
+    // }
+
     private enum Mode {
         POSITION, VOLTAGE
     }
