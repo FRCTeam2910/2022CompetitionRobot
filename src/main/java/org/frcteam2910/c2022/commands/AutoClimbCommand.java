@@ -48,7 +48,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         // Angle the robot to extend the climber
         group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE, false));
         if (wait) {
-            group.addCommands(new WaitCommand(1.5));
+            group.addCommands(new WaitCommand(0.5));
         }
         // Extend the climber slightly past the next rung
         group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_EXTEND_HEIGHT));
@@ -56,6 +56,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_RETRACT_ANGLE, false));
 
         if (transversal) {
+            group.addCommands(new WaitCommand(2.0));
             group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT));
         } else {
             // Retract the climber, and move the hood to the transfer position after the

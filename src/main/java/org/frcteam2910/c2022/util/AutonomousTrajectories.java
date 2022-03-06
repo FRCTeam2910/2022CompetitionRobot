@@ -72,12 +72,12 @@ public class AutonomousTrajectories {
 
         fiveBallOrangePartOne = new Trajectory(
                 new SimplePathBuilder(new Vector2(-3.527, -2.458), Rotation2.fromDegrees(34.88))
-                        .lineTo(new Vector2(-6.335, -2.519), Rotation2.fromDegrees(-136.25))
-                        .arcTo(new Vector2(-6.857, -2.727), new Vector2(-6.339, -3.269)).build(),
+                        .lineTo(new Vector2(-6.431, -2.409), Rotation2.fromDegrees(-136.25))
+                        .arcTo(new Vector2(-6.963, -2.617), new Vector2(-6.444, -3.158)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         fiveBallOrangePartTwo = new Trajectory(
-                new SimplePathBuilder(new Vector2(-6.857, -2.727), Rotation2.fromDegrees(-136.25))
+                new SimplePathBuilder(new Vector2(-6.963, -2.617), Rotation2.fromDegrees(-136.25))
                         .lineTo(new Vector2(-3.527, -2.458), Rotation2.fromDegrees(34.88)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
     }

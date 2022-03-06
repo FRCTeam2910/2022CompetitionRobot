@@ -23,8 +23,8 @@ public class ShooterSubsystem implements Subsystem {
     public static final double HOOD_MAX_ANGLE = Math.toRadians(85.2);
     public static final double HOOD_PREPARE_TRANSFER_ANGLE = Math.toRadians(84.2);
     public static final double HOOD_TRANSFER_ANGLE = Math.toRadians(76.4);
-    public static final double HOOD_TRAVERSE_RETRACT_ANGLE = Math.toRadians(52.0);
-    public static final double HOOD_TRAVERSE_EXTEND_ANGLE = Math.toRadians(10.0);
+    public static final double HOOD_TRAVERSE_RETRACT_ANGLE = Math.toRadians(45.0);
+    public static final double HOOD_TRAVERSE_EXTEND_ANGLE = Math.toRadians(15.0);
     public static final double HOOD_MIN_ANGLE = Math.toRadians(0.0);
 
     private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
@@ -236,7 +236,7 @@ public class ShooterSubsystem implements Subsystem {
 
     public void enableCurrentLimits(boolean enabled) {
         SupplyCurrentLimitConfiguration configuration = new SupplyCurrentLimitConfiguration();
-        configuration.currentLimit = 5.0;
+        configuration.currentLimit = 20.0;
         configuration.enable = enabled;
         flywheelPrimaryMotor.configSupplyCurrentLimit(configuration);
         flywheelSecondaryMotor.configSupplyCurrentLimit(configuration);

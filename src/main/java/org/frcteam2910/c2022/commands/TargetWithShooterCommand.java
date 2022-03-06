@@ -33,9 +33,9 @@ public class TargetWithShooterCommand extends CommandBase {
         SHOOTER_TUNING.put(new InterpolatingDouble(4.0),
                 new Vector2(Math.toRadians(23.0), Units.rotationsPerMinuteToRadiansPerSecond(2100)));
         SHOOTER_TUNING.put(new InterpolatingDouble(4.5),
-                new Vector2(Math.toRadians(26.0), Units.rotationsPerMinuteToRadiansPerSecond(2250)));
+                new Vector2(Math.toRadians(26.0), Units.rotationsPerMinuteToRadiansPerSecond(2275)));
         SHOOTER_TUNING.put(new InterpolatingDouble(5.0),
-                new Vector2(Math.toRadians(30.0), Units.rotationsPerMinuteToRadiansPerSecond(2350)));
+                new Vector2(Math.toRadians(30.0), Units.rotationsPerMinuteToRadiansPerSecond(2375)));
         SHOOTER_TUNING.put(new InterpolatingDouble(5.5),
                 new Vector2(Math.toRadians(31.5), Units.rotationsPerMinuteToRadiansPerSecond(2450)));
         SHOOTER_TUNING.put(new InterpolatingDouble(6.0),
