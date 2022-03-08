@@ -6,9 +6,9 @@ import org.frcteam2910.c2022.subsystems.FeederSubsystem;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class FenderShootCommand extends CommandBase {
-    private final static double SHOOTER_ANGLE = Math.toRadians(87);
-    private final static double FLYWHEEL_SPEED = Units.rotationsPerMinuteToRadiansPerSecond(3000);
-    private final static double FEEDER_SPEED = 0.5;
+    private final static double SHOOTER_ANGLE = Math.toRadians(0.0);
+    private final static double FLYWHEEL_SPEED = Units.rotationsPerMinuteToRadiansPerSecond(1800);
+    private final static double FEEDER_SPEED = 1.0;
 
     private final ShooterSubsystem shooter;
     private final FeederSubsystem feeder;
@@ -21,12 +21,18 @@ public class FenderShootCommand extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        // To aim when bumpers are flat against the hub wall
+    public void initialize() {
         shooter.setHoodTargetPosition(SHOOTER_ANGLE);
         shooter.setTargetFlywheelSpeed(FLYWHEEL_SPEED);
+    }
+
+    @Override
+    public void execute() {
+        // To aim when bumpers are flat against the hub wall
         if (shooter.isHoodAtTargetAngle() && shooter.isFlywheelAtTargetSpeed()) {
             feeder.setFeederSpeed(FEEDER_SPEED);
+        } else {
+            feeder.setFeederSpeed(0.0);
         }
     }
 

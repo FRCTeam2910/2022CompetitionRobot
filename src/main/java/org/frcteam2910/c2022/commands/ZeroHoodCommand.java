@@ -5,14 +5,19 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class ZeroHoodCommand extends CommandBase {
-    private static final double ZERO_HOOD_VELOCITY_TIME = 250; // in ms, 5 sec
+    private static final double ZERO_HOOD_VELOCITY_TIME = 0.5; // in sec
+    private static final double HOOD_VOLTAGE = 1.5;
+
+    private static final double HOOD_ALLOWABLE_ZERO_VELOCITY = Math.toRadians(0.1);
 
     private final ShooterSubsystem shooterSubsystem;
 
-    private double zeroHoodStartTime;
+    private double zeroHoodStartTime = Double.NaN;
+    private final boolean forward;
 
-    public ZeroHoodCommand(ShooterSubsystem shooterSubsystem) {
+    public ZeroHoodCommand(ShooterSubsystem shooterSubsystem, boolean forward) {
         this.shooterSubsystem = shooterSubsystem;
+        this.forward = forward;
 
         addRequirements(shooterSubsystem);
     }
@@ -20,18 +25,25 @@ public class ZeroHoodCommand extends CommandBase {
     @Override
     public void initialize() {
         shooterSubsystem.setHoodZeroed(false);
-        shooterSubsystem.setHoodVoltage(-2.0);
+        zeroHoodStartTime = Double.NaN;
+        if (forward) {
+            shooterSubsystem.setHoodVoltage(HOOD_VOLTAGE);
+        } else {
+            shooterSubsystem.setHoodVoltage(-HOOD_VOLTAGE);
+        }
     }
 
     @Override
     public boolean isFinished() {
-        if (Math.abs(shooterSubsystem.getHoodVoltage()) > 0.2) {
-            zeroHoodStartTime = Timer.getFPGATimestamp();
-        }
-
-        if (System.currentTimeMillis() - zeroHoodStartTime >= ZERO_HOOD_VELOCITY_TIME) {
-            shooterSubsystem.setHoodZeroed(true);
-            return true;
+        if (Double.isFinite(zeroHoodStartTime)) {
+            if (Math.abs(shooterSubsystem.getHoodVelocity()) > HOOD_ALLOWABLE_ZERO_VELOCITY) {
+                zeroHoodStartTime = Double.NaN;
+            } else
+                return Timer.getFPGATimestamp() - zeroHoodStartTime >= ZERO_HOOD_VELOCITY_TIME;
+        } else {
+            if (Math.abs(shooterSubsystem.getHoodVelocity()) < HOOD_ALLOWABLE_ZERO_VELOCITY) {
+                zeroHoodStartTime = Timer.getFPGATimestamp();
+            }
         }
 
         return false;
@@ -40,6 +52,13 @@ public class ZeroHoodCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.setHoodVoltage(0.0);
-        shooterSubsystem.zeroHoodMotor();
+        if (!interrupted) {
+            shooterSubsystem.setHoodZeroed(true);
+            if (forward) {
+                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MAX_ANGLE);
+            } else {
+                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(0.5));
+            }
+        }
     }
 }

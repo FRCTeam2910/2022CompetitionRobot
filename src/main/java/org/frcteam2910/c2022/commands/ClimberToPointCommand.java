@@ -14,7 +14,7 @@ public class ClimberToPointCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        climber.setTargetPosition(height);
+        climber.setTargetHeight(height);
     }
 
     @Override

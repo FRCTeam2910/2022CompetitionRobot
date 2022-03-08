@@ -1,15 +1,16 @@
 package org.frcteam2910.c2022.commands;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 
 public class ZeroClimberCommand extends CommandBase {
 
-    private static final long CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 250;
+    private static final double CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 0.5;
 
-    private static final double REVERSE_VOLTAGE = -2.0;
-    private static final double VELOCITY_THRESHOLD = 0.1;
+    private static final double REVERSE_VOLTAGE = -0.75;
+    private static final double VELOCITY_THRESHOLD = Units.inchesToMeters(0.1);
 
     private final ClimberSubsystem climber;
 
@@ -24,13 +25,14 @@ public class ZeroClimberCommand extends CommandBase {
     @Override
     public void initialize() {
         zeroVelocityTimestamp = Double.NaN;
+        climber.setZeroed(false);
     }
 
     @Override
     public void execute() {
         climber.setTargetVoltage(REVERSE_VOLTAGE);
         if (Math.abs(climber.getCurrentVelocity()) < VELOCITY_THRESHOLD) {
-            if (Double.isFinite(zeroVelocityTimestamp)) {
+            if (!Double.isFinite(zeroVelocityTimestamp)) {
                 zeroVelocityTimestamp = Timer.getFPGATimestamp();
             }
         } else {
@@ -40,7 +42,10 @@ public class ZeroClimberCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Timer.getFPGATimestamp() - zeroVelocityTimestamp >= CLIMBER_ZERO_VELOCITY_TIME_PERIOD;
+        if (Double.isFinite(zeroVelocityTimestamp)) {
+            return Timer.getFPGATimestamp() - zeroVelocityTimestamp >= CLIMBER_ZERO_VELOCITY_TIME_PERIOD;
+        }
+        return false;
     }
 
     @Override
@@ -48,6 +53,7 @@ public class ZeroClimberCommand extends CommandBase {
         climber.setTargetVoltage(0.0);
         if (!interrupted) {
             climber.setZeroPosition();
+            climber.setZeroed(true);
         }
     }
 }
