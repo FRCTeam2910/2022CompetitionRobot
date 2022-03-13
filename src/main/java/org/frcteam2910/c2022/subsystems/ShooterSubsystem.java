@@ -28,9 +28,9 @@ public class ShooterSubsystem implements Subsystem {
     public static final double HOOD_MIN_ANGLE = Math.toRadians(0.0);
 
     private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
-    private static final double HOOD_GEAR_REDUCTION = (14.0 / 54.0) * (18.0 / 38.0) * (36.0 / 20.0) * (10.0 / 220.0);
-    private static final double FLYWHEEL_GEAR_REDUCTION = 1.0;
-    private static final double FLYWHEEL_ALLOWABLE_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(100);
+    private static final double HOOD_GEAR_REDUCTION = (14.0 / 54.0) * (18.0 / 38.0) * (38.0 / 18.0) * (10.0 / 220.0);
+    private static final double FLYWHEEL_GEAR_REDUCTION = 36.0 / 53.0;
+    private static final double FLYWHEEL_ALLOWABLE_ERROR = Units.rotationsPerMinuteToRadiansPerSecond(50);
 
     private static final DCMotor HOOD_MOTOR = DCMotor.getFalcon500(1);
     private static final double HOOD_VELOCITY_CONSTANT = 5.5657;
@@ -38,15 +38,15 @@ public class ShooterSubsystem implements Subsystem {
     private static final double HOOD_SENSOR_POSITION_COEFFICIENT = (HOOD_GEAR_REDUCTION / 2048.0) * 2 * Math.PI;
     private static final double HOOD_SENSOR_VELOCITY_COEFFICIENT = HOOD_SENSOR_POSITION_COEFFICIENT * 10.0;
 
-    private static final double FLYWHEEL_VELOCITY_CONSTANT = 0.017941;
+    private static final double FLYWHEEL_VELOCITY_CONSTANT = 0.028;
     private static final double FLYWHEEL_ACCELERATION_CONSTANT = 0.0030108;
     private static final double FLYWHEEL_SENSOR_POSITION_COEFFICIENT = (FLYWHEEL_GEAR_REDUCTION / 2048.0) * 2 * Math.PI;
     private static final double FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT = FLYWHEEL_SENSOR_POSITION_COEFFICIENT * 10.0;
 
     private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Math.toRadians(380.0), Math.toRadians(1000));
+            Math.toRadians(450.0), Math.toRadians(2000));
     private static final MotionProfile.Constraints SLOW_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Math.toRadians(380.0), Math.toRadians(150));
+            Math.toRadians(450.0), Math.toRadians(500.0));
 
     private final TalonFX hoodAngleMotor = new TalonFX(Constants.HOOD_MOTOR_PORT);
     private final LinearSystem<N2, N1, N1> hoodPlant = LinearSystemId
@@ -88,11 +88,11 @@ public class ShooterSubsystem implements Subsystem {
         shuffleboardTab.addBoolean("Is Flywheel at Speed", () -> isFlywheelAtTargetSpeed());
 
         TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
-        flywheelConfiguration.supplyCurrLimit.currentLimit = 5.0;
+        flywheelConfiguration.supplyCurrLimit.currentLimit = 20.0;
         flywheelConfiguration.supplyCurrLimit.enable = false;
         flywheelConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor
                 .toFeedbackDevice();
-        flywheelConfiguration.slot0.kP = 0.5;
+        flywheelConfiguration.slot0.kP = 0.1;
         flywheelConfiguration.slot0.kI = 0.0;
         flywheelConfiguration.slot0.kD = 0.0;
 
@@ -110,10 +110,10 @@ public class ShooterSubsystem implements Subsystem {
         hoodConfiguration.motionAcceleration = FAST_MOTION_CONSTRAINTS.maxAcceleration
                 / HOOD_SENSOR_VELOCITY_COEFFICIENT;
         hoodConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        hoodConfiguration.slot0.kP = 0.4;
+        hoodConfiguration.slot0.kP = 1.0;
         hoodConfiguration.slot0.kI = 0.0;
-        hoodConfiguration.slot0.kD = 0.0;
-        hoodConfiguration.supplyCurrLimit.currentLimit = 15.0;
+        hoodConfiguration.slot0.kD = 0.5;
+        hoodConfiguration.supplyCurrLimit.currentLimit = 50.0;
         hoodConfiguration.supplyCurrLimit.enable = true;
 
         hoodAngleMotor.configAllSettings(hoodConfiguration);

@@ -53,6 +53,7 @@ public class ZeroClimberCommand extends CommandBase {
         climber.setTargetVoltage(0.0);
         if (!interrupted) {
             climber.setZeroPosition();
+            climber.setTargetHeight(0);
             climber.setZeroed(true);
         }
     }

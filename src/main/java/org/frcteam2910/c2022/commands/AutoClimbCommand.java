@@ -21,11 +21,12 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         // Transfer high rung to hood
         addCommands(transferToHood(climber, shooter));
         // Move from high rung to traverse rung
-        addCommands(traverseToNextRung(climber, shooter, true, true));
+        addCommands(traverseToNextRung(climber, shooter, true, false));
         // Transfer high rung to hood
         // addCommands(transferToHood(climber, shooter));
         // addCommands(new SetHoodAngleCommand(shooter,
         // ShooterSubsystem.HOOD_TRANSFER_ANGLE, true, true));
+        addCommands(new WaitCommand(5).perpetually());
     }
 
     private static Command transferToHood(ClimberSubsystem climber, ShooterSubsystem shooter) {
@@ -56,7 +57,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_RETRACT_ANGLE, false));
 
         if (transversal) {
-            group.addCommands(new WaitCommand(1.0));
+            group.addCommands(new WaitCommand(0.75));
             group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT));
         } else {
             // Retract the climber, and move the hood to the transfer position after the

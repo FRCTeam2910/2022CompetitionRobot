@@ -45,7 +45,7 @@ public class Constants {
     public static final int FLYWHEEL_SECONDARY_MOTOR_PORT = 9;
 
     public static final double HOOD_MANUAL_ADJUST_INTERVAL = Math.toRadians(0.5);
-    public static final double FLYWHEEL_MANUAL_ADJUST_INTERVAL = Units.rotationsPerMinuteToRadiansPerSecond(50.0);
+    public static final double FLYWHEEL_MANUAL_ADJUST_INTERVAL = Units.rotationsPerMinuteToRadiansPerSecond(75.0);
 
     public static final double HOOD_MOTOR_TO_HOOD_GEAR_RATIO = 1;
     public static final double HOOD_ALLOWABLE_ERROR = Math.toRadians(0.5);
