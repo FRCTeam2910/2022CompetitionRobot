@@ -102,7 +102,7 @@ public class ClimberSubsystem implements Subsystem {
     public void periodic() {
         switch (mode) {
             case POSITION :
-                if(isClimberZeroed()){
+                if (isClimberZeroed()) {
                     leftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
                     rightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
                 }

@@ -2,7 +2,6 @@ package org.frcteam2910.c2022.commands;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.frcteam2910.c2022.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 import org.frcteam2910.c2022.subsystems.VisionSubsystem;
 import org.frcteam2910.common.math.Vector2;
@@ -11,7 +10,6 @@ import org.frcteam2910.common.util.InterpolatingTreeMap;
 
 public class TargetWithShooterCommand extends CommandBase {
     private final ShooterSubsystem shooter;
-    private final DrivetrainSubsystem drivetrain;
     private final VisionSubsystem vision;
 
     private static final InterpolatingTreeMap<InterpolatingDouble, Vector2> SHOOTER_TUNING = new InterpolatingTreeMap<>();
@@ -42,9 +40,8 @@ public class TargetWithShooterCommand extends CommandBase {
                 new Vector2(Math.toRadians(33.0), Units.rotationsPerMinuteToRadiansPerSecond(2625)));
 
     }
-    public TargetWithShooterCommand(ShooterSubsystem shooter, DrivetrainSubsystem drivetrain, VisionSubsystem vision) {
+    public TargetWithShooterCommand(ShooterSubsystem shooter, VisionSubsystem vision) {
         this.shooter = shooter;
-        this.drivetrain = drivetrain;
         this.vision = vision;
 
         addRequirements(shooter);

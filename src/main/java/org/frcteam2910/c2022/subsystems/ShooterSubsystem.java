@@ -9,7 +9,6 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -84,8 +83,8 @@ public class ShooterSubsystem implements Subsystem {
         // () -> Math.toDegrees(hoodMotionFollower.getLastState().map(state ->
         // state.velocity).orElse(0.0)));
         shuffleboardTab.addNumber("Hood Voltage", () -> hoodVoltage);
-        shuffleboardTab.addBoolean("Is Hood at Angle", () -> isHoodAtTargetAngle());
-        shuffleboardTab.addBoolean("Is Flywheel at Speed", () -> isFlywheelAtTargetSpeed());
+        shuffleboardTab.addBoolean("Is Hood at Angle", this::isHoodAtTargetAngle);
+        shuffleboardTab.addBoolean("Is Flywheel at Speed", this::isFlywheelAtTargetSpeed);
 
         TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
         flywheelConfiguration.supplyCurrLimit.currentLimit = 20.0;
@@ -252,8 +251,8 @@ public class ShooterSubsystem implements Subsystem {
 
     @Override
     public void periodic() {
-        final double now = Timer.getFPGATimestamp();
-        final double dt = Robot.kDefaultPeriod;
+        // final double now = Timer.getFPGATimestamp();
+        // final double dt = Robot.kDefaultPeriod;
 
         if (isHoodZeroed) {
             // hoodVoltage = hoodMotionFollower.update(getHoodAngle(), now, dt);
