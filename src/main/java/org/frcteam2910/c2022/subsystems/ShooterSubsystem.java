@@ -1,5 +1,7 @@
 package org.frcteam2910.c2022.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.*;
@@ -9,6 +11,8 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
@@ -43,7 +47,7 @@ public class ShooterSubsystem implements Subsystem {
     private static final double FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT = FLYWHEEL_SENSOR_POSITION_COEFFICIENT * 10.0;
 
     private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Math.toRadians(450.0), Math.toRadians(2000));
+            Math.toRadians(450.0), Math.toRadians(2000.0));
     private static final MotionProfile.Constraints SLOW_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
             Math.toRadians(450.0), Math.toRadians(500.0));
 
@@ -63,6 +67,8 @@ public class ShooterSubsystem implements Subsystem {
     private boolean isHoodZeroed = false;
     private boolean flywheelDisabled = false;
     private double targetFlywheelSpeed;
+    private double shootingOffset = 0.0;
+    private NetworkTableEntry shooterRPMOffsetEntry;
 
     // private final MotionProfileFollower hoodMotionFollower = new
     // MotionProfileFollower(
@@ -85,13 +91,17 @@ public class ShooterSubsystem implements Subsystem {
         shuffleboardTab.addNumber("Hood Voltage", () -> hoodVoltage);
         shuffleboardTab.addBoolean("Is Hood at Angle", this::isHoodAtTargetAngle);
         shuffleboardTab.addBoolean("Is Flywheel at Speed", this::isFlywheelAtTargetSpeed);
+        shooterRPMOffsetEntry = Shuffleboard.getTab(Constants.DRIVER_READOUT_TAB_NAME)
+                .add(Constants.SHOOTER_OFFSET_ENTRY_NAME, 0.0).withWidget(BuiltInWidgets.kNumberSlider)
+                .withProperties(Map.of("min", -250.0, "max", 250.0, "Block increment", 25.0)).withPosition(2, 1)
+                .getEntry();
 
         TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
         flywheelConfiguration.supplyCurrLimit.currentLimit = 20.0;
         flywheelConfiguration.supplyCurrLimit.enable = false;
         flywheelConfiguration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor
                 .toFeedbackDevice();
-        flywheelConfiguration.slot0.kP = 0.1;
+        flywheelConfiguration.slot0.kP = 0.25;
         flywheelConfiguration.slot0.kI = 0.0;
         flywheelConfiguration.slot0.kD = 0.0;
 
@@ -109,9 +119,9 @@ public class ShooterSubsystem implements Subsystem {
         hoodConfiguration.motionAcceleration = FAST_MOTION_CONSTRAINTS.maxAcceleration
                 / HOOD_SENSOR_VELOCITY_COEFFICIENT;
         hoodConfiguration.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
-        hoodConfiguration.slot0.kP = 1.0;
+        hoodConfiguration.slot0.kP = 0.5;
         hoodConfiguration.slot0.kI = 0.0;
-        hoodConfiguration.slot0.kD = 0.5;
+        hoodConfiguration.slot0.kD = 0.0;
         hoodConfiguration.supplyCurrLimit.currentLimit = 50.0;
         hoodConfiguration.supplyCurrLimit.enable = true;
 
@@ -167,15 +177,21 @@ public class ShooterSubsystem implements Subsystem {
     }
 
     public boolean isHoodAtTargetAngle() {
+        return isHoodAtTargetAngle(false);
+    }
+
+    public boolean isHoodAtTargetAngle(boolean climbing) {
         if (Robot.isSimulation()) {
-            return Math.abs(getHoodTargetPosition() - hoodSim.getAngleRads()) < Constants.HOOD_ALLOWABLE_ERROR;
+            return Math.abs(getHoodTargetPosition() - hoodSim.getAngleRads()) < Constants.HOOD_SHOOTING_ALLOWABLE_ERROR;
+        } else if (climbing) {
+            return Math.abs(getHoodTargetPosition() - getHoodAngle()) < Constants.HOOD_CLIMBING_ALLOWABLE_ERROR;
         } else {
-            return Math.abs(getHoodTargetPosition() - getHoodAngle()) < Constants.HOOD_ALLOWABLE_ERROR;
+            return Math.abs(getHoodTargetPosition() - getHoodAngle()) < Constants.HOOD_SHOOTING_ALLOWABLE_ERROR;
         }
     }
 
     public void setTargetFlywheelSpeed(double targetFlywheelSpeed) {
-        this.targetFlywheelSpeed = targetFlywheelSpeed;
+        this.targetFlywheelSpeed = targetFlywheelSpeed + Units.rotationsPerMinuteToRadiansPerSecond(shootingOffset);
     }
 
     public double getTargetFlywheelSpeed() {
@@ -269,6 +285,8 @@ public class ShooterSubsystem implements Subsystem {
                     targetFlywheelSpeed / FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT, DemandType.ArbitraryFeedForward,
                     feedForward);
         }
+
+        shootingOffset = shooterRPMOffsetEntry.getDouble(0.0);
     }
 
     public void setFastHoodConfig(boolean fast) {

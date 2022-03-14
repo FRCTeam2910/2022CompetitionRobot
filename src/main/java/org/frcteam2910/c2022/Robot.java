@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
             new ZeroClimberCommand(robotContainer.getClimber()).schedule();
         }
         if (!robotContainer.getShooter().isHoodZeroed()) {
-            new ZeroHoodCommand(robotContainer.getShooter(), false).schedule();
+            new ZeroHoodCommand(robotContainer.getShooter(), true).schedule();
         }
     }
 

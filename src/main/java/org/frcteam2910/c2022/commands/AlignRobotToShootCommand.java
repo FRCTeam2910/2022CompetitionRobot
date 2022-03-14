@@ -16,7 +16,7 @@ public class AlignRobotToShootCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
     private final VisionSubsystem vision;
-    private final PidController controller = new PidController(new PidConstants(5.0, 0.0, 0.2));
+    private final PidController controller = new PidController(new PidConstants(5.0, 0.0, 0.3));
     private boolean targetSeen = false;
 
     private final DoubleSupplier xAxis;

@@ -11,7 +11,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         addCommands(new InstantCommand(shooter::disableFlywheel));
 
         // Prepare to transfer mid rung to hood
-        addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT)
+        addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_TRANSFER_HEIGHT)
                 .alongWith(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE)));
 
         // Transfer mid rung to hood
@@ -47,14 +47,14 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         SequentialCommandGroup group = new SequentialCommandGroup();
 
         // Angle the robot to extend the climber
-        group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE, false));
+        group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE, false, true));
         if (wait) {
             group.addCommands(new WaitCommand(0.5));
         }
         // Extend the climber slightly past the next rung
         group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_EXTEND_HEIGHT));
         // Angle the robot so the climber hooks will grab the next rung
-        group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_RETRACT_ANGLE, false));
+        group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_RETRACT_ANGLE, false, true));
 
         if (transversal) {
             group.addCommands(new WaitCommand(0.75));
@@ -64,7 +64,8 @@ public class AutoClimbCommand extends SequentialCommandGroup {
             // climber grabs onto the next rung
             group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT).alongWith(
                     new WaitUntilCommand(() -> climber.getCurrentHeight() < ClimberSubsystem.TRAVERSE_RUNG_HEIGHT)
-                            .andThen(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE))));
+                            .andThen(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE,
+                                    true, true))));
         }
 
         return group;

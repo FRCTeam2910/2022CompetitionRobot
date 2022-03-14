@@ -3,13 +3,13 @@ package org.frcteam2910.c2022.util;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import org.frcteam2910.c2022.Constants;
 import org.frcteam2910.c2022.RobotContainer;
 
 public class DriverReadout {
-    private static final String DASHBOARD_TAB_NAME = "Driver Readout";
 
     public DriverReadout(RobotContainer container) {
-        ShuffleboardTab tab = Shuffleboard.getTab(DASHBOARD_TAB_NAME);
+        ShuffleboardTab tab = Shuffleboard.getTab(Constants.DRIVER_READOUT_TAB_NAME);
 
         tab.addNumber("Pressure", () -> container.getSuperstructure().getCurrentPressure()).withSize(2, 2)
                 .withPosition(0, 0).withWidget(BuiltInWidgets.kDial);

@@ -54,7 +54,7 @@ public class VisionSubsystem implements Subsystem {
         tab.addNumber("center Y Pixels", () -> centerYPixels);
         tab.addNumber("center X Angle", () -> Math.toDegrees(centerXAngle));
         tab.addNumber("center Y Angle", () -> Math.toDegrees(centerYAngle));
-        tab.addBoolean("Is Vision on Target", () -> isOnTarget());
+        tab.addBoolean("Is Vision on Target", this::isOnTarget);
     }
 
     public double getDistanceToTarget() {
