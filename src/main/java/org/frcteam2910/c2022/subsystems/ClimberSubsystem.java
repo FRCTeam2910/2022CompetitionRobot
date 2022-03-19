@@ -45,7 +45,7 @@ public class ClimberSubsystem implements Subsystem {
     private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT * 10.0;
 
     private static final MotionProfile.Constraints MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Units.feetToMeters(3.0), Units.feetToMeters(8.0));
+            Units.feetToMeters(2.0), Units.feetToMeters(6.0));
 
     private final LinearSystem<N2, N1, N1> plant = LinearSystemId.identifyPositionSystem(VELOCITY_CONSTANT,
             ACCELERATION_CONSTANT);
