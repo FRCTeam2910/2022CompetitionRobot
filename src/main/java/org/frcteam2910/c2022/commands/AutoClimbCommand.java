@@ -61,10 +61,10 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         if (transversal) {
             group.addCommands(new WaitCommand(1.5));
             group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT));
+            group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_MIN_ANGLE));
         } else {
             // Retract the climber, and move the hood to the transfer position after the
             // climber grabs onto the next rung
-            group.addCommands(new WaitCommand(1.0));
             group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT).alongWith(
                     new WaitUntilCommand(() -> climber.getCurrentHeight() < ClimberSubsystem.TRAVERSE_RUNG_HEIGHT)
                             .andThen(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE,
