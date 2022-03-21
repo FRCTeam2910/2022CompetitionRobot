@@ -16,7 +16,7 @@ public class AlignRobotToShootCommand extends CommandBase {
 
     private final DrivetrainSubsystem drivetrain;
     private final VisionSubsystem vision;
-    private final PidController controller = new PidController(new PidConstants(5.0, 0.0, 0.2));
+    private final PidController controller = new PidController(new PidConstants(5.0, 0.0, 0.3));
     private boolean targetSeen = false;
 
     private final DoubleSupplier xAxis;
@@ -47,7 +47,6 @@ public class AlignRobotToShootCommand extends CommandBase {
     @Override
     public void execute() {
         if (targetSeen) {
-            double setPoint = Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getX());
             Rotation2d currentAngle = drivetrain.getPose().getRotation();
 
             controller.setSetpoint(vision.getAngleToTarget());

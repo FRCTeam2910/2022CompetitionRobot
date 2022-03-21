@@ -25,16 +25,16 @@ public class ClimberSubsystem implements Subsystem {
     public static final double MAX_HEIGHT = Units.inchesToMeters(39.05);
     public static final double MID_RUNG_HEIGHT = Units.inchesToMeters(36.55);
     public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(34.0);
-    public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(26.0);
+    public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(22.0);
     public static final double TRAVERSE_RUNG_HEIGHT = Units.inchesToMeters(25.0);
     public static final double HOOD_PASSAGE_HEIGHT = Units.inchesToMeters(10.25);
     public static final double HOOD_TRANSFER_HEIGHT = Units.inchesToMeters(6.25);
     public static final double MIN_HEIGHT = Units.feetToMeters(0.0);
 
     private static final DCMotor MOTOR = DCMotor.getFalcon500(2);
-    private static final double REDUCTION = (12.0 / 40.0) * (18.0 / 46.0) * (18.0 / 48.0);
+    private static final double REDUCTION = (16.0 / 36.0) * (20.0 / 44.0) * (18.0 / 48.0);
     private static final double MASS = Units.lbsToKilograms(60.0);
-    private static final double RADIUS = Units.inchesToMeters(0.91);
+    private static final double RADIUS = Units.inchesToMeters(0.90);
 
     private static final double VELOCITY_CONSTANT = 1.0 / (RADIUS * REDUCTION * MOTOR.KvRadPerSecPerVolt);
     private static final double ACCELERATION_CONSTANT = (MOTOR.rOhms * RADIUS * MASS * REDUCTION) / (MOTOR.KtNMPerAmp);
@@ -45,7 +45,7 @@ public class ClimberSubsystem implements Subsystem {
     private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT * 10.0;
 
     private static final MotionProfile.Constraints MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Units.feetToMeters(2.0), Units.feetToMeters(6.0));
+            Units.feetToMeters(3.0), Units.feetToMeters(8.0));
 
     private final LinearSystem<N2, N1, N1> plant = LinearSystemId.identifyPositionSystem(VELOCITY_CONSTANT,
             ACCELERATION_CONSTANT);
@@ -102,8 +102,10 @@ public class ClimberSubsystem implements Subsystem {
     public void periodic() {
         switch (mode) {
             case POSITION :
-                leftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
-                rightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                if (isClimberZeroed()) {
+                    leftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                    rightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                }
                 break;
             case VOLTAGE :
                 leftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
@@ -159,18 +161,10 @@ public class ClimberSubsystem implements Subsystem {
 
     public void setZeroPosition() {
         if (Robot.isReal()) {
-            leftMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.25) / SENSOR_POSITION_COEFFICIENT);
-            rightMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.25) / SENSOR_POSITION_COEFFICIENT);
+            leftMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
+            rightMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
         }
     }
-
-    // public void setFastClimberConfig(boolean fast){
-    // if(fast){
-    //
-    // } else {
-    //
-    // }
-    // }
 
     private enum Mode {
         POSITION, VOLTAGE

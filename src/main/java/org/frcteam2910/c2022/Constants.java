@@ -45,8 +45,12 @@ public class Constants {
     public static final int FLYWHEEL_SECONDARY_MOTOR_PORT = 9;
 
     public static final double HOOD_MANUAL_ADJUST_INTERVAL = Math.toRadians(0.5);
-    public static final double FLYWHEEL_MANUAL_ADJUST_INTERVAL = Units.rotationsPerMinuteToRadiansPerSecond(50.0);
+    public static final double FLYWHEEL_MANUAL_ADJUST_INTERVAL = Units.rotationsPerMinuteToRadiansPerSecond(25.0);
 
     public static final double HOOD_MOTOR_TO_HOOD_GEAR_RATIO = 1;
-    public static final double HOOD_ALLOWABLE_ERROR = Math.toRadians(0.5);
+    public static final double HOOD_SHOOTING_ALLOWABLE_ERROR = Math.toRadians(0.5);
+    public static final double HOOD_CLIMBING_ALLOWABLE_ERROR = Math.toRadians(1.0);
+
+    public static final String SHOOTER_OFFSET_ENTRY_NAME = "Shooting Offset";
+    public static final String DRIVER_READOUT_TAB_NAME = "Driver Readout";
 }

@@ -6,7 +6,7 @@ import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 public class SetHoodAngleCommand extends CommandBase {
     private final ShooterSubsystem shooter;
     private final double targetAngle;
-    private final boolean perpetual;
+    private final boolean climbing;
     private final boolean fast;
 
     public SetHoodAngleCommand(ShooterSubsystem shooter, double targetAngle) {
@@ -17,10 +17,10 @@ public class SetHoodAngleCommand extends CommandBase {
         this(shooter, targetAngle, fast, false);
     }
 
-    public SetHoodAngleCommand(ShooterSubsystem shooter, double targetAngle, boolean fast, boolean perpetual) {
+    public SetHoodAngleCommand(ShooterSubsystem shooter, double targetAngle, boolean fast, boolean climbing) {
         this.shooter = shooter;
         this.targetAngle = targetAngle;
-        this.perpetual = perpetual;
+        this.climbing = climbing;
         this.fast = fast;
 
         addRequirements(shooter);
@@ -34,6 +34,6 @@ public class SetHoodAngleCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return shooter.isHoodAtTargetAngle() && !perpetual;
+        return shooter.isHoodAtTargetAngle(climbing);
     }
 }
