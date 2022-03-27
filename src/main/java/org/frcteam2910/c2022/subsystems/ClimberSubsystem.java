@@ -22,17 +22,18 @@ import org.frcteam2910.common.math.MathUtils;
 import org.frcteam2910.common.motion.MotionProfile;
 
 public class ClimberSubsystem implements Subsystem {
-    public static final double MAX_HEIGHT = Units.inchesToMeters(39.05);
-    public static final double MID_RUNG_HEIGHT = Units.inchesToMeters(36.55);
-    public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(34.0);
-    public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(22.0);
-    public static final double TRAVERSE_RUNG_HEIGHT = Units.inchesToMeters(25.0);
-    public static final double HOOD_PASSAGE_HEIGHT = Units.inchesToMeters(10.25);
-    public static final double HOOD_TRANSFER_HEIGHT = Units.inchesToMeters(6.25);
+    public static final double HEIGHT_CHANGE = 6.75;
+    public static final double MAX_HEIGHT = Units.inchesToMeters(32.75);
+    public static final double MID_RUNG_HEIGHT = Units.inchesToMeters(30.0);
+    public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(27.25);
+    public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(15.25);
+    public static final double TRAVERSE_RUNG_HEIGHT = Units.inchesToMeters(18.25);
+    public static final double HOOD_PASSAGE_HEIGHT = Units.inchesToMeters(3.5);
+    public static final double HOOD_TRANSFER_HEIGHT = Units.inchesToMeters(-0.5);
     public static final double MIN_HEIGHT = Units.feetToMeters(0.0);
 
     private static final DCMotor MOTOR = DCMotor.getFalcon500(2);
-    private static final double REDUCTION = (16.0 / 36.0) * (20.0 / 44.0) * (18.0 / 48.0);
+    private static final double REDUCTION = (16.0 / 36.0) * (24.0 / 40.0) * (18.0 / 48.0);
     private static final double MASS = Units.lbsToKilograms(60.0);
     private static final double RADIUS = Units.inchesToMeters(0.90);
 
@@ -45,7 +46,7 @@ public class ClimberSubsystem implements Subsystem {
     private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT * 10.0;
 
     private static final MotionProfile.Constraints MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Units.feetToMeters(3.0), Units.feetToMeters(8.0));
+            Units.feetToMeters(4.0), Units.feetToMeters(8.0));
 
     private final LinearSystem<N2, N1, N1> plant = LinearSystemId.identifyPositionSystem(VELOCITY_CONSTANT,
             ACCELERATION_CONSTANT);
@@ -61,10 +62,11 @@ public class ClimberSubsystem implements Subsystem {
 
     public ClimberSubsystem() {
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Climber");
-        shuffleboardTab.addNumber("Target Height", () -> Units.metersToFeet(getTargetHeight()));
-        shuffleboardTab.addNumber("Height", () -> Units.metersToFeet(getCurrentHeight()));
-        shuffleboardTab.addNumber("Velocity", () -> Units.metersToFeet(getCurrentVelocity()));
+        shuffleboardTab.addNumber("Target Height", () -> Units.metersToInches(getTargetHeight()));
+        shuffleboardTab.addNumber("Height", () -> Units.metersToInches(getCurrentHeight()));
+        shuffleboardTab.addNumber("Velocity", () -> Units.metersToInches(getCurrentVelocity()));
         shuffleboardTab.addNumber("Voltage", () -> targetVoltage);
+        shuffleboardTab.addString("Mode", () -> mode.name());
 
         TalonFXConfiguration configuration = new TalonFXConfiguration();
         configuration.motionCruiseVelocity = MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT;
@@ -73,8 +75,8 @@ public class ClimberSubsystem implements Subsystem {
         configuration.slot0.kI = 0.0;
         configuration.slot0.kD = 0.0;
         configuration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-        configuration.supplyCurrLimit.currentLimit = 40.0;
-        configuration.supplyCurrLimit.enable = true;
+        // configuration.supplyCurrLimit.currentLimit = 100.0;
+        // configuration.supplyCurrLimit.enable = true;
         configuration.voltageCompSaturation = 12.0;
 
         leftMotor.configAllSettings(configuration);
@@ -122,7 +124,7 @@ public class ClimberSubsystem implements Subsystem {
     }
 
     public void setTargetHeight(double targetHeight) {
-        this.targetHeight = MathUtils.clamp(targetHeight, MIN_HEIGHT, MAX_HEIGHT);
+        this.targetHeight = MathUtils.clamp(targetHeight, Units.inchesToMeters(-10.0), MAX_HEIGHT);
         mode = Mode.POSITION;
     }
 

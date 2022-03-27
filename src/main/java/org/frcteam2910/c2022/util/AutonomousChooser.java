@@ -97,9 +97,9 @@ public class AutonomousChooser {
 
         // Grab the second ball and move to the shooting position
         // Zero the hood along the way
-        command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartOne(), () -> false, 0.25)
+        command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartOne())
                 .andThen(follow(container, trajectories.getThreeBallOrangePartTwo()))
-                .alongWith(new ZeroHoodCommand(container.getShooter(), true)));
+                .alongWith(new ZeroHoodCommand(container.getShooter(), true, true)));
 
         // Shoot the 1st and 2nd balls
         shootAtTarget(command, container, 1.5);

@@ -45,6 +45,7 @@ public class ShooterSubsystem implements Subsystem {
     private static final double FLYWHEEL_ACCELERATION_CONSTANT = 0.0030108;
     private static final double FLYWHEEL_SENSOR_POSITION_COEFFICIENT = (FLYWHEEL_GEAR_REDUCTION / 2048.0) * 2 * Math.PI;
     private static final double FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT = FLYWHEEL_SENSOR_POSITION_COEFFICIENT * 10.0;
+    public static final double FLYWHEEL_IDLE_SPEED = Units.rotationsPerMinuteToRadiansPerSecond(2000);
 
     private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
             Math.toRadians(450.0), Math.toRadians(2000.0));
