@@ -203,5 +203,4 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
                 states[3].angle.getRadians());
     }
-
 }
