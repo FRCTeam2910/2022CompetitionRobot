@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class ZeroHoodCommand extends CommandBase {
-    private static final double ZERO_HOOD_VELOCITY_TIME = 0.5; // in sec
+    private static final double ZERO_HOOD_VELOCITY_TIME = 0.25; // in sec
     private static final double HOOD_VOLTAGE = 1.5;
 
     private static final double HOOD_ALLOWABLE_ZERO_VELOCITY = Math.toRadians(0.1);

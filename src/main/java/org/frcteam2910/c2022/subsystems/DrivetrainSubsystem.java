@@ -42,7 +42,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public static final TrajectoryConstraint[] TRAJECTORY_CONSTRAINTS = {
             new FeedforwardConstraint(4.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(),
                     FEEDFORWARD_CONSTANTS.getAccelerationConstant(), false),
-            new MaxAccelerationConstraint(5.0), new CentripetalAccelerationConstraint(3.0)};
+            new MaxAccelerationConstraint(5.0), new CentripetalAccelerationConstraint(5.0)};
 
     private final HolonomicMotionProfiledTrajectoryFollower follower = new HolonomicMotionProfiledTrajectoryFollower(
             new PidConstants(5.0, 0.0, 0.0), new PidConstants(5.0, 0.0, 0.0),

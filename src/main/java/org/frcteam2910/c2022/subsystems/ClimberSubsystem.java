@@ -25,7 +25,7 @@ public class ClimberSubsystem implements Subsystem {
     public static final double HEIGHT_CHANGE = 6.75;
     public static final double MAX_HEIGHT = Units.inchesToMeters(32.75);
     public static final double MID_RUNG_HEIGHT = Units.inchesToMeters(30.0);
-    public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(27.25);
+    public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(28.0);
     public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(15.25);
     public static final double TRAVERSE_RUNG_HEIGHT = Units.inchesToMeters(18.25);
     public static final double HOOD_PASSAGE_HEIGHT = Units.inchesToMeters(3.5);
@@ -46,7 +46,7 @@ public class ClimberSubsystem implements Subsystem {
     private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT * 10.0;
 
     private static final MotionProfile.Constraints MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Units.feetToMeters(4.0), Units.feetToMeters(8.0));
+            Units.feetToMeters(5.0), Units.feetToMeters(9.0));
 
     private final LinearSystem<N2, N1, N1> plant = LinearSystemId.identifyPositionSystem(VELOCITY_CONSTANT,
             ACCELERATION_CONSTANT);
