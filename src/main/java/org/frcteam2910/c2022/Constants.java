@@ -49,7 +49,7 @@ public class Constants {
 
     public static final double HOOD_MOTOR_TO_HOOD_GEAR_RATIO = 1;
     public static final double HOOD_SHOOTING_ALLOWABLE_ERROR = Math.toRadians(0.5);
-    public static final double HOOD_CLIMBING_ALLOWABLE_ERROR = Math.toRadians(1.0);
+    public static final double HOOD_CLIMBING_ALLOWABLE_ERROR = Math.toRadians(1.5);
 
     public static final String SHOOTER_OFFSET_ENTRY_NAME = "Shooting Offset";
     public static final String DRIVER_READOUT_TAB_NAME = "Driver Readout";

@@ -106,13 +106,13 @@ public class AutonomousTrajectories {
 
         sixBallOrangePartFour = new Trajectory(
                 new SimplePathBuilder(new Vector2(-3.54, -2.314), Rotation2.fromDegrees(34.88))
-                        .lineTo(new Vector2(-6.743, -2.406), Rotation2.fromDegrees(-136.25)).build(),
+                        .lineTo(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-136.25)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         sixBallOrangePartFive = new Trajectory(
-                new SimplePathBuilder(new Vector2(-6.743, -2.406), Rotation2.fromDegrees(-136.25))
-                        .lineTo(new Vector2(-6.847, 0.576))
-                        .arcTo(new Vector2(-3.593, 2.667), new Vector2(-4.598, 0.654), Rotation2.fromDegrees(-34.34))
+                new SimplePathBuilder(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-136.25))
+                        .lineTo(new Vector2(-6.963, 0.638))
+                        .arcTo(new Vector2(-3.593, 2.667), new Vector2(-4.714, 0.717), Rotation2.fromDegrees(-34.34))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 

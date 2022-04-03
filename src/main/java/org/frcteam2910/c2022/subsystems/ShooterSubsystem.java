@@ -27,6 +27,7 @@ public class ShooterSubsystem implements Subsystem {
     public static final double HOOD_PREPARE_TRANSFER_ANGLE = Math.toRadians(84.2);
     public static final double HOOD_TRANSFER_ANGLE = Math.toRadians(76.4);
     public static final double HOOD_TRAVERSE_RETRACT_ANGLE = Math.toRadians(45.0);
+    public static final double HOOD_MID_TRAVERSE_ANGLE = Math.toRadians(60.0);
     public static final double HOOD_TRAVERSE_EXTEND_ANGLE = Math.toRadians(20.0);
     public static final double HOOD_MIN_ANGLE = Math.toRadians(0.0);
 
