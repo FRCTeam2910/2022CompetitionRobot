@@ -155,7 +155,7 @@ public class AutonomousChooser {
 
         // Grab the 4th ball and wait for the 5th
         command.addCommands(followAndIntake(container, trajectories.getSixBallOrangePartFour(),
-                () -> container.getFeeder().isFull(), 2.0));
+                () -> container.getFeeder().isFull(), 1.5));
 
         // Retract Intake
         command.addCommands(new InstantCommand(() -> container.getIntake().setExtended(false)));
