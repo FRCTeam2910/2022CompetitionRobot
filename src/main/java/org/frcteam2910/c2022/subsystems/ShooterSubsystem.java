@@ -143,7 +143,7 @@ public class ShooterSubsystem implements Subsystem {
         flywheelPrimaryMotor.setInverted(true);
         flywheelSecondaryMotor.setInverted(true);
 
-        flywheelSecondaryMotor.follow(flywheelPrimaryMotor);
+        // flywheelSecondaryMotor.follow(flywheelPrimaryMotor);
     }
 
     public double getHoodAngle() {
@@ -281,9 +281,13 @@ public class ShooterSubsystem implements Subsystem {
 
         if (flywheelDisabled) {
             flywheelPrimaryMotor.set(TalonFXControlMode.PercentOutput, 0.0);
+            flywheelSecondaryMotor.set(TalonFXControlMode.PercentOutput, 0.0);
         } else {
             double feedForward = FLYWHEEL_VELOCITY_CONSTANT * targetFlywheelSpeed / 12.0;
             flywheelPrimaryMotor.set(TalonFXControlMode.Velocity,
+                    targetFlywheelSpeed / FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT, DemandType.ArbitraryFeedForward,
+                    feedForward);
+            flywheelSecondaryMotor.set(TalonFXControlMode.Velocity,
                     targetFlywheelSpeed / FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT, DemandType.ArbitraryFeedForward,
                     feedForward);
         }
