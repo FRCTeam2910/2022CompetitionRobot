@@ -27,6 +27,7 @@ public class ShooterSubsystem implements Subsystem {
     public static final double HOOD_PREPARE_TRANSFER_ANGLE = Math.toRadians(84.2);
     public static final double HOOD_TRANSFER_ANGLE = Math.toRadians(76.4);
     public static final double HOOD_TRAVERSE_RETRACT_ANGLE = Math.toRadians(45.0);
+    public static final double HOOD_MID_TRAVERSE_ANGLE = Math.toRadians(60.0);
     public static final double HOOD_TRAVERSE_EXTEND_ANGLE = Math.toRadians(20.0);
     public static final double HOOD_MIN_ANGLE = Math.toRadians(0.0);
 
@@ -45,6 +46,7 @@ public class ShooterSubsystem implements Subsystem {
     private static final double FLYWHEEL_ACCELERATION_CONSTANT = 0.0030108;
     private static final double FLYWHEEL_SENSOR_POSITION_COEFFICIENT = (FLYWHEEL_GEAR_REDUCTION / 2048.0) * 2 * Math.PI;
     private static final double FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT = FLYWHEEL_SENSOR_POSITION_COEFFICIENT * 10.0;
+    public static final double FLYWHEEL_IDLE_SPEED = Units.rotationsPerMinuteToRadiansPerSecond(2000);
 
     private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
             Math.toRadians(450.0), Math.toRadians(2000.0));
@@ -141,7 +143,7 @@ public class ShooterSubsystem implements Subsystem {
         flywheelPrimaryMotor.setInverted(true);
         flywheelSecondaryMotor.setInverted(true);
 
-        flywheelSecondaryMotor.follow(flywheelPrimaryMotor);
+        // flywheelSecondaryMotor.follow(flywheelPrimaryMotor);
     }
 
     public double getHoodAngle() {
@@ -279,9 +281,13 @@ public class ShooterSubsystem implements Subsystem {
 
         if (flywheelDisabled) {
             flywheelPrimaryMotor.set(TalonFXControlMode.PercentOutput, 0.0);
+            flywheelSecondaryMotor.set(TalonFXControlMode.PercentOutput, 0.0);
         } else {
             double feedForward = FLYWHEEL_VELOCITY_CONSTANT * targetFlywheelSpeed / 12.0;
             flywheelPrimaryMotor.set(TalonFXControlMode.Velocity,
+                    targetFlywheelSpeed / FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT, DemandType.ArbitraryFeedForward,
+                    feedForward);
+            flywheelSecondaryMotor.set(TalonFXControlMode.Velocity,
                     targetFlywheelSpeed / FLYWHEEL_SENSOR_VELOCITY_COEFFICIENT, DemandType.ArbitraryFeedForward,
                     feedForward);
         }

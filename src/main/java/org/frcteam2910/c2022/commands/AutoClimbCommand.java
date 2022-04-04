@@ -22,8 +22,8 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         addCommands(transferToHood(climber, shooter));
         // Move from high rung to traverse rung
         addCommands(traverseToNextRung(climber, shooter, true));
-        // Transfer high rung to hood
-        // addCommands(transferToHood(climber, shooter));
+        // Transfer traverse rung to hood
+        addCommands(transferToHood(climber, shooter));
         // addCommands(new SetHoodAngleCommand(shooter,
         // ShooterSubsystem.HOOD_TRANSFER_ANGLE, true, true));
         addCommands(new WaitCommand(5).perpetually());
@@ -59,16 +59,20 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_RETRACT_ANGLE, false, true));
 
         if (transversal) {
-            group.addCommands(new WaitCommand(1.5));
-            group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT));
-            group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_MIN_ANGLE));
+            // group.addCommands(new ClimberToPointCommand(climber,
+            // ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT));
+            // group.addCommands(
+            // new WaitCommand(0.5).andThen(new SetHoodAngleCommand(shooter,
+            // ShooterSubsystem.HOOD_MIN_ANGLE)));
+            // group.addCommands(new InstantCommand(() -> climber.setTargetVoltage(0.0)));
+
+            group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT).alongWith(
+                    new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE, true, true)));
         } else {
             // Retract the climber, and move the hood to the transfer position after the
             // climber grabs onto the next rung
             group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT).alongWith(
-                    new WaitUntilCommand(() -> climber.getCurrentHeight() < ClimberSubsystem.TRAVERSE_RUNG_HEIGHT)
-                            .andThen(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE,
-                                    true, true))));
+                    new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE, true, true)));
         }
 
         return group;

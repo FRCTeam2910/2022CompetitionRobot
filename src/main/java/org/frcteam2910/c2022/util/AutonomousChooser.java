@@ -19,13 +19,14 @@ public class AutonomousChooser {
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
 
-        autonomousModeChooser.setDefaultOption("Fender (Blue)", AutonomousMode.FENDER_BLUE);
+        autonomousModeChooser.setDefaultOption("Five Ball (Orange)", AutonomousMode.FIVE_BALL_ORANGE);
         autonomousModeChooser.addOption("Test Auto", AutonomousMode.TEST_AUTO);
         autonomousModeChooser.addOption("Fender (Red)", AutonomousMode.FENDER_RED);
         autonomousModeChooser.addOption("Two Ball (Green)", AutonomousMode.TWO_BALL_GREEN);
         autonomousModeChooser.addOption("Two Ball (Purple)", AutonomousMode.TWO_BALL_PURPLE);
         autonomousModeChooser.addOption("Three Ball (Orange)", AutonomousMode.THREE_BALL_ORANGE);
         autonomousModeChooser.addOption("Five Ball (Orange)", AutonomousMode.FIVE_BALL_ORANGE);
+        autonomousModeChooser.addOption("Six Ball (Orange)", AutonomousMode.SIX_BALL_ORANGE);
     }
 
     public SendableChooser<AutonomousMode> getModeChooser() {
@@ -97,9 +98,9 @@ public class AutonomousChooser {
 
         // Grab the second ball and move to the shooting position
         // Zero the hood along the way
-        command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartOne(), () -> false, 0.25)
+        command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartOne())
                 .andThen(follow(container, trajectories.getThreeBallOrangePartTwo()))
-                .alongWith(new ZeroHoodCommand(container.getShooter(), true)));
+                .alongWith(new ZeroHoodCommand(container.getShooter(), true, true)));
 
         // Shoot the 1st and 2nd balls
         shootAtTarget(command, container, 1.5);
@@ -132,6 +133,49 @@ public class AutonomousChooser {
         return command;
     }
 
+    public Command get6BallOrangeAuto(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectories.getSixBallOrangePartOne());
+
+        // Grab the second ball and move to the shooting position
+        // Zero the hood along the way
+        command.addCommands(followAndIntake(container, trajectories.getSixBallOrangePartOne())
+                .andThen(follow(container, trajectories.getSixBallOrangePartTwo()))
+                .alongWith(new ZeroHoodCommand(container.getShooter(), true, true)));
+
+        // Shoot the 1st and 2nd balls
+        shootAtTarget(command, container, 1.5);
+
+        // Grab the 3rd ball
+        command.addCommands(followAndIntake(container, trajectories.getSixBallOrangePartThree()));
+
+        // Shoot the 3rd ball
+        shootAtTarget(command, container, 1.0);
+
+        // Grab the 4th ball and wait for the 5th
+        command.addCommands(followAndIntake(container, trajectories.getSixBallOrangePartFour(),
+                () -> container.getFeeder().isFull(), 1.5));
+
+        // Retract Intake
+        command.addCommands(new InstantCommand(() -> container.getIntake().setExtended(false)));
+
+        // Pass through the hangar to the 6th
+        command.addCommands(follow(container, trajectories.getSixBallOrangePartFive()));
+        command.addCommands(new InstantCommand(() -> container.getIntake().setExtended(true)));
+
+        // Shoot 4th and 5th
+        shootAtTarget(command, container, 1.5);
+
+        // Intake 6th
+        command.addCommands(followAndIntake(container, trajectories.getSixBallOrangePartSix()));
+
+        // Shoot 6th
+        shootAtTarget(command, container, 1.5);
+
+        return command;
+    }
+
     public Command getCommand(RobotContainer container) {
         switch (autonomousModeChooser.getSelected()) {
             case TEST_AUTO :
@@ -148,6 +192,8 @@ public class AutonomousChooser {
                 return get3BallOrangeAuto(container);
             case FIVE_BALL_ORANGE :
                 return get5BallOrangeAuto(container);
+            case SIX_BALL_ORANGE :
+                return get6BallOrangeAuto(container);
         }
         return new InstantCommand();
     }
@@ -183,6 +229,6 @@ public class AutonomousChooser {
     }
 
     private enum AutonomousMode {
-        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_GREEN, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FIVE_BALL_ORANGE
+        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_GREEN, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FIVE_BALL_ORANGE, SIX_BALL_ORANGE
     }
 }
