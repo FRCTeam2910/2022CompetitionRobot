@@ -87,7 +87,7 @@ public class RobotContainer {
                 .whenPressed(new ClimberToPointCommand(climber, ClimberSubsystem.MIN_HEIGHT));
         new Button(controller::getBackButton).whenPressed(drivetrain::zeroRotation);
         new Button(controller::getStartButton).whenPressed(new AutoClimbCommand(climber, shooter));
-        //// manual hood adjustment - 0: up, 180: down
+        // // manual hood adjustment - 0: up, 180: down
         // new Button(() -> controller.getPOV() == 180.0).whenPressed(() ->
         // shooter.setHoodTargetPosition(
         // shooter.getHoodTargetPosition() - Constants.HOOD_MANUAL_ADJUST_INTERVAL)
@@ -98,7 +98,7 @@ public class RobotContainer {
         // shooter.getHoodTargetPosition() + Constants.HOOD_MANUAL_ADJUST_INTERVAL)
         // );
         //
-        //// //manual flywheel adjustment - 90: right, 270: left
+        // // //manual flywheel adjustment - 90: right, 270: left
         // new Button(() -> controller.getPOV() == 90.0).whenPressed(() ->
         // shooter.setTargetFlywheelSpeed(
         // shooter.getTargetFlywheelSpeed() + Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)

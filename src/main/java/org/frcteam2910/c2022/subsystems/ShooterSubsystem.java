@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.c2022.Constants;
 import org.frcteam2910.c2022.Robot;
+import org.frcteam2910.common.math.MathUtils;
 import org.frcteam2910.common.motion.MotionProfile;
 
 public class ShooterSubsystem implements Subsystem {
@@ -27,8 +28,8 @@ public class ShooterSubsystem implements Subsystem {
     public static final double HOOD_PREPARE_TRANSFER_ANGLE = Math.toRadians(84.2);
     public static final double HOOD_TRANSFER_ANGLE = Math.toRadians(76.4);
     public static final double HOOD_TRAVERSE_RETRACT_ANGLE = Math.toRadians(45.0);
-    public static final double HOOD_MID_TRAVERSE_ANGLE = Math.toRadians(60.0);
-    public static final double HOOD_TRAVERSE_EXTEND_ANGLE = Math.toRadians(20.0);
+    public static final double HOOD_TRAVERSE_EXTEND_ANGLE_HIGH = Math.toRadians(20.0);
+    public static final double HOOD_TRAVERSE_EXTEND_ANGLE_TRANVERSE = Math.toRadians(25.0);
     public static final double HOOD_MIN_ANGLE = Math.toRadians(0.0);
 
     private static final double HOOD_MOMENT_OF_INERTIA = Units.lbsToKilograms(Units.inchesToMeters(450));
@@ -70,7 +71,9 @@ public class ShooterSubsystem implements Subsystem {
     private boolean flywheelDisabled = false;
     private double targetFlywheelSpeed;
     private double shootingOffset = 0.0;
-    private NetworkTableEntry shooterRPMOffsetEntry;
+    private double angleOffset = 0.0;
+    private final NetworkTableEntry shooterRPMOffsetEntry;
+    private final NetworkTableEntry hoodAngleOffsetEntry;
 
     // private final MotionProfileFollower hoodMotionFollower = new
     // MotionProfileFollower(
@@ -96,6 +99,10 @@ public class ShooterSubsystem implements Subsystem {
         shooterRPMOffsetEntry = Shuffleboard.getTab(Constants.DRIVER_READOUT_TAB_NAME)
                 .add(Constants.SHOOTER_OFFSET_ENTRY_NAME, 0.0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withProperties(Map.of("min", -250.0, "max", 250.0, "Block increment", 25.0)).withPosition(2, 1)
+                .getEntry();
+        hoodAngleOffsetEntry = Shuffleboard.getTab(Constants.DRIVER_READOUT_TAB_NAME)
+                .add(Constants.HOOD_OFFSET_ENTRY_NAME, 0.0).withWidget(BuiltInWidgets.kNumberSlider)
+                .withProperties(Map.of("min", -10.0, "max", 10.0, "Block increment", 0.5)).withPosition(2, 2)
                 .getEntry();
 
         TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
@@ -213,7 +220,16 @@ public class ShooterSubsystem implements Subsystem {
     }
 
     public void setHoodTargetPosition(double position) {
-        hoodTargetAngle = position;
+        setHoodTargetPosition(position, false);
+    }
+
+    public void setHoodTargetPosition(double position, boolean offset) {
+        if (!offset) {
+            hoodTargetAngle = MathUtils.clamp(position, HOOD_MIN_ANGLE, HOOD_MAX_ANGLE);
+        } else {
+            hoodTargetAngle = MathUtils.clamp(position + Units.degreesToRadians(angleOffset), HOOD_MIN_ANGLE,
+                    HOOD_MAX_ANGLE);
+        }
         // double startingPosition = hoodMotionFollower.getLastState().map(state ->
         // state.position).orElse(getHoodAngle());
         // double startingVelocity = hoodMotionFollower.getLastState().map(state ->
@@ -293,6 +309,7 @@ public class ShooterSubsystem implements Subsystem {
         }
 
         shootingOffset = shooterRPMOffsetEntry.getDouble(0.0);
+        angleOffset = hoodAngleOffsetEntry.getDouble(0.0);
     }
 
     public void setFastHoodConfig(boolean fast) {
