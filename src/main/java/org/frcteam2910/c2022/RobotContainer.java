@@ -3,6 +3,7 @@ package org.frcteam2910.c2022;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
@@ -78,7 +79,7 @@ public class RobotContainer {
         new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, vision)
                 .alongWith(
                         new AlignRobotToShootCommand(drivetrain, vision, this::getForwardInput, this::getStrafeInput))
-                .alongWith(new ShootWhenReadyCommand(feeder, shooter, vision)));
+                .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
         new Button(() -> controller.getPOV() == 0).whenPressed(new ConditionalCommand(
                 new ClimberToPointCommand(climber, ClimberSubsystem.MID_RUNG_HEIGHT),
                 new ClimberToPointCommand(climber, ClimberSubsystem.MAX_HEIGHT), () -> climber
