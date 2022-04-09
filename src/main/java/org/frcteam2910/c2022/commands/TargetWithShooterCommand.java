@@ -51,27 +51,27 @@ public class TargetWithShooterCommand extends CommandBase {
         // Units.rotationsPerMinuteToRadiansPerSecond(2575)));
 
         SHOOTER_TUNING.put(new InterpolatingDouble(1.0),
-                new Vector2(Math.toRadians(4.5), Units.rotationsPerMinuteToRadiansPerSecond(1700)));
+                new Vector2(Math.toRadians(7.0), Units.rotationsPerMinuteToRadiansPerSecond(1725)));
         SHOOTER_TUNING.put(new InterpolatingDouble(1.5),
-                new Vector2(Math.toRadians(7.0), Units.rotationsPerMinuteToRadiansPerSecond(1700)));
+                new Vector2(Math.toRadians(9.5), Units.rotationsPerMinuteToRadiansPerSecond(1725)));
         SHOOTER_TUNING.put(new InterpolatingDouble(2.0),
-                new Vector2(Math.toRadians(9.0), Units.rotationsPerMinuteToRadiansPerSecond(1725)));
+                new Vector2(Math.toRadians(11.5), Units.rotationsPerMinuteToRadiansPerSecond(1750)));
         SHOOTER_TUNING.put(new InterpolatingDouble(2.5),
-                new Vector2(Math.toRadians(11.0), Units.rotationsPerMinuteToRadiansPerSecond(1800)));
+                new Vector2(Math.toRadians(13.5), Units.rotationsPerMinuteToRadiansPerSecond(1825)));
         SHOOTER_TUNING.put(new InterpolatingDouble(3.0),
-                new Vector2(Math.toRadians(13.5), Units.rotationsPerMinuteToRadiansPerSecond(1875)));
+                new Vector2(Math.toRadians(16.0), Units.rotationsPerMinuteToRadiansPerSecond(1900)));
         SHOOTER_TUNING.put(new InterpolatingDouble(3.5),
-                new Vector2(Math.toRadians(16.0), Units.rotationsPerMinuteToRadiansPerSecond(1975)));
+                new Vector2(Math.toRadians(18.5), Units.rotationsPerMinuteToRadiansPerSecond(2000)));
         SHOOTER_TUNING.put(new InterpolatingDouble(4.0),
-                new Vector2(Math.toRadians(19.0), Units.rotationsPerMinuteToRadiansPerSecond(2075)));
+                new Vector2(Math.toRadians(21.5), Units.rotationsPerMinuteToRadiansPerSecond(2100)));
         SHOOTER_TUNING.put(new InterpolatingDouble(4.5),
-                new Vector2(Math.toRadians(21.5), Units.rotationsPerMinuteToRadiansPerSecond(2150)));
+                new Vector2(Math.toRadians(24.0), Units.rotationsPerMinuteToRadiansPerSecond(2175)));
         SHOOTER_TUNING.put(new InterpolatingDouble(5.0),
-                new Vector2(Math.toRadians(23.0), Units.rotationsPerMinuteToRadiansPerSecond(2250)));
+                new Vector2(Math.toRadians(25.5), Units.rotationsPerMinuteToRadiansPerSecond(2275)));
         SHOOTER_TUNING.put(new InterpolatingDouble(5.5),
-                new Vector2(Math.toRadians(25.0), Units.rotationsPerMinuteToRadiansPerSecond(2375)));
+                new Vector2(Math.toRadians(27.5), Units.rotationsPerMinuteToRadiansPerSecond(2400)));
         SHOOTER_TUNING.put(new InterpolatingDouble(6.0),
-                new Vector2(Math.toRadians(27.5), Units.rotationsPerMinuteToRadiansPerSecond(2450)));
+                new Vector2(Math.toRadians(30.0), Units.rotationsPerMinuteToRadiansPerSecond(2475)));
 
     }
     public TargetWithShooterCommand(ShooterSubsystem shooter, VisionSubsystem vision) {
