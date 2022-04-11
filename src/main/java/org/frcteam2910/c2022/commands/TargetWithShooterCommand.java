@@ -2,6 +2,7 @@ package org.frcteam2910.c2022.commands;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.frcteam2910.c2022.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 import org.frcteam2910.c2022.subsystems.VisionSubsystem;
 import org.frcteam2910.common.math.Vector2;
@@ -11,6 +12,7 @@ import org.frcteam2910.common.util.InterpolatingTreeMap;
 public class TargetWithShooterCommand extends CommandBase {
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
+    private final DrivetrainSubsystem drivetrain;
 
     private static final InterpolatingTreeMap<InterpolatingDouble, Vector2> SHOOTER_TUNING = new InterpolatingTreeMap<>();
 
@@ -74,7 +76,8 @@ public class TargetWithShooterCommand extends CommandBase {
                 new Vector2(Math.toRadians(30.0), Units.rotationsPerMinuteToRadiansPerSecond(2475)));
 
     }
-    public TargetWithShooterCommand(ShooterSubsystem shooter, VisionSubsystem vision) {
+    public TargetWithShooterCommand(ShooterSubsystem shooter, VisionSubsystem vision, DrivetrainSubsystem drivetrain) {
+        this.drivetrain = drivetrain;
         this.shooter = shooter;
         this.vision = vision;
 
@@ -84,7 +87,8 @@ public class TargetWithShooterCommand extends CommandBase {
     @Override
     public void execute() {
         // double distance = drivetrain.getPose().getTranslation().getNorm();
-        double distance = vision.getDistanceToTarget();
+        double distance = vision.getDistanceToTarget()
+                - (drivetrain.getHubDistanceMovingOffset() - vision.getDistanceToTarget());
         Vector2 angleAndSpeed = SHOOTER_TUNING.getInterpolated(new InterpolatingDouble(distance));
 
         shooter.setTargetFlywheelSpeed(angleAndSpeed.y);

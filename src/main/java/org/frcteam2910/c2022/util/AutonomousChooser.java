@@ -250,11 +250,12 @@ public class AutonomousChooser {
     }
 
     private void shootAtTarget(SequentialCommandGroup command, RobotContainer container, double timeToWait) {
-        command.addCommands(new TargetWithShooterCommand(container.getShooter(), container.getVision())
-                .alongWith(new AlignRobotToShootCommand(container.getDrivetrain(), container.getVision()))
-                .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getFeeder(),
-                        container.getShooter(), container.getVision())))
-                .withTimeout(timeToWait));
+        command.addCommands(
+                new TargetWithShooterCommand(container.getShooter(), container.getVision(), container.getDrivetrain())
+                        .alongWith(new AlignRobotToShootCommand(container.getDrivetrain(), container.getVision()))
+                        .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getFeeder(),
+                                container.getShooter(), container.getVision())))
+                        .withTimeout(timeToWait));
     }
 
     private Command follow(RobotContainer container, Trajectory trajectory) {
