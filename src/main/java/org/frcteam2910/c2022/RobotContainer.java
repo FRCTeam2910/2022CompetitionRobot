@@ -3,6 +3,7 @@ package org.frcteam2910.c2022;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
@@ -78,7 +79,7 @@ public class RobotContainer {
         new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, vision)
                 .alongWith(
                         new AlignRobotToShootCommand(drivetrain, vision, this::getForwardInput, this::getStrafeInput))
-                .alongWith(new ShootWhenReadyCommand(feeder, shooter, vision)));
+                .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
         new Button(() -> controller.getPOV() == 0).whenPressed(new ConditionalCommand(
                 new ClimberToPointCommand(climber, ClimberSubsystem.MID_RUNG_HEIGHT),
                 new ClimberToPointCommand(climber, ClimberSubsystem.MAX_HEIGHT), () -> climber
@@ -87,7 +88,7 @@ public class RobotContainer {
                 .whenPressed(new ClimberToPointCommand(climber, ClimberSubsystem.MIN_HEIGHT));
         new Button(controller::getBackButton).whenPressed(drivetrain::zeroRotation);
         new Button(controller::getStartButton).whenPressed(new AutoClimbCommand(climber, shooter));
-        //// manual hood adjustment - 0: up, 180: down
+        // // manual hood adjustment - 0: up, 180: down
         // new Button(() -> controller.getPOV() == 180.0).whenPressed(() ->
         // shooter.setHoodTargetPosition(
         // shooter.getHoodTargetPosition() - Constants.HOOD_MANUAL_ADJUST_INTERVAL)
@@ -98,7 +99,7 @@ public class RobotContainer {
         // shooter.getHoodTargetPosition() + Constants.HOOD_MANUAL_ADJUST_INTERVAL)
         // );
         //
-        //// //manual flywheel adjustment - 90: right, 270: left
+        // // //manual flywheel adjustment - 90: right, 270: left
         // new Button(() -> controller.getPOV() == 90.0).whenPressed(() ->
         // shooter.setTargetFlywheelSpeed(
         // shooter.getTargetFlywheelSpeed() + Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)

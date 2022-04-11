@@ -26,7 +26,7 @@ public class ClimberSubsystem implements Subsystem {
     public static final double MAX_HEIGHT = Units.inchesToMeters(32.75);
     public static final double MID_RUNG_HEIGHT = Units.inchesToMeters(30.0);
     public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(28.0);
-    public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(12.0);
+    public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(20.0);
     public static final double TRAVERSE_RUNG_HEIGHT = Units.inchesToMeters(18.25);
     public static final double HOOD_PASSAGE_HEIGHT = Units.inchesToMeters(3.5);
     public static final double HOOD_TRANSFER_HEIGHT = Units.inchesToMeters(-0.5);
@@ -45,8 +45,10 @@ public class ClimberSubsystem implements Subsystem {
     private static final double SENSOR_POSITION_COEFFICIENT = REDUCTION * RADIUS * 2 * Math.PI / 2048.0;
     private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT * 10.0;
 
-    private static final MotionProfile.Constraints MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Units.feetToMeters(4.0), Units.feetToMeters(8.0));
+    private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
+            Units.feetToMeters(6.0), Units.feetToMeters(12.0));
+    private static final MotionProfile.Constraints SLOW_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
+            Units.feetToMeters(3.0), Units.feetToMeters(6.0));
 
     private final LinearSystem<N2, N1, N1> plant = LinearSystemId.identifyPositionSystem(VELOCITY_CONSTANT,
             ACCELERATION_CONSTANT);
@@ -69,8 +71,8 @@ public class ClimberSubsystem implements Subsystem {
         shuffleboardTab.addString("Mode", () -> mode.name());
 
         TalonFXConfiguration configuration = new TalonFXConfiguration();
-        configuration.motionCruiseVelocity = MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT;
-        configuration.motionAcceleration = MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT;
+        configuration.motionCruiseVelocity = FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT;
+        configuration.motionAcceleration = FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT;
         configuration.slot0.kP = 0.25;
         configuration.slot0.kI = 0.0;
         configuration.slot0.kD = 0.0;
@@ -165,6 +167,20 @@ public class ClimberSubsystem implements Subsystem {
         if (Robot.isReal()) {
             leftMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
             rightMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
+        }
+    }
+
+    public void setFastClimberConstraints(boolean fast) {
+        if (fast) {
+            leftMotor.configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            leftMotor.configMotionAcceleration(FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            rightMotor.configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            rightMotor.configMotionAcceleration(FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+        } else {
+            leftMotor.configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            leftMotor.configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            rightMotor.configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            rightMotor.configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
         }
     }
 
