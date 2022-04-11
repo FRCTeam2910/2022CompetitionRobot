@@ -27,6 +27,7 @@ public class AutonomousTrajectories {
     private final Trajectory sixBallOrangePartFour;
     private final Trajectory sixBallOrangePartFive;
     private final Trajectory sixBallOrangePartSix;
+    private final Trajectory twoBallDefensivePartOne;
 
     public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints) {
         testAutoPartOne = new Trajectory(
@@ -122,6 +123,11 @@ public class AutonomousTrajectories {
                 new SimplePathBuilder(new Vector2(-3.593, 2.667), Rotation2.fromDegrees(-34.34))
                         .lineTo(new Vector2(-3.031, 2.25)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
+
+        twoBallDefensivePartOne = new Trajectory(
+                new SimplePathBuilder(new Vector2(0.0, 0.0), Rotation2.fromDegrees(0.0)).lineTo(new Vector2(0.0, 0.0))
+                        .build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
     }
 
     public Trajectory getTestAutoPartOne() {
@@ -186,5 +192,9 @@ public class AutonomousTrajectories {
 
     public Trajectory getSixBallOrangePartSix() {
         return sixBallOrangePartSix;
+    }
+
+    public Trajectory getTwoBallDefensivePartOne() {
+        return twoBallDefensivePartOne;
     }
 }

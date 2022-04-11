@@ -27,6 +27,7 @@ public class AutonomousChooser {
         autonomousModeChooser.addOption("Three Ball (Orange)", AutonomousMode.THREE_BALL_ORANGE);
         autonomousModeChooser.addOption("Five Ball (Orange)", AutonomousMode.FIVE_BALL_ORANGE);
         autonomousModeChooser.addOption("Six Ball (Orange)", AutonomousMode.SIX_BALL_ORANGE);
+        autonomousModeChooser.addOption("Two Ball (Defensive)", AutonomousMode.TWO_BALL_DEFENSIVE);
     }
 
     public SendableChooser<AutonomousMode> getModeChooser() {
@@ -176,6 +177,14 @@ public class AutonomousChooser {
         return command;
     }
 
+    public Command get2BallDefensiveAuto(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectories.getTwoBallDefensivePartOne());
+
+        return command;
+    }
+
     public Command getCommand(RobotContainer container) {
         switch (autonomousModeChooser.getSelected()) {
             case TEST_AUTO :
@@ -194,6 +203,8 @@ public class AutonomousChooser {
                 return get5BallOrangeAuto(container);
             case SIX_BALL_ORANGE :
                 return get6BallOrangeAuto(container);
+            case TWO_BALL_DEFENSIVE :
+                return get2BallDefensiveAuto(container);
         }
         return new InstantCommand();
     }
@@ -229,6 +240,6 @@ public class AutonomousChooser {
     }
 
     private enum AutonomousMode {
-        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_GREEN, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FIVE_BALL_ORANGE, SIX_BALL_ORANGE
+        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_GREEN, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FIVE_BALL_ORANGE, SIX_BALL_ORANGE, TWO_BALL_DEFENSIVE
     }
 }
