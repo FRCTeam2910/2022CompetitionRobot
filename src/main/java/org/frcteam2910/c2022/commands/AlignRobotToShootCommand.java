@@ -49,7 +49,8 @@ public class AlignRobotToShootCommand extends CommandBase {
         if (targetSeen) {
             Rotation2d currentAngle = drivetrain.getPose().getRotation();
 
-            controller.setSetpoint(vision.getAngleToTarget());
+            controller.setSetpoint(
+                    vision.getAngleToTarget() - (drivetrain.getHubRotationMovingOffset() - vision.getAngleToTarget()));
             double rotationalVelocity = controller.calculate(currentAngle.getRadians(), Robot.kDefaultPeriod);
             rotationalVelocity += Math.copySign(ROTATION_STATIC_CONSTANT / DrivetrainSubsystem.MAX_VOLTAGE
                     * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND, rotationalVelocity);

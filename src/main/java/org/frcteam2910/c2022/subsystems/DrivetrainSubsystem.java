@@ -70,6 +70,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule backLeftModule;
     private final SwerveModule backRightModule;
 
+    private double movingDistanceToHubX;
+    private double movingDistanceToHubY;
+
     private ChassisSpeeds currentVelocity = new ChassisSpeeds();
 
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
@@ -123,6 +126,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
             return Units.metersToFeet(lastState.getVelocity());
         });
         tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
+        tab.addNumber("Moving distance offset", this::getHubDistanceMovingOffset);
+        tab.addNumber("Moving rotation offset", this::getHubRotationMovingOffset);
 
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel,
@@ -223,5 +228,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 states[2].angle.getRadians());
         backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
                 states[3].angle.getRadians());
+
+        double distanceToHubX = estimator.getEstimatedPosition().getX() * -1;
+        double distanceToHubY = estimator.getEstimatedPosition().getY() * -1;
+        movingDistanceToHubX = distanceToHubX + (CARGO_TIME_IN_AIR * chassisSpeeds.vxMetersPerSecond);
+        movingDistanceToHubY = distanceToHubY + (CARGO_TIME_IN_AIR * chassisSpeeds.vyMetersPerSecond);
+    }
+
+    public double getHubDistanceMovingOffset() {
+        return Math.hypot(movingDistanceToHubX, movingDistanceToHubY);
+    }
+
+    public double getHubRotationMovingOffset() {
+        return Units.radiansToDegrees(Math.atan2(movingDistanceToHubY, movingDistanceToHubX));
     }
 }

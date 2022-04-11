@@ -56,4 +56,6 @@ public class Constants {
     public static final String SHOOTER_OFFSET_ENTRY_NAME = "Shooting Offset";
     public static final String HOOD_OFFSET_ENTRY_NAME = "Hood Offset";
     public static final String DRIVER_READOUT_TAB_NAME = "Driver Readout";
+
+    public static final double CARGO_TIME_IN_AIR = 1.25;
 }

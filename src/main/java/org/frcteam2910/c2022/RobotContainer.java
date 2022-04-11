@@ -78,7 +78,7 @@ public class RobotContainer {
         new Button(controller::getXButton).whenPressed(new ZeroHoodCommand(shooter, true));
         new Button(controller::getAButton).whileHeld(new ManualFeedToShooterCommand(feeder));
         new Button(() -> controller.getLeftTriggerAxis() > 0.5).whenPressed(new ResetFeederCommand(feeder, intake));
-        new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, vision)
+        new Button(controller::getRightBumper).whileHeld(new TargetWithShooterCommand(shooter, vision, drivetrain)
                 .alongWith(
                         new AlignRobotToShootCommand(drivetrain, vision, this::getForwardInput, this::getStrafeInput))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
