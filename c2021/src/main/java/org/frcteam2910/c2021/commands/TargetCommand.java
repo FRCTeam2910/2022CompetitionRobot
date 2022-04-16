@@ -1,42 +1,39 @@
-package org.frcteam2910.c2022.commands;
+package org.frcteam2910.c2021.commands;
 
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.frcteam2910.c2022.subsystems.DrivetrainSubsystem;
-import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
-import org.frcteam2910.c2022.util.DriverReadout;
+import org.frcteam2910.c2021.DriverReadout;
+import org.frcteam2910.c2021.subsystems.DrivetrainSubsystem;
 import org.frcteam2910.visionlib.TargetingSolver;
 import org.littletonrobotics.subsystems.Vision;
 
 public class TargetCommand extends CommandBase {
+
     private final DrivetrainSubsystem drivetrain;
-    private final ShooterSubsystem shooter;
     private final Vision vision;
     private final TargetingSolver targetingSolver;
     private final DriverReadout driverReadout;
     private final DoubleSupplier forwardSupplier;
     private final DoubleSupplier strafeSupplier;
 
-    public TargetCommand(DrivetrainSubsystem drivetrain, ShooterSubsystem shooter, Vision vision,
-            TargetingSolver targetingSolver, DriverReadout driverReadout, DoubleSupplier forwardSupplier,
-            DoubleSupplier strafeSupplier) {
+    public TargetCommand(DrivetrainSubsystem drivetrain, Vision vision, TargetingSolver targetingSolver,
+            DriverReadout driverReadout, DoubleSupplier forwardSupplier, DoubleSupplier strafeSupplier) {
         this.drivetrain = drivetrain;
-        this.shooter = shooter;
         this.vision = vision;
         this.targetingSolver = targetingSolver;
         this.driverReadout = driverReadout;
         this.forwardSupplier = forwardSupplier;
         this.strafeSupplier = strafeSupplier;
 
-        addRequirements(drivetrain, shooter, vision);
+        addRequirements(drivetrain, vision);
     }
 
-    public TargetCommand(DrivetrainSubsystem drivetrain, ShooterSubsystem shooter, Vision vision,
-            TargetingSolver targetingSolver, DriverReadout driverReadout) {
-        this(drivetrain, shooter, vision, targetingSolver, driverReadout, () -> 0.0, () -> 0.0);
+    public TargetCommand(DrivetrainSubsystem drivetrain, Vision vision, TargetingSolver targetingSolver,
+            DriverReadout driverReadout) {
+        this(drivetrain, vision, targetingSolver, driverReadout, () -> 0.0, () -> 0.0);
     }
 
     @Override
@@ -65,8 +62,6 @@ public class TargetCommand extends CommandBase {
         drivetrain.setTargetVelocityAndRotation(
                 ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, 0.0, currentPose.getRotation()),
                 solution.rotation);
-        shooter.setHoodTargetPosition(solution.hoodAngle, true);
-        shooter.setTargetFlywheelSpeed(solution.shooterVelocity);
     }
 
     @Override

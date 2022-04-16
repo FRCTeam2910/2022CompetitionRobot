@@ -1,8 +1,8 @@
-package org.frcteam2910.c2022.lib;
+package org.frcteam2910.visionlib;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import org.frcteam2910.c2022.lib.wpilib.InterpolatingTreeMap;
+import org.frcteam2910.visionlib.wpilib.InterpolatingTreeMap;
 
 public class TargetingSolver {
     private static final int REFINEMENT_ITERATIONS = 20;

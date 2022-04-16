@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.frcteam2910.c2022.lib.IDrivetrain;
+import org.frcteam2910.visionlib.IDrivetrain;
 import org.littletonrobotics.FieldConstants;
 import org.littletonrobotics.VisionConstants;
 import org.littletonrobotics.oi.OverrideOI;

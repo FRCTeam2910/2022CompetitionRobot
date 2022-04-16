@@ -14,7 +14,7 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 application {
-    mainClass.set("org.frcteam2910.c2022.Main")
+    mainClass.set("org.frcteam2910.c2021.Main")
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -54,8 +54,6 @@ dependencies {
     implementation wpi.java.vendor.java()
     implementation project(":common:robot")
     implementation project(":vision-lib")
-
-    implementation 'org.georegression:georegression:0.24'
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)

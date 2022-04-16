@@ -34,4 +34,4 @@ pluginManagement {
 
 rootProject.name = "2022CompetitionRobot"
 
-include(":common", ":common:robot")
+include(":common", ":common:robot", ":c2021", ":vision-lib")

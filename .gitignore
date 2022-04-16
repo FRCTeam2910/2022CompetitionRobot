@@ -1,6 +1,8 @@
 # Ignore Gradle output folders
 /.gradle/
 /build/
+/c2021/build/
+/vision-lib/build/
 
 # Ignore Intellij configuration
 /.idea/

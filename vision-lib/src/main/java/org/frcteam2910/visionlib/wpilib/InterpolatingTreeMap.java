@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package org.frcteam2910.c2022.lib.wpilib;
+package org.frcteam2910.visionlib.wpilib;
 
 import java.util.TreeMap;
 

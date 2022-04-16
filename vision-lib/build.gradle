@@ -1,0 +1,40 @@
+import com.diffplug.spotless.LineEnding
+
+import java.nio.charset.StandardCharsets
+
+plugins {
+    id "java"
+    id "edu.wpi.first.GradleRIO"
+    id "com.diffplug.spotless"
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
+// Also defines JUnit 4.
+dependencies {
+    implementation wpi.java.deps.wpilib()
+    implementation wpi.java.vendor.java()
+
+    testImplementation 'junit:junit:4.12'
+}
+
+spotless {
+    java {
+        target fileTree('src') {
+            include "**/*.java"
+        }
+        toggleOffOn()
+
+        setLineEndings(LineEnding.UNIX)
+        setEncoding(StandardCharsets.UTF_8)
+        eclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+
+        importOrder('java', '', '\\#')
+                .wildcardsLast()
+        removeUnusedImports()
+    }
+}

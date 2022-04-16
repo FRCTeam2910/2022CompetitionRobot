@@ -1,9 +1,9 @@
-package org.frcteam2910.c2022.subsystems;
+package org.frcteam2910.c2021.subsystems;
 
 import java.util.Optional;
 
 import com.ctre.phoenix.sensors.Pigeon2;
-import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
+import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
@@ -21,55 +21,40 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.frcteam2910.c2022.Robot;
-import org.frcteam2910.c2022.util.Utilities;
-import org.frcteam2910.common.control.*;
-import org.frcteam2910.common.math.Vector2;
-import org.frcteam2910.common.util.DrivetrainFeedforwardConstants;
-import org.frcteam2910.common.util.HolonomicDriveSignal;
-import org.frcteam2910.common.util.HolonomicFeedforward;
 import org.frcteam2910.visionlib.IDrivetrain;
 import org.frcteam2910.visionlib.wpilib.SwerveDrivePoseEstimator;
 import org.frcteam2910.visionlib.wpilib.TimeInterpolatableBuffer;
 
-import static org.frcteam2910.c2022.Constants.*;
+import static org.frcteam2910.c2021.Constants.*;
 
 public class DrivetrainSubsystem extends SubsystemBase implements IDrivetrain {
+    public static final double TRACKWIDTH_METERS = Units.inchesToMeters(22.0);
+    public static final double WHEELBASE_METERS = Units.inchesToMeters(22.0);
+
     public static final double MAX_VOLTAGE = 12.0;
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 6380.0 / 60.0
             * SdsModuleConfigurations.MK4_L3.getDriveReduction() * SdsModuleConfigurations.MK4_L3.getWheelDiameter()
             * Math.PI;
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND
-            / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
+            / Math.hypot(TRACKWIDTH_METERS / 2.0, WHEELBASE_METERS / 2.0);
 
     public static final double ROTATION_STATIC_CONSTANT = 0.3;
 
-    public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(0.891,
-            0.15, 0.13592);
-
-    public static final TrajectoryConstraint[] TRAJECTORY_CONSTRAINTS = {
-            new FeedforwardConstraint(4.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(),
-                    FEEDFORWARD_CONSTANTS.getAccelerationConstant(), false),
-            new MaxAccelerationConstraint(5.0), new CentripetalAccelerationConstraint(5.0)};
-
-    private final HolonomicMotionProfiledTrajectoryFollower follower = new HolonomicMotionProfiledTrajectoryFollower(
-            new PidConstants(5.0, 0.0, 0.0), new PidConstants(5.0, 0.0, 0.0),
-            new HolonomicFeedforward(FEEDFORWARD_CONSTANTS));
     private final PIDController rotationController = new PIDController(5.0, 0.0, 0.3);
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
             // Front left
-            new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
+            new Translation2d(TRACKWIDTH_METERS / 2.0, WHEELBASE_METERS / 2.0),
             // Front right
-            new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0),
+            new Translation2d(TRACKWIDTH_METERS / 2.0, -WHEELBASE_METERS / 2.0),
             // Back left
-            new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
+            new Translation2d(-TRACKWIDTH_METERS / 2.0, WHEELBASE_METERS / 2.0),
             // Back right
-            new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
+            new Translation2d(-TRACKWIDTH_METERS / 2.0, -WHEELBASE_METERS / 2.0));
     private final SwerveDrivePoseEstimator estimator;
     private final TimeInterpolatableBuffer<Pose2d> previousPoses = TimeInterpolatableBuffer.createBuffer(0.5);
 
-    private final Pigeon2 pigeon = new Pigeon2(DRIVETRAIN_PIGEON_ID);
+    private final Pigeon2 pigeon = new Pigeon2(0);
 
     private final SwerveModule frontLeftModule;
     private final SwerveModule frontRightModule;
@@ -83,22 +68,25 @@ public class DrivetrainSubsystem extends SubsystemBase implements IDrivetrain {
 
     public DrivetrainSubsystem() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-        frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
+        frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                 tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
-                Mk4iSwerveModuleHelper.GearRatio.L3, FRONT_LEFT_MODULE_DRIVE_MOTOR, FRONT_LEFT_MODULE_STEER_MOTOR,
-                FRONT_LEFT_MODULE_STEER_ENCODER, FRONT_LEFT_MODULE_STEER_OFFSET);
-        frontRightModule = Mk4iSwerveModuleHelper.createFalcon500(
+                Mk4SwerveModuleHelper.GearRatio.L4, DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
+                DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR, DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
+                DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET);
+        frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
                 tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-                Mk4iSwerveModuleHelper.GearRatio.L3, FRONT_RIGHT_MODULE_DRIVE_MOTOR, FRONT_RIGHT_MODULE_STEER_MOTOR,
-                FRONT_RIGHT_MODULE_STEER_ENCODER, FRONT_RIGHT_MODULE_STEER_OFFSET);
-        backLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
+                Mk4SwerveModuleHelper.GearRatio.L4, DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
+                DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR, DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
+                DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET);
+        backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
                 tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
-                Mk4iSwerveModuleHelper.GearRatio.L3, BACK_LEFT_MODULE_DRIVE_MOTOR, BACK_LEFT_MODULE_STEER_MOTOR,
-                BACK_LEFT_MODULE_STEER_ENCODER, BACK_LEFT_MODULE_STEER_OFFSET);
-        backRightModule = Mk4iSwerveModuleHelper.createFalcon500(
+                Mk4SwerveModuleHelper.GearRatio.L4, DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR, DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR,
+                DRIVETRAIN_BACK_LEFT_ENCODER_PORT, DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET);
+        backRightModule = Mk4SwerveModuleHelper.createFalcon500(
                 tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
-                Mk4iSwerveModuleHelper.GearRatio.L3, BACK_RIGHT_MODULE_DRIVE_MOTOR, BACK_RIGHT_MODULE_STEER_MOTOR,
-                BACK_RIGHT_MODULE_STEER_ENCODER, BACK_RIGHT_MODULE_STEER_OFFSET);
+                Mk4SwerveModuleHelper.GearRatio.L4, DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
+                DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR, DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
+                DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET);
         estimator = new SwerveDrivePoseEstimator(getGyroscopeRotation(), new Pose2d(), kinematics,
                 VecBuilder.fill(0.02, 0.02, 0.01), // estimator values (x, y, rotation) std-devs
                 VecBuilder.fill(0.01), // Gyroscope rotation std-dev
@@ -108,20 +96,6 @@ public class DrivetrainSubsystem extends SubsystemBase implements IDrivetrain {
         tab.addNumber("Odometry Y", () -> Units.metersToFeet(getCurrentPose().getY()));
         tab.addNumber("Odometry Angle", () -> getCurrentPose().getRotation().getDegrees());
         tab.addNumber("Velocity X", () -> Units.metersToFeet(getCurrentVelocity().vxMetersPerSecond));
-        tab.addNumber("Trajectory Position X", () -> {
-            var lastState = follower.getLastState();
-            if (lastState == null)
-                return 0;
-
-            return Units.metersToFeet(lastState.getPathState().getPosition().x);
-        });
-        tab.addNumber("Trajectory Velocity X", () -> {
-            var lastState = follower.getLastState();
-            if (lastState == null)
-                return 0;
-
-            return Units.metersToFeet(lastState.getVelocity());
-        });
         tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
 
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);
@@ -150,10 +124,6 @@ public class DrivetrainSubsystem extends SubsystemBase implements IDrivetrain {
     @Override
     public Optional<Pose2d> getPreviousPose(double timestamp) {
         return previousPoses.getSample(timestamp);
-    }
-
-    public HolonomicMotionProfiledTrajectoryFollower getFollower() {
-        return follower;
     }
 
     @Override
@@ -216,20 +186,7 @@ public class DrivetrainSubsystem extends SubsystemBase implements IDrivetrain {
                 currentBackLeftModuleState, currentBackRightModuleState);
         previousPoses.addSample(Timer.getFPGATimestamp(), estimator.getEstimatedPosition());
 
-        var driveSignalOpt = follower.update(Utilities.poseToRigidTransform(getCurrentPose()),
-                new Vector2(currentVelocity.vxMetersPerSecond, currentVelocity.vyMetersPerSecond),
-                currentVelocity.omegaRadiansPerSecond, Timer.getFPGATimestamp(), Robot.kDefaultPeriod);
-
-        if (driveSignalOpt.isPresent()) {
-            HolonomicDriveSignal driveSignal = driveSignalOpt.get();
-            if (driveSignalOpt.get().isFieldOriented()) {
-                targetVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(driveSignal.getTranslation().x,
-                        driveSignal.getTranslation().y, driveSignal.getRotation(), getCurrentPose().getRotation());
-            } else {
-                targetVelocity = new ChassisSpeeds(driveSignal.getTranslation().x, driveSignal.getTranslation().y,
-                        driveSignal.getRotation());
-            }
-        } else if (targetRotation != null) {
+        if (targetRotation != null) {
             double rotationError = MathUtil
                     .angleModulus(getCurrentPose().getRotation().getRadians() - targetRotation.getRadians());
             targetVelocity.omegaRadiansPerSecond = rotationController.calculate(rotationError, 0.0);

@@ -1,4 +1,4 @@
-package org.frcteam2910.c2022.lib;
+package org.frcteam2910.visionlib;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
