@@ -45,7 +45,7 @@ public interface IDrivetrain extends Subsystem {
             double error = MathUtil
                     .angleModulus(getCurrentPose().getRotation().getRadians() - targetRotation.getRadians());
 
-            return Math.abs(error) < Math.toDegrees(5.0);
+            return Math.abs(error) < getTargetRotationAcceptableError();
         }).orElse(false);
     }
 }
