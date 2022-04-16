@@ -17,7 +17,7 @@ public class CharacterizeDrivetrainCommand extends CommandBase {
 
     @Override
     public void initialize() {
-        drivetrain.setPose(new Pose2d()); // Reset the drivetrain position
+        drivetrain.resetPose(new Pose2d()); // Reset the drivetrain position
 
         logger.initLogging();
     }
@@ -25,7 +25,7 @@ public class CharacterizeDrivetrainCommand extends CommandBase {
     @Override
     public void execute() {
         // Update the data
-        double position = drivetrain.getPose().getX();
+        double position = drivetrain.getCurrentPose().getX();
         double velocity = drivetrain.getCurrentVelocity().vxMetersPerSecond;
         logger.log(position, velocity);
 
@@ -33,7 +33,7 @@ public class CharacterizeDrivetrainCommand extends CommandBase {
         double voltage = logger.getMotorVoltage();
 
         // Drive at new voltage
-        drivetrain.drive(
+        drivetrain.setTargetVelocity(
                 new ChassisSpeeds(voltage / 12.0 * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND, 0.0, 0.0));
     }
 
@@ -41,6 +41,6 @@ public class CharacterizeDrivetrainCommand extends CommandBase {
     public void end(boolean interrupted) {
         logger.sendData();
         logger.reset();
-        drivetrain.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        drivetrain.setTargetVelocity(new ChassisSpeeds(0.0, 0.0, 0.0));
     }
 }

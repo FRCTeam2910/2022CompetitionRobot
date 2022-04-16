@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.frcteam2910.c2022.commands.CharacterizeDrivetrainCommand;
 import org.frcteam2910.c2022.commands.ZeroClimberCommand;
 import org.frcteam2910.c2022.commands.ZeroHoodCommand;
-import org.frcteam2910.c2022.util.DriverReadout;
 
 public class Robot extends TimedRobot {
     private final RobotContainer robotContainer = new RobotContainer();
@@ -14,12 +13,11 @@ public class Robot extends TimedRobot {
     private final CharacterizeDrivetrainCommand characterizeCommand = new CharacterizeDrivetrainCommand(
             robotContainer.getDrivetrain());
 
-    @SuppressWarnings("unused")
-    private final DriverReadout driverReadout = new DriverReadout(robotContainer);
-
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+
+        robotContainer.getDriverReadout().update();
     }
 
     @Override

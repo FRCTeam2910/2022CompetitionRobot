@@ -199,11 +199,11 @@ public class AutonomousChooser {
     }
 
     private void shootAtTarget(SequentialCommandGroup command, RobotContainer container, double timeToWait) {
-        command.addCommands(new TargetWithShooterCommand(container.getShooter(), container.getVision())
-                .alongWith(new AlignRobotToShootCommand(container.getDrivetrain(), container.getVision()))
-                .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getFeeder(),
-                        container.getShooter(), container.getVision())))
-                .withTimeout(timeToWait));
+        command.addCommands(new TargetCommand(container.getDrivetrain(), container.getShooter(), container.getVision(),
+                container.getTargetingSolver(), container.getDriverReadout())
+                        .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getDrivetrain(),
+                                container.getFeeder(), container.getShooter())))
+                        .withTimeout(timeToWait));
     }
 
     private Command follow(RobotContainer container, Trajectory trajectory) {
@@ -224,8 +224,9 @@ public class AutonomousChooser {
 
     public void resetRobotPose(SequentialCommandGroup command, RobotContainer container, Trajectory trajectory) {
         Path.State start = trajectory.getPath().calculate(0.0);
-        command.addCommands(new InstantCommand(() -> container.getDrivetrain().setPose(new Pose2d(start.getPosition().x,
-                start.getPosition().y, new Rotation2d(start.getRotation().toRadians())))));
+        command.addCommands(
+                new InstantCommand(() -> container.getDrivetrain().resetPose(new Pose2d(start.getPosition().x,
+                        start.getPosition().y, new Rotation2d(start.getRotation().toRadians())))));
     }
 
     private enum AutonomousMode {
