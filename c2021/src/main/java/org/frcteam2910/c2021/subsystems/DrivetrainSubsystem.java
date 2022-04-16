@@ -1,8 +1,6 @@
 package org.frcteam2910.c2021.subsystems;
 
-import java.util.Optional;
-
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -24,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.frcteam2910.visionlib.IDrivetrain;
 import org.frcteam2910.visionlib.wpilib.SwerveDrivePoseEstimator;
 import org.frcteam2910.visionlib.wpilib.TimeInterpolatableBuffer;
+
+import java.util.Optional;
 
 import static org.frcteam2910.c2021.Constants.*;
 
@@ -54,7 +54,7 @@ public class DrivetrainSubsystem extends SubsystemBase implements IDrivetrain {
     private final SwerveDrivePoseEstimator estimator;
     private final TimeInterpolatableBuffer<Pose2d> previousPoses = TimeInterpolatableBuffer.createBuffer(0.5);
 
-    private final Pigeon2 pigeon = new Pigeon2(0);
+    private final PigeonIMU pigeon = new PigeonIMU(0);
 
     private final SwerveModule frontLeftModule;
     private final SwerveModule frontRightModule;
@@ -101,7 +101,6 @@ public class DrivetrainSubsystem extends SubsystemBase implements IDrivetrain {
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel,
         // 255);
-        pigeon.configFactoryDefault();
     }
 
     private Rotation2d getGyroscopeRotation() {
