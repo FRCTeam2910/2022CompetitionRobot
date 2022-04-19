@@ -25,7 +25,7 @@ public class ClimberSubsystem implements Subsystem {
     public static final double HEIGHT_CHANGE = 6.75;
     public static final double MAX_HEIGHT = Units.inchesToMeters(32.75);
     public static final double MID_RUNG_HEIGHT = Units.inchesToMeters(30.0);
-    public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(28.0);
+    public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(28.5);
     public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(20.0);
     public static final double TRAVERSE_RUNG_HEIGHT = Units.inchesToMeters(18.25);
     public static final double HOOD_PASSAGE_HEIGHT = Units.inchesToMeters(3.5);

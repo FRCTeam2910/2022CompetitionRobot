@@ -180,7 +180,20 @@ public class AutonomousChooser {
     public Command get2BallDefensiveAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, trajectories.getTwoBallDefensivePartOne());
+        // Run 2 ball white
+        command.addCommands(get2BallWhiteAuto(container));
+
+        // Pick up both opponent balls
+        command.addCommands(followAndIntake(container, trajectories.getTwoBallDefensivePartOne()));
+        command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartTwo()));
+
+        // Move up to hub
+        command.addCommands(follow(container, trajectories.getThreeBallOrangePartThree()));
+
+        // Reverse feed balls
+        command.addCommands(new InstantCommand(() -> container.getIntake().setExtended(false)));
+        command.addCommands(new ResetFeederCommand(container.getFeeder(), container.getIntake()));
+        command.addCommands(new ResetFeederCommand(container.getFeeder(), container.getIntake()));
 
         return command;
     }

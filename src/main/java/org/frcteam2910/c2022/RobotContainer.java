@@ -89,8 +89,8 @@ public class RobotContainer {
         new Button(() -> controller.getPOV() == 180)
                 .whenPressed(new ClimberToPointCommand(climber, ClimberSubsystem.MIN_HEIGHT));
         new Button(controller::getBackButton).whenPressed(drivetrain::zeroRotation);
-        new Button(controller::getStartButton)
-                .whenPressed(new AutoClimbCommand(climber, shooter, climbChooser.getClimbChooser().getSelected()));
+        new Button(controller::getStartButton).whenPressed(
+                new AutoClimbCommand(climber, shooter, () -> climbChooser.getClimbChooser().getSelected()));
         // // manual hood adjustment - 0: up, 180: down
         // new Button(() -> controller.getPOV() == 180.0).whenPressed(() ->
         // shooter.setHoodTargetPosition(
