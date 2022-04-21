@@ -82,16 +82,16 @@ public class AutonomousTrajectories {
         fiveBallOrangePartOne = new Trajectory(
                 new SimplePathBuilder(new Vector2(-3.540, -2.314), Rotation2.fromDegrees(34.88))
                         .lineTo(new Vector2(-5.537, -2.481), Rotation2.fromDegrees(-131.25))
-                        .lineTo(new Vector2(-6.782, -2.585)).build(),
+                        .lineTo(new Vector2(-6.853, -2.511)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         fiveBallOrangePartTwo = new Trajectory(
-                new SimplePathBuilder(new Vector2(-6.782, -2.585), Rotation2.fromDegrees(-131.25))
+                new SimplePathBuilder(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-131.25))
                         .lineTo(new Vector2(-2.500, -2.500), Rotation2.fromDegrees(45.0)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         fiveBallDefensivePartTwo = new Trajectory(
-                new SimplePathBuilder(new Vector2(-6.782, -2.585), Rotation2.fromDegrees(-131.25))
+                new SimplePathBuilder(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-131.25))
                         .lineTo(new Vector2(-4.269, -0.957), Rotation2.fromDegrees(16.4)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
@@ -115,13 +115,13 @@ public class AutonomousTrajectories {
         sixBallOrangePartFour = new Trajectory(
                 new SimplePathBuilder(new Vector2(-3.54, -2.314), Rotation2.fromDegrees(34.88))
                         .lineTo(new Vector2(-5.537, -2.481), Rotation2.fromDegrees(-131.25))
-                        .lineTo(new Vector2(-6.782, -2.585)).build(),
+                        .lineTo(new Vector2(-6.853, -2.511)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         sixBallOrangePartFive = new Trajectory(
-                new SimplePathBuilder(new Vector2(-6.782, -2.585), Rotation2.fromDegrees(-131.25))
-                        .lineTo(new Vector2(-6.894, 0.600))
-                        .arcTo(new Vector2(-3.593, 2.667), new Vector2(-4.645, 0.679), Rotation2.fromDegrees(-32.13))
+                new SimplePathBuilder(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-6.963, 0.638))
+                        .arcTo(new Vector2(-3.593, 2.667), new Vector2(-4.960, 1.165), Rotation2.fromDegrees(-32.13))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
