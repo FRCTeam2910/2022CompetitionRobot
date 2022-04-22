@@ -21,7 +21,8 @@ public class AutonomousTrajectories {
     private final Trajectory threeBallOrangePartThree;
     private final Trajectory fiveBallOrangePartOne;
     private final Trajectory fiveBallOrangePartTwo;
-    private final Trajectory fiveBallDefensivePartTwo;
+    private final Trajectory fiveBallOrangePartThree;
+    private final Trajectory fiveBallDefensivePartThree;
     private final Trajectory sixBallOrangePartOne;
     private final Trajectory sixBallOrangePartTwo;
     private final Trajectory sixBallOrangePartThree;
@@ -87,12 +88,17 @@ public class AutonomousTrajectories {
 
         fiveBallOrangePartTwo = new Trajectory(
                 new SimplePathBuilder(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-6.669, -2.336)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        fiveBallOrangePartThree = new Trajectory(
+                new SimplePathBuilder(new Vector2(-6.669, -2.336), Rotation2.fromDegrees(-131.25))
                         .lineTo(new Vector2(-2.500, -2.500), Rotation2.fromDegrees(45.0)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
-        fiveBallDefensivePartTwo = new Trajectory(
-                new SimplePathBuilder(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-131.25))
-                        .lineTo(new Vector2(-4.269, -0.957), Rotation2.fromDegrees(16.4)).build(),
+        fiveBallDefensivePartThree = new Trajectory(
+                new SimplePathBuilder(new Vector2(-6.669, -2.336), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-4.127, -0.851), Rotation2.fromDegrees(16.4)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         sixBallOrangePartOne = new Trajectory(
@@ -182,8 +188,12 @@ public class AutonomousTrajectories {
         return fiveBallOrangePartTwo;
     }
 
-    public Trajectory getFiveBallDefensivePartTwo() {
-        return fiveBallDefensivePartTwo;
+    public Trajectory getFiveBallOrangePartThree() {
+        return fiveBallOrangePartThree;
+    }
+
+    public Trajectory getFiveBallDefensivePartThree() {
+        return fiveBallDefensivePartThree;
     }
 
     public Trajectory getSixBallOrangePartOne() {
