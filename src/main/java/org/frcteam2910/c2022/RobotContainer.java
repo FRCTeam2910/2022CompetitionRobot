@@ -9,6 +9,7 @@ import org.frcteam2910.c2022.commands.*;
 import org.frcteam2910.c2022.subsystems.*;
 import org.frcteam2910.c2022.util.AutonomousChooser;
 import org.frcteam2910.c2022.util.AutonomousTrajectories;
+import org.frcteam2910.c2022.util.ClimbChooser;
 
 public class RobotContainer {
     private final Superstructure superstructure = new Superstructure();
@@ -22,6 +23,7 @@ public class RobotContainer {
 
     private final AutonomousChooser autonomousChooser = new AutonomousChooser(
             new AutonomousTrajectories(DrivetrainSubsystem.TRAJECTORY_CONSTRAINTS));
+    private final ClimbChooser climbChooser = new ClimbChooser();
 
     private final XboxController controller = new XboxController(Constants.CONTROLLER_PORT);
 
@@ -87,7 +89,8 @@ public class RobotContainer {
         new Button(() -> controller.getPOV() == 180)
                 .whenPressed(new ClimberToPointCommand(climber, ClimberSubsystem.MIN_HEIGHT));
         new Button(controller::getBackButton).whenPressed(drivetrain::zeroRotation);
-        new Button(controller::getStartButton).whenPressed(new AutoClimbCommand(climber, shooter));
+        new Button(controller::getStartButton).whenPressed(
+                new AutoClimbCommand(climber, shooter, () -> climbChooser.getClimbChooser().getSelected()));
         // // manual hood adjustment - 0: up, 180: down
         // new Button(() -> controller.getPOV() == 180.0).whenPressed(() ->
         // shooter.setHoodTargetPosition(
@@ -99,7 +102,7 @@ public class RobotContainer {
         // shooter.getHoodTargetPosition() + Constants.HOOD_MANUAL_ADJUST_INTERVAL)
         // );
         //
-        // // //manual flywheel adjustment - 90: right, 270: left
+        // //manual flywheel adjustment - 90: right, 270: left
         // new Button(() -> controller.getPOV() == 90.0).whenPressed(() ->
         // shooter.setTargetFlywheelSpeed(
         // shooter.getTargetFlywheelSpeed() + Constants.FLYWHEEL_MANUAL_ADJUST_INTERVAL)
@@ -137,6 +140,10 @@ public class RobotContainer {
 
     public AutonomousChooser getAutonomousChooser() {
         return autonomousChooser;
+    }
+
+    public ClimbChooser getClimbChooser() {
+        return climbChooser;
     }
 
     public Superstructure getSuperstructure() {

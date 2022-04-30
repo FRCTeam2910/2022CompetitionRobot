@@ -21,12 +21,16 @@ public class AutonomousTrajectories {
     private final Trajectory threeBallOrangePartThree;
     private final Trajectory fiveBallOrangePartOne;
     private final Trajectory fiveBallOrangePartTwo;
+    private final Trajectory fiveBallOrangePartThree;
+    private final Trajectory fiveBallDefensivePartThree;
     private final Trajectory sixBallOrangePartOne;
     private final Trajectory sixBallOrangePartTwo;
     private final Trajectory sixBallOrangePartThree;
     private final Trajectory sixBallOrangePartFour;
     private final Trajectory sixBallOrangePartFive;
     private final Trajectory sixBallOrangePartSix;
+    private final Trajectory twoBallDefensivePartOne;
+    private final Trajectory twoBallDefensivePartTwo;
 
     public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints) {
         testAutoPartOne = new Trajectory(
@@ -67,25 +71,34 @@ public class AutonomousTrajectories {
 
         threeBallOrangePartTwo = new Trajectory(
                 new SimplePathBuilder(new Vector2(-0.66, -3.417), Rotation2.fromDegrees(-90.0))
-                        .lineTo(new Vector2(-3.831, -3.197), Rotation2.fromDegrees(34.88))
-                        .arcTo(new Vector2(-3.937, -2.744), new Vector2(-3.794, -2.949)).build(),
+                        .lineTo(new Vector2(-3.200, -3.284), Rotation2.fromDegrees(34.88))
+                        .arcTo(new Vector2(-3.950, -2.600), new Vector2(-3.150, -2.485)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         threeBallOrangePartThree = new Trajectory(
-                new SimplePathBuilder(new Vector2(-3.937, -2.744), Rotation2.fromDegrees(34.88))
-                        .lineTo(new Vector2(-3.527, -2.458)).build(),
+                new SimplePathBuilder(new Vector2(-3.950, -2.600), Rotation2.fromDegrees(34.88))
+                        .lineTo(new Vector2(-3.540, -2.314)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         fiveBallOrangePartOne = new Trajectory(
-                new SimplePathBuilder(new Vector2(-3.527, -2.458), Rotation2.fromDegrees(34.88))
-                        .lineTo(new Vector2(-5.656, -2.449), Rotation2.fromDegrees(-136.25))
-                        .lineTo(new Vector2(-6.406, -2.445))
-                        .arcTo(new Vector2(-6.928, -2.653), new Vector2(-6.409, -3.195)).build(),
+                new SimplePathBuilder(new Vector2(-3.540, -2.314), Rotation2.fromDegrees(34.88))
+                        .lineTo(new Vector2(-5.537, -2.481), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-6.853, -2.511)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         fiveBallOrangePartTwo = new Trajectory(
-                new SimplePathBuilder(new Vector2(-6.928, -2.653), Rotation2.fromDegrees(-136.25))
-                        .lineTo(new Vector2(-3.527, -2.458), Rotation2.fromDegrees(34.88)).build(),
+                new SimplePathBuilder(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-6.669, -2.336)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        fiveBallOrangePartThree = new Trajectory(
+                new SimplePathBuilder(new Vector2(-6.669, -2.336), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-2.500, -2.500), Rotation2.fromDegrees(45.0)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        fiveBallDefensivePartThree = new Trajectory(
+                new SimplePathBuilder(new Vector2(-6.669, -2.336), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-4.127, -0.851), Rotation2.fromDegrees(16.4)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         sixBallOrangePartOne = new Trajectory(
@@ -107,20 +120,31 @@ public class AutonomousTrajectories {
 
         sixBallOrangePartFour = new Trajectory(
                 new SimplePathBuilder(new Vector2(-3.54, -2.314), Rotation2.fromDegrees(34.88))
-                        .lineTo(new Vector2(-5.537, -2.481), Rotation2.fromDegrees(-136.25))
-                        .lineTo(new Vector2(-6.782, -2.585)).build(),
+                        .lineTo(new Vector2(-5.537, -2.481), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-6.853, -2.511)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         sixBallOrangePartFive = new Trajectory(
-                new SimplePathBuilder(new Vector2(-6.782, -2.585), Rotation2.fromDegrees(-136.25))
-                        .lineTo(new Vector2(-6.894, 0.600))
-                        .arcTo(new Vector2(-3.593, 2.667), new Vector2(-4.645, 0.679), Rotation2.fromDegrees(-34.34))
+                new SimplePathBuilder(new Vector2(-6.853, -2.511), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-6.963, 0.638))
+                        .arcTo(new Vector2(-3.593, 2.667), new Vector2(-4.960, 1.165), Rotation2.fromDegrees(-32.13))
                         .build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         sixBallOrangePartSix = new Trajectory(
-                new SimplePathBuilder(new Vector2(-3.593, 2.667), Rotation2.fromDegrees(-34.34))
-                        .lineTo(new Vector2(-3.031, 2.25)).build(),
+                new SimplePathBuilder(new Vector2(-3.593, 2.667), Rotation2.fromDegrees(-32.13))
+                        .lineTo(new Vector2(-2.893, 2.667)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        twoBallDefensivePartOne = new Trajectory(
+                new SimplePathBuilder(new Vector2(-3.294, 2.068), Rotation2.fromDegrees(-32.13))
+                        .lineTo(new Vector2(-3.225, 2.141), Rotation2.fromDegrees(46.5))
+                        .lineTo(new Vector2(-2.247, 3.171)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        twoBallDefensivePartTwo = new Trajectory(
+                new SimplePathBuilder(new Vector2(-2.247, 3.171), Rotation2.fromDegrees(46.5))
+                        .lineTo(new Vector2(-1.5, 0.4), Rotation2.fromDegrees(-21.0)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
     }
 
@@ -164,6 +188,14 @@ public class AutonomousTrajectories {
         return fiveBallOrangePartTwo;
     }
 
+    public Trajectory getFiveBallOrangePartThree() {
+        return fiveBallOrangePartThree;
+    }
+
+    public Trajectory getFiveBallDefensivePartThree() {
+        return fiveBallDefensivePartThree;
+    }
+
     public Trajectory getSixBallOrangePartOne() {
         return sixBallOrangePartOne;
     }
@@ -186,5 +218,13 @@ public class AutonomousTrajectories {
 
     public Trajectory getSixBallOrangePartSix() {
         return sixBallOrangePartSix;
+    }
+
+    public Trajectory getTwoBallDefensivePartOne() {
+        return twoBallDefensivePartOne;
+    }
+
+    public Trajectory getTwoBallDefensivePartTwo() {
+        return twoBallDefensivePartTwo;
     }
 }
