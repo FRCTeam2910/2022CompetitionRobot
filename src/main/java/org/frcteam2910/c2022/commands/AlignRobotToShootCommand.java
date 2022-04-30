@@ -2,6 +2,7 @@ package org.frcteam2910.c2022.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -56,6 +57,11 @@ public class AlignRobotToShootCommand extends CommandBase {
                     * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND, rotationalVelocity);
             drivetrain.drive(ChassisSpeeds.fromFieldRelativeSpeeds(xAxis.getAsDouble(), yAxis.getAsDouble(),
                     -rotationalVelocity, currentAngle));
+            if (vision.isOnTarget()) {
+                double distanceToTarget = vision.getDistanceToTarget();
+                drivetrain.setPose(new Pose2d(distanceToTarget * Math.cos(currentAngle.getRadians()),
+                        distanceToTarget * Math.sin(currentAngle.getRadians()), currentAngle));
+            }
         } else {
             targetSeen = vision.shooterHasTargets();
         }
