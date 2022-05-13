@@ -26,6 +26,7 @@ import org.frcteam2910.c2022.Robot;
 import org.frcteam2910.c2022.util.Utilities;
 import org.frcteam2910.common.control.*;
 import org.frcteam2910.common.math.Vector2;
+import org.frcteam2910.common.robot.drivers.Pigeon;
 import org.frcteam2910.common.util.DrivetrainFeedforwardConstants;
 import org.frcteam2910.common.util.HolonomicDriveSignal;
 import org.frcteam2910.common.util.HolonomicFeedforward;
@@ -63,7 +64,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
     private final SwerveDrivePoseEstimator estimator;
 
-    private final Pigeon2 pigeon = new Pigeon2(DRIVETRAIN_PIGEON_ID);
+    private final Pigeon pigeon = new Pigeon(DRIVETRAIN_PIGEON_ID);
 
     private final SwerveModule frontLeftModule;
     private final SwerveModule frontRightModule;
@@ -127,11 +128,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel,
         // 255);
-        pigeon.configFactoryDefault();
+//        pigeon.configFactoryDefault();
     }
 
     private Rotation2d getGyroscopeRotation() {
-        return Rotation2d.fromDegrees(pigeon.getYaw());
+        return Rotation2d.fromDegrees(pigeon.getAxis(Pigeon.Axis.YAW));
     }
 
     /**
