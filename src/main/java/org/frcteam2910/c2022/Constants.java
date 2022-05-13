@@ -7,7 +7,7 @@ public class Constants {
 
     public static final double DRIVETRAIN_TRACKWIDTH_METERS = Units.inchesToMeters(22);
     public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(22);
-    public static final int DRIVETRAIN_PIGEON_ID = 51;
+    public static final int DRIVETRAIN_PIGEON_ID = 0;
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 4;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 3;
