@@ -75,6 +75,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     private final NetworkTableEntry motorOutputPercentageLimiterEntry;
+    double motorOutputLimiter;
 
     public DrivetrainSubsystem() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
@@ -156,6 +157,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return currentVelocity;
     }
 
+    public double getMotorOutputLimiter() {
+        return motorOutputLimiter;
+    }
+
     /**
      * Sets the position of the robot to the position passed in with the current
      * gyroscope rotation.
@@ -202,7 +207,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             }
         }
 
-        double motorOutputLimiter = motorOutputPercentageLimiterEntry.getDouble(0.0) / 100;
+        motorOutputLimiter = motorOutputPercentageLimiterEntry.getDouble(0.0) / 100;
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
