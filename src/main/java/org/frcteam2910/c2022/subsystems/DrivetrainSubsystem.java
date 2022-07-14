@@ -2,8 +2,7 @@ package org.frcteam2910.c2022.subsystems;
 
 import java.util.Map;
 
-import com.ctre.phoenix.sensors.Pigeon2;
-import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
+import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.VecBuilder;
@@ -22,6 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.frcteam2910.c2022.Constants;
 import org.frcteam2910.c2022.Robot;
 import org.frcteam2910.c2022.util.Utilities;
 import org.frcteam2910.common.control.*;
@@ -80,22 +80,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public DrivetrainSubsystem() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-        frontLeftModule = Mk3SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
-                Mk3SwerveModuleHelper.GearRatio.STANDARD, FRONT_LEFT_MODULE_DRIVE_MOTOR, FRONT_LEFT_MODULE_STEER_MOTOR,
-                FRONT_LEFT_MODULE_STEER_ENCODER, FRONT_LEFT_MODULE_STEER_OFFSET);
-        frontRightModule = Mk3SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-                Mk3SwerveModuleHelper.GearRatio.STANDARD, FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-                FRONT_RIGHT_MODULE_STEER_MOTOR, FRONT_RIGHT_MODULE_STEER_ENCODER, FRONT_RIGHT_MODULE_STEER_OFFSET);
-        backLeftModule = Mk3SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
-                Mk3SwerveModuleHelper.GearRatio.STANDARD, BACK_LEFT_MODULE_DRIVE_MOTOR, BACK_LEFT_MODULE_STEER_MOTOR,
-                BACK_LEFT_MODULE_STEER_ENCODER, BACK_LEFT_MODULE_STEER_OFFSET);
-        backRightModule = Mk3SwerveModuleHelper.createFalcon500(
-                tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
-                Mk3SwerveModuleHelper.GearRatio.STANDARD, BACK_RIGHT_MODULE_DRIVE_MOTOR, BACK_RIGHT_MODULE_STEER_MOTOR,
-                BACK_RIGHT_MODULE_STEER_ENCODER, BACK_RIGHT_MODULE_STEER_OFFSET);
+        frontLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+                tab.getLayout("Front Left Module", BuiltInLayouts.kList).withPosition(2, 0).withSize(2, 4),
+                Mk4SwerveModuleHelper.GearRatio.L4, Constants.DRIVETRAIN_FRONT_LEFT_DRIVE_MOTOR,
+                Constants.DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR, Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_PORT,
+                Constants.DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET);
+        frontRightModule = Mk4SwerveModuleHelper.createFalcon500(
+                tab.getLayout("Front Right Module", BuiltInLayouts.kList).withPosition(4, 0).withSize(2, 4),
+                Mk4SwerveModuleHelper.GearRatio.L4, Constants.DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR,
+                Constants.DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR, Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_PORT,
+                Constants.DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET);
+        backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
+                tab.getLayout("Back Left Module", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 4),
+                Mk4SwerveModuleHelper.GearRatio.L4, Constants.DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR,
+                Constants.DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR, Constants.DRIVETRAIN_BACK_LEFT_ENCODER_PORT,
+                Constants.DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET);
+        backRightModule = Mk4SwerveModuleHelper.createFalcon500(
+                tab.getLayout("Back Right Module", BuiltInLayouts.kList).withPosition(8, 0).withSize(2, 4),
+                Mk4SwerveModuleHelper.GearRatio.L4, Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
+                Constants.DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR, Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
+                Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET);
         estimator = new SwerveDrivePoseEstimator(getGyroscopeRotation(), new Pose2d(), kinematics,
                 VecBuilder.fill(0.02, 0.02, 0.01), // estimator values (x, y, rotation) std-devs
                 VecBuilder.fill(0.01), // Gyroscope rotation std-dev
@@ -125,10 +129,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         });
         tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
 
-        // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);
-        // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel,
-        // 255);
-//        pigeon.configFactoryDefault();
     }
 
     private Rotation2d getGyroscopeRotation() {
@@ -212,17 +212,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-        frontLeftModule.set(
-                states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+        frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
                 states[0].angle.getRadians());
-        frontRightModule.set(
-                states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+        frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
                 states[1].angle.getRadians());
-        backLeftModule.set(
-                states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+        backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
                 states[2].angle.getRadians());
-        backRightModule.set(
-                states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+        backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
                 states[3].angle.getRadians());
     }
 }
