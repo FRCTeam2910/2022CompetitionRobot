@@ -7,6 +7,7 @@ plugins {
     id "java"
     id "com.github.johnrengelman.shadow"
     id "edu.wpi.first.GradleRIO"
+    id "net.ltgt.errorprone"
     id "com.diffplug.spotless"
 }
 
@@ -14,7 +15,7 @@ sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
 application {
-    mainClass.set("org.frcteam2910.c2022.Main")
+    mainClass.set("org.frcteam2910.c2020.Main")
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -50,6 +51,8 @@ deploy {
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
+    compileOnly group: "com.google.errorprone", name: "error_prone_annotations", version: "2.3.4"
+
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
     implementation project(":common:robot")
@@ -69,6 +72,8 @@ dependencies {
     nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
+
+    errorprone group: "com.google.errorprone", name: "error_prone_core", version: "2.3.4"
 
     testImplementation 'junit:junit:4.12'
 }
