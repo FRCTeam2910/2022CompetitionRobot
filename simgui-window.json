@@ -1,0 +1,80 @@
+{
+  "MainWindow": {
+    "GLOBAL": {
+      "height": "1046",
+      "maximized": "1",
+      "style": "1",
+      "userScale": "2",
+      "width": "1920",
+      "xpos": "0",
+      "ypos": "34"
+    }
+  },
+  "Window": {
+    "###/FMSInfo": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "235,221"
+    },
+    "###/LiveWindow/Ungrouped/PIDController[1]": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "170,180"
+    },
+    "###/LiveWindow/Ungrouped/Scheduler": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "400,200"
+    },
+    "###/SmartDashboard/Elevator Sim": {
+      "Collapsed": "0",
+      "Pos": "475,168",
+      "Size": "392,253"
+    },
+    "###FMS": {
+      "Collapsed": "0",
+      "Pos": "7,810",
+      "Size": "388,182"
+    },
+    "###Joysticks": {
+      "Collapsed": "0",
+      "Pos": "351,821",
+      "Size": "1156,202"
+    },
+    "###NetworkTables": {
+      "Collapsed": "0",
+      "Pos": "332,403",
+      "Size": "1125,368"
+    },
+    "###Other Devices": {
+      "Collapsed": "0",
+      "Pos": "1149,89",
+      "Size": "375,1042"
+    },
+    "###Plot <0>": {
+      "Collapsed": "0",
+      "Pos": "997,112",
+      "Size": "867,535"
+    },
+    "###System Joysticks": {
+      "Collapsed": "0",
+      "Pos": "7,465",
+      "Size": "273,290"
+    },
+    "###Timing": {
+      "Collapsed": "0",
+      "Pos": "7,225",
+      "Size": "188,157"
+    },
+    "Debug##Default": {
+      "Collapsed": "0",
+      "Pos": "60,60",
+      "Size": "400,400"
+    },
+    "Robot State": {
+      "Collapsed": "0",
+      "Pos": "5,20",
+      "Size": "126,129"
+    }
+  }
+}

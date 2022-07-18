@@ -1,0 +1,108 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/DrivetrainSubsystem": "Subsystem",
+      "/LiveWindow/Ungrouped/DigitalInput[0]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[14]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[15]": "Digital Input",
+      "/LiveWindow/Ungrouped/DigitalInput[1]": "Digital Input",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/Shuffleboard/Driver Readout/Autonomous Mode": "String Chooser",
+      "/SmartDashboard/Elevator Sim": "Mechanism2d",
+      "/SmartDashboard/EnableCompressorCommand": "Command"
+    },
+    "windows": {
+      "/SmartDashboard/Elevator Sim": {
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "LiveWindow": {
+      "Ungrouped": {
+        "PIDController[1]": {
+          "open": true
+        },
+        "open": true
+      },
+      "open": true
+    },
+    "Shuffleboard": {
+      "Climber": {
+        "open": true
+      },
+      "Drivetrain": {
+        "open": true
+      },
+      "open": true
+    },
+    "SmartDashboard": {
+      "Elevator Sim": {
+        "open": true
+      }
+    }
+  },
+  "NetworkTables View": {
+    "visible": false
+  },
+  "Plot": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "axis": [
+            {
+              "max": 1.2,
+              "min": -1.2
+            }
+          ],
+          "height": 461,
+          "series": [
+            {
+              "color": [
+                0.3333333432674408,
+                0.658823549747467,
+                0.4078431725502014,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Climber/target velocity"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Climber/velocity"
+            },
+            {
+              "color": [
+                0.3333333432674408,
+                0.3550327718257904,
+                0.658823549747467,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Climber/target height"
+            },
+            {
+              "color": [
+                0.6966449022293091,
+                0.30588236451148987,
+                0.7686275243759155,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Climber/height"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
