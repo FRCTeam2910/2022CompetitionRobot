@@ -1,5 +1,6 @@
 package org.frcteam2910.c2020.subsystems;
 
+import java.util.Map;
 import java.util.Optional;
 
 import com.google.errorprone.annotations.concurrent.GuardedBy;
@@ -10,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -85,6 +87,9 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
     private final NetworkTableEntry odometryYEntry;
     private final NetworkTableEntry odometryAngleEntry;
 
+    private final NetworkTableEntry motorOutputPercentageLimiterEntry;
+    double motorOutputLimiter;
+
     public DrivetrainSubsystem() {
         synchronized (sensorLock) {
             gyroscope.setInverted(false);
@@ -112,6 +117,10 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
                 Mk4SwerveModuleHelper.GearRatio.L4, Constants.DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR,
                 Constants.DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR, Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_PORT,
                 Constants.DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET);
+
+        motorOutputPercentageLimiterEntry = tab.add("Motor Percentage", 100.0).withWidget(BuiltInWidgets.kNumberSlider)
+                .withProperties(Map.of("min", 0.0, "max", 100.0, "Block increment", 10.0)).withPosition(0, 3)
+                .getEntry();
 
         modules = new SwerveModule[]{frontLeftModule, frontRightModule, backLeftModule, backRightModule};
 
@@ -277,6 +286,8 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         odometryXEntry.setDouble(pose.translation.x);
         odometryYEntry.setDouble(pose.translation.y);
         odometryAngleEntry.setDouble(getPose().rotation.toDegrees());
+
+        motorOutputLimiter = motorOutputPercentageLimiterEntry.getDouble(0.0) / 100;
     }
 
     public HolonomicMotionProfiledTrajectoryFollower getFollower() {

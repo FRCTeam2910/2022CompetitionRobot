@@ -63,7 +63,7 @@ public class RobotContainer {
         // CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, new
         // ManuallyAdjustShooterCommand(shooterSubsystem));
         CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem,
-                new DefaultShooterCommand(shooterSubsystem, 4000, Constants.HOOD_MAX_ANGLE));
+                new DefaultShooterCommand(shooterSubsystem, Constants.FLYWHEEL_IDLE_SPEED, Constants.HOOD_MAX_ANGLE));
         CommandScheduler.getInstance().setDefaultCommand(intakeSubsystem,
                 new ExtendBottomIntakeCommand(intakeSubsystem));// Remove this command as it is not needed; make the
                                                                 // field true in the intake subsystem

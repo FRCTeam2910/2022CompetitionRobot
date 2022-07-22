@@ -52,4 +52,6 @@ public class Constants {
     public static final int PIGEON_PORT = 20;
 
     public static final int PRESSURE_SENSOR_PORT = 0;
+
+    public static final int FLYWHEEL_IDLE_SPEED = 100;
 }
