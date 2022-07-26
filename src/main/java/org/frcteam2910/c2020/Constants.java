@@ -5,8 +5,8 @@ public class Constants {
     public static final int DRIVETRAIN_FRONT_RIGHT_DRIVE_MOTOR = 6;
     public static final int DRIVETRAIN_BACK_LEFT_DRIVE_MOTOR = 9;
     public static final int DRIVETRAIN_BACK_RIGHT_DRIVE_MOTOR = 7;
-    public static final int DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR = 14;
 
+    public static final int DRIVETRAIN_FRONT_RIGHT_ANGLE_MOTOR = 14;
     public static final int DRIVETRAIN_FRONT_LEFT_ANGLE_MOTOR = 11;
     public static final int DRIVETRAIN_BACK_LEFT_ANGLE_MOTOR = 12;
     public static final int DRIVETRAIN_BACK_RIGHT_ANGLE_MOTOR = 13;
@@ -53,21 +53,22 @@ public class Constants {
 
     public static final int FEEDER_IS_FULL_SENSOR_PORT = 0;
     public static final int FEEDER_INTAKE_BALL_SENSOR_PORT = 1;
+    public static final double FLYWHEEL_DEFAULT_RPM = 100;
 
-    private static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET_COMPETITION = -Math.toRadians(68.2);
-    private static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET_COMPETITION = -Math.toRadians(51.8);
-    private static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET_COMPETITION = -Math.toRadians(354.1);
-    private static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET_COMPETITION = -Math.toRadians(200.25);
+    private static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET_COMPETITION = -Math.toRadians(198.2);
+    private static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET_COMPETITION = -Math.toRadians(207.5);
+    private static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET_COMPETITION = -Math.toRadians(56.7);
+    private static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET_COMPETITION = -Math.toRadians(222.0);
     private static final double SHOOTER_HOOD_MIN_ANGLE_COMPETITION = Math.toRadians(26.90);
     private static final double SHOOTER_HOOD_MAX_ANGLE_COMPETITION = Math.toRadians(64.54);
     private static final double SHOOTER_HOOD_OFFSET_COMPETITION = Math.toRadians(50.9)
             + SHOOTER_HOOD_MAX_ANGLE_COMPETITION;
     private static final double SHOOTER_HOOD_GEAR_RATIO_COMPETITION = 22.0 / 72.0;
 
-    private static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET_PRACTICE = -Math.toRadians(75.5);
-    private static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET_PRACTICE = -Math.toRadians(347.7);
-    private static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET_PRACTICE = -Math.toRadians(298.5);
-    private static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET_PRACTICE = -Math.toRadians(77.0);
+    private static final double DRIVETRAIN_FRONT_LEFT_ENCODER_OFFSET_PRACTICE = -Math.toRadians(14);
+    private static final double DRIVETRAIN_FRONT_RIGHT_ENCODER_OFFSET_PRACTICE = -Math.toRadians(201);
+    private static final double DRIVETRAIN_BACK_LEFT_ENCODER_OFFSET_PRACTICE = -Math.toRadians(234);
+    private static final double DRIVETRAIN_BACK_RIGHT_ENCODER_OFFSET_PRACTICE = -Math.toRadians(227);
     private static final double SHOOTER_HOOD_MIN_ANGLE_PRACTICE = Math.toRadians(24.0);
     private static final double SHOOTER_HOOD_MAX_ANGLE_PRACTICE = Math.toRadians(58.0);
     private static final double SHOOTER_HOOD_OFFSET_PRACTICE = Math.toRadians(57.38);

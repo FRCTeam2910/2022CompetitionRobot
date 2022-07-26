@@ -51,8 +51,8 @@ public class RobotContainer {
         // Utilities.deadband(secondaryController.getRightXAxis().get(), 0.1)));
         CommandScheduler.getInstance().registerSubsystem(climberSubsystem);
         CommandScheduler.getInstance().registerSubsystem(intakeSubsystem);
-        CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem,
-                new DefaultShooterCommand(shooterSubsystem, 4500.0, Constants.SHOOTER_HOOD_MAX_ANGLE));
+        CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, new DefaultShooterCommand(shooterSubsystem,
+                Constants.FLYWHEEL_DEFAULT_RPM, Constants.SHOOTER_HOOD_MAX_ANGLE));
         CommandScheduler.getInstance().registerSubsystem(visionSubsystem);
 
         configureButtonBindings();

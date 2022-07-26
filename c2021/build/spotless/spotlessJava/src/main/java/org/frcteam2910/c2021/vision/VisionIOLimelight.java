@@ -1,0 +1,75 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package org.frcteam2910.c2021.vision;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
+
+/** Vision hardware implementation for a Limelight. */
+public class VisionIOLimelight implements VisionIO {
+    private double captureTimestamp = 0.0;
+    private double[] cornerX = new double[]{};
+    private double[] cornerY = new double[]{};
+    private boolean simpleValid = false;
+    private double simpleAngle = 0.0;
+
+    private final NetworkTableEntry ledEntry = NetworkTableInstance.getDefault().getTable("limelight")
+            .getEntry("ledMode");
+    private final NetworkTableEntry validEntry = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv");
+    private final NetworkTableEntry latencyEntry = NetworkTableInstance.getDefault().getTable("limelight")
+            .getEntry("tl");
+    private final NetworkTableEntry dataEntry = NetworkTableInstance.getDefault().getTable("limelight")
+            .getEntry("tcornxy");
+    private final NetworkTableEntry simpleAngleEntry = NetworkTableInstance.getDefault().getTable("limelight")
+            .getEntry("tx");
+
+    public VisionIOLimelight() {
+        latencyEntry.addListener(event -> {
+            double timestamp = Timer.getFPGATimestamp() - (latencyEntry.getDouble(0.0) / 1000.0);
+
+            List<Double> cornerXList = new ArrayList<>();
+            List<Double> cornerYList = new ArrayList<>();
+            if (validEntry.getDouble(0.0) == 1.0) {
+                boolean isX = true;
+                for (double coordinate : dataEntry.getDoubleArray(new double[]{})) {
+                    if (isX) {
+                        cornerXList.add(coordinate);
+                    } else {
+                        cornerYList.add(coordinate);
+                    }
+                    isX = !isX;
+                }
+            }
+
+            synchronized (VisionIOLimelight.this) {
+                captureTimestamp = timestamp;
+                cornerX = cornerXList.stream().mapToDouble(Double::doubleValue).toArray();
+                cornerY = cornerYList.stream().mapToDouble(Double::doubleValue).toArray();
+                simpleValid = validEntry.getDouble(0.0) == 1.0;
+                simpleAngle = simpleAngleEntry.getDouble(0.0);
+            }
+
+        }, EntryListenerFlags.kUpdate);
+    }
+
+    @Override
+    public synchronized void updateInputs(VisionIOInputs inputs) {
+        inputs.captureTimestamp = captureTimestamp;
+        inputs.cornerX = cornerX;
+        inputs.cornerY = cornerY;
+        inputs.simpleValid = simpleValid;
+        inputs.simpleAngle = simpleAngle;
+    }
+
+    @Override
+    public void setLeds(boolean enabled) {
+        ledEntry.forceSetDouble(enabled ? 3.0 : 1.0);
+    }
+}
