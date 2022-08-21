@@ -17,9 +17,9 @@ public class IntakeSubsystem implements Subsystem, UpdateManager.Updatable {
     public static final double MIN_INTAKE_MOVEMENT_PRESSURE = 60.0;
 
     private TalonFX right_intake_motor = new TalonFX(Constants.INTAKE_MOTOR_PORT);
-    private Solenoid topExtentionSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
+    private Solenoid topExtentionSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM,
             Constants.TOP_INTAKE_EXTENSION_SOLENOID);
-    private Solenoid bottomExtensionSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
+    private Solenoid bottomExtensionSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM,
             Constants.BOTTOM_INTAKE_EXTENSION_SOLENOID);
 
     private final Object stateLock = new Object();

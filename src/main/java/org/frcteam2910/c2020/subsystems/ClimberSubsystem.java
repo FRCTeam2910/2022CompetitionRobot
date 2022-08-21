@@ -16,7 +16,7 @@ public class ClimberSubsystem implements Subsystem {
     public static final double REVERSE_LIMIT = 60000.0;
     public static final boolean ENABLE_LIMITS = true;
 
-    private final Solenoid lockSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
+    private final Solenoid lockSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM,
             Constants.CLIMBER_LOCK_SOLENOID_PORT);
     private final TalonFX motor = new TalonFX(Constants.CLIMBER_MOTOR_PORT);
 
