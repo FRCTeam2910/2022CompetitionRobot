@@ -23,7 +23,8 @@ public class DriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        drivetrainSubsystem.drive(new Vector2(forward.get(true), strafe.get(true)), rotation.get(true), true);
+        drivetrainSubsystem.drive(new Vector2(forward.get(true) * drivetrainSubsystem.getMotorOutputLimiter(),
+                strafe.get(true) * drivetrainSubsystem.getMotorOutputLimiter()), rotation.get(true), true);
     }
 
     @Override

@@ -168,6 +168,14 @@ public class DrivetrainSubsystem implements Subsystem, UpdateManager.Updatable {
         }
     }
 
+    public double getMotorOutputLimiter() {
+        return motorOutputLimiter;
+    }
+
+    public void setMotorOutputLimiter(double motorOutputLimiter) {
+        this.motorOutputLimiter = motorOutputLimiter;
+    }
+
     public double getAngularVelocity() {
         synchronized (kinematicsLock) {
             return angularVelocity;
