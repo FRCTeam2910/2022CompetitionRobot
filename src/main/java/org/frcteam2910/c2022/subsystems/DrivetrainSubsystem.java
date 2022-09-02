@@ -1,5 +1,7 @@
 package org.frcteam2910.c2022.subsystems;
 
+import java.util.Map;
+
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
@@ -13,8 +15,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -70,6 +74,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
+    private final NetworkTableEntry motorOutputPercentageLimiterEntry;
+    private double motorOutputLimiter;
+
     public DrivetrainSubsystem() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
@@ -92,6 +99,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 VecBuilder.fill(0.02, 0.02, 0.01), // estimator values (x, y, rotation) std-devs
                 VecBuilder.fill(0.01), // Gyroscope rotation std-dev
                 VecBuilder.fill(0.1, 0.1, 0.01)); // Vision (x, y, rotation) std-devs
+
+        motorOutputPercentageLimiterEntry = tab.add("Motor Percentage", 100.0).withWidget(BuiltInWidgets.kNumberSlider)
+                .withProperties(Map.of("min", 0.0, "max", 100.0, "Block increment", 10.0)).withPosition(0, 3)
+                .getEntry();
 
         tab.addNumber("Odometry X", () -> Units.metersToFeet(getPose().getX()));
         tab.addNumber("Odometry Y", () -> Units.metersToFeet(getPose().getY()));
@@ -136,6 +147,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
      */
     public Pose2d getPose() {
         return estimator.getEstimatedPosition();
+    }
+
+    public double getMotorOutputLimiter() {
+        return motorOutputLimiter;
+    }
+
+    public void setMotorOutputLimiter(double motorOutputLimiter) {
+        this.motorOutputLimiter = motorOutputLimiter;
     }
 
     public HolonomicMotionProfiledTrajectoryFollower getFollower() {
@@ -191,6 +210,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         driveSignal.getRotation());
             }
         }
+
+        motorOutputLimiter = motorOutputPercentageLimiterEntry.getDouble(0.0) / 100;
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);

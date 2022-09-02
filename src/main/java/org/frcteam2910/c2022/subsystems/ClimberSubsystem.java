@@ -2,7 +2,6 @@ package org.frcteam2910.c2022.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -107,13 +106,15 @@ public class ClimberSubsystem implements Subsystem {
         switch (mode) {
             case POSITION :
                 if (isClimberZeroed()) {
-                    leftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
-                    rightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                    // leftMotor.set(TalonFXControlMode.MotionMagic, targetHeight /
+                    // SENSOR_POSITION_COEFFICIENT);
+                    // rightMotor.set(TalonFXControlMode.MotionMagic, targetHeight /
+                    // SENSOR_POSITION_COEFFICIENT);
                 }
                 break;
             case VOLTAGE :
-                leftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
-                rightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                // leftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                // rightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
                 break;
         }
     }
