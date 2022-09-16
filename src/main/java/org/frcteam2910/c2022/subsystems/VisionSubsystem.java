@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import georegression.struct.point.Point2D_F64;
 import org.frcteam2910.common.math.MathUtils;
+import org.frcteam2910.common.math.Vector2;
 import org.frcteam2910.common.util.MovingAverage;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.TargetCorner;
@@ -31,6 +32,8 @@ public class VisionSubsystem implements Subsystem {
 
     private boolean shooterHasTargets = false;
     private double distanceToTarget = Double.NaN;
+    private double distanceToTargetX = Double.NaN;
+    private double distanceToTargetY = Double.NaN;
     private double angleToTarget = Double.NaN;
     private MovingAverage averageDistance = new MovingAverage(10);
     private double theta;
@@ -47,6 +50,8 @@ public class VisionSubsystem implements Subsystem {
         ShuffleboardTab tab = Shuffleboard.getTab("Vision");
         tab.addBoolean("shooter has targets", () -> shooterHasTargets).withPosition(0, 0).withSize(1, 1);
         tab.addNumber("distance to target", () -> distanceToTarget).withPosition(1, 0).withSize(1, 1);
+        tab.addNumber("X", () -> distanceToTargetX).withPosition(1, 1).withSize(1, 1);
+        tab.addNumber("Y", () -> distanceToTargetY).withPosition(1, 2).withSize(1, 1);
         tab.addNumber("angle to target", () -> Units.radiansToDegrees(angleToTarget)).withPosition(2, 0).withSize(1, 1);
         tab.addNumber("avg distance to target", () -> averageDistance.get()).withPosition(3, 0).withSize(1, 1);
         tab.addNumber("theta", () -> Math.toDegrees(theta));
@@ -57,8 +62,8 @@ public class VisionSubsystem implements Subsystem {
         tab.addBoolean("Is Vision on Target", this::isOnTarget);
     }
 
-    public double getDistanceToTarget() {
-        return distanceToTarget;
+    public Vector2 getDistanceToTarget() {
+        return new Vector2(distanceToTargetX, distanceToTargetY);
     }
 
     public double getAngleToTarget() {
@@ -95,6 +100,8 @@ public class VisionSubsystem implements Subsystem {
             theta = Math.toRadians(pitch) + LIMELIGHT_MOUNTING_ANGLE;
             distanceToTarget = (TARGET_HEIGHT_METERS - LIMELIGHT_HEIGHT) / Math.tan(theta);
             angleToTarget = drivetrain.getPose().getRotation().getRadians() + Math.toRadians(yaw);
+            distanceToTargetX = distanceToTarget * Math.cos(drivetrain.getPose().getRotation().getRadians());
+            distanceToTargetY = distanceToTarget * Math.sin(drivetrain.getPose().getRotation().getRadians());
         }
 
         // result = shooterLimelight.getLatestResult();

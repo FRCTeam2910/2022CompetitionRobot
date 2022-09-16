@@ -38,9 +38,9 @@ public class AutonomousChooser {
     public Command getTestAuto(RobotContainer container) {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
-        resetRobotPose(command, container, trajectories.getTestAutoPartOne());
+        resetRobotPose(command, container, trajectories.getSixBallOrangePartOne());
 
-        command.addCommands(follow(container, trajectories.getTestAutoPartOne()));
+        // command.addCommands(follow(container, trajectories.getTestAutoPartOne()));
 
         return command;
     }
@@ -254,7 +254,7 @@ public class AutonomousChooser {
                 new TargetWithShooterCommand(container.getShooter(), container.getVision(), container.getDrivetrain())
                         .alongWith(new AlignRobotToShootCommand(container.getDrivetrain(), container.getVision()))
                         .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(container.getFeeder(),
-                                container.getShooter(), container.getVision())))
+                                container.getShooter(), container.getVision(), container.getDrivetrain())))
                         .withTimeout(timeToWait));
     }
 
