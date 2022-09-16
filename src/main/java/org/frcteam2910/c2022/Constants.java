@@ -8,8 +8,10 @@ public class Constants {
     public static final int INTAKE_LEFT_MOTOR_PORT = 12;
     public static final int INTAKE_RIGHT_MOTOR_PORT = 13;
     public static final int INTAKE_SOLENOID_PORT = 0;
-    public static final int CLIMBER_LEFT_MOTOR_PORT = 16;
-    public static final int CLIMBER_RIGHT_MOTOR_PORT = 11;
+    public static final int CLIMBER_FIRST_LEFT_MOTOR_PORT = 16;
+    public static final int CLIMBER_FIRST_RIGHT_MOTOR_PORT = 11;
+    public static final int CLIMBER_SECOND_LEFT_MOTOR_PORT = 17;
+    public static final int CLIMBER_SECOND_RIGHT_MOTOR_PORT = 18;
     public static final int FEEDER_MOTOR_PORT = 10;
     public static final int FEEDER_SOLENOID_PORT = 13;
 

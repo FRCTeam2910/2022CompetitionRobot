@@ -2,6 +2,7 @@ package org.frcteam2910.c2022.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -53,8 +54,10 @@ public class ClimberSubsystem implements Subsystem {
             ACCELERATION_CONSTANT);
     private final ElevatorSim simulation = new ElevatorSim(plant, MOTOR, 1.0 / REDUCTION, RADIUS, 0.0,
             MAX_HEIGHT * 1.1);
-    private final TalonFX leftMotor = new TalonFX(Constants.CLIMBER_LEFT_MOTOR_PORT);
-    private final TalonFX rightMotor = new TalonFX(Constants.CLIMBER_RIGHT_MOTOR_PORT);
+    private final TalonFX firstLeftMotor = new TalonFX(Constants.CLIMBER_FIRST_LEFT_MOTOR_PORT, "CANivore");
+    private final TalonFX firstRightMotor = new TalonFX(Constants.CLIMBER_FIRST_RIGHT_MOTOR_PORT, "CANivore");
+    private final TalonFX secondLeftMotor = new TalonFX(Constants.CLIMBER_SECOND_LEFT_MOTOR_PORT, "CANivore");
+    private final TalonFX secondRightMotor = new TalonFX(Constants.CLIMBER_SECOND_RIGHT_MOTOR_PORT, "CANivore");
 
     private Mode mode = Mode.VOLTAGE;
     private boolean zeroed = false;
@@ -80,19 +83,30 @@ public class ClimberSubsystem implements Subsystem {
         // configuration.supplyCurrLimit.enable = true;
         configuration.voltageCompSaturation = 12.0;
 
-        leftMotor.configAllSettings(configuration);
-        rightMotor.configAllSettings(configuration);
-        leftMotor.setNeutralMode(NeutralMode.Brake);
-        rightMotor.setNeutralMode(NeutralMode.Brake);
+        firstLeftMotor.configAllSettings(configuration);
+        firstRightMotor.configAllSettings(configuration);
+        secondLeftMotor.configAllSettings(configuration);
+        secondRightMotor.configAllSettings(configuration);
+        firstLeftMotor.setNeutralMode(NeutralMode.Brake);
+        firstRightMotor.setNeutralMode(NeutralMode.Brake);
+        secondLeftMotor.setNeutralMode(NeutralMode.Brake);
+        secondRightMotor.setNeutralMode(NeutralMode.Brake);
 
-        rightMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
-        rightMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
-        leftMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
-        leftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+        firstRightMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        firstRightMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
+        secondRightMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        secondRightMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
+        firstLeftMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        firstLeftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
+        secondLeftMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
+        secondLeftMotor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 255);
 
-        leftMotor.enableVoltageCompensation(true);
-        rightMotor.enableVoltageCompensation(true);
-        rightMotor.setInverted(true);
+        firstLeftMotor.enableVoltageCompensation(true);
+        firstRightMotor.enableVoltageCompensation(true);
+        secondLeftMotor.enableVoltageCompensation(true);
+        secondRightMotor.enableVoltageCompensation(true);
+        firstRightMotor.setInverted(true);
+        secondRightMotor.setInverted(true);
     }
 
     @Override
@@ -106,15 +120,17 @@ public class ClimberSubsystem implements Subsystem {
         switch (mode) {
             case POSITION :
                 if (isClimberZeroed()) {
-                    // leftMotor.set(TalonFXControlMode.MotionMagic, targetHeight /
-                    // SENSOR_POSITION_COEFFICIENT);
-                    // rightMotor.set(TalonFXControlMode.MotionMagic, targetHeight /
-                    // SENSOR_POSITION_COEFFICIENT);
+                    firstLeftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                    firstRightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                    secondLeftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                    secondRightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
                 }
                 break;
             case VOLTAGE :
-                // leftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
-                // rightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                firstLeftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                firstRightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                secondLeftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                secondRightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
                 break;
         }
     }
@@ -152,7 +168,7 @@ public class ClimberSubsystem implements Subsystem {
         if (Robot.isSimulation()) {
             return simulation.getPositionMeters();
         } else {
-            return leftMotor.getSelectedSensorPosition() * SENSOR_POSITION_COEFFICIENT;
+            return firstLeftMotor.getSelectedSensorPosition() * SENSOR_POSITION_COEFFICIENT;
         }
     }
 
@@ -160,28 +176,54 @@ public class ClimberSubsystem implements Subsystem {
         if (Robot.isSimulation()) {
             return simulation.getVelocityMetersPerSecond();
         } else {
-            return leftMotor.getSelectedSensorVelocity() * SENSOR_VELOCITY_COEFFICIENT;
+            return firstLeftMotor.getSelectedSensorVelocity() * SENSOR_VELOCITY_COEFFICIENT;
         }
     }
 
     public void setZeroPosition() {
         if (Robot.isReal()) {
-            leftMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
-            rightMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
+            firstLeftMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
+            firstRightMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
+            secondLeftMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
+            secondRightMotor.setSelectedSensorPosition(Units.inchesToMeters(-0.1875) / SENSOR_POSITION_COEFFICIENT);
         }
     }
 
     public void setFastClimberConstraints(boolean fast) {
         if (fast) {
-            leftMotor.configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
-            leftMotor.configMotionAcceleration(FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
-            rightMotor.configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
-            rightMotor.configMotionAcceleration(FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            firstLeftMotor
+                    .configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            firstLeftMotor
+                    .configMotionAcceleration(FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            firstRightMotor
+                    .configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            firstRightMotor
+                    .configMotionAcceleration(FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            secondLeftMotor
+                    .configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            secondLeftMotor
+                    .configMotionAcceleration(FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            secondRightMotor
+                    .configMotionCruiseVelocity(FAST_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            secondRightMotor
+                    .configMotionAcceleration(FAST_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
         } else {
-            leftMotor.configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
-            leftMotor.configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
-            rightMotor.configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
-            rightMotor.configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            firstLeftMotor
+                    .configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            firstLeftMotor
+                    .configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            firstRightMotor
+                    .configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            firstRightMotor
+                    .configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            secondLeftMotor
+                    .configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            secondLeftMotor
+                    .configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+            secondRightMotor
+                    .configMotionCruiseVelocity(SLOW_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+            secondRightMotor
+                    .configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
         }
     }
 

@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.frcteam2910.c2022.Constants;
 
 public class IntakeSubsystem implements Subsystem {
-    private final TalonFX leftMotor = new TalonFX(Constants.INTAKE_LEFT_MOTOR_PORT);
-    private final TalonFX rightMotor = new TalonFX(Constants.INTAKE_RIGHT_MOTOR_PORT);
+    private final TalonFX leftMotor = new TalonFX(Constants.INTAKE_LEFT_MOTOR_PORT, "CANivore");
+    private final TalonFX rightMotor = new TalonFX(Constants.INTAKE_RIGHT_MOTOR_PORT, "CANivore");
     private final Solenoid extensionSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.INTAKE_SOLENOID_PORT);
 
     private double motorSpeed = 0.0;
