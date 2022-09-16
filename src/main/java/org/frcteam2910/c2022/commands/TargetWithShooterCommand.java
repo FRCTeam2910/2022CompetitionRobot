@@ -86,9 +86,9 @@ public class TargetWithShooterCommand extends CommandBase {
 
     @Override
     public void execute() {
-        // double distance = drivetrain.getPose().getTranslation().getNorm();
-        double distance = vision.getDistanceToTarget()
-                - (drivetrain.getHubDistanceMovingOffset() - vision.getDistanceToTarget());
+        double distanceX = vision.getDistanceToTarget().x + drivetrain.getHubDistanceMovingOffset().x;
+        double distanceY = vision.getDistanceToTarget().y + drivetrain.getHubDistanceMovingOffset().y;
+        double distance = Math.hypot(distanceX, distanceY);
         Vector2 angleAndSpeed = SHOOTER_TUNING.getInterpolated(new InterpolatingDouble(distance));
 
         shooter.setTargetFlywheelSpeed(angleAndSpeed.y);
