@@ -59,6 +59,8 @@ public class VisionSubsystem implements Subsystem {
         tab.addNumber("center Y Pixels", () -> centerYPixels);
         tab.addNumber("center X Angle", () -> Math.toDegrees(centerXAngle));
         tab.addNumber("center Y Angle", () -> Math.toDegrees(centerYAngle));
+        tab.addNumber("angle using atan2",
+                () -> Math.toDegrees(Math.atan2(getDistanceToTarget().y, getDistanceToTarget().x)));
         tab.addBoolean("Is Vision on Target", this::isOnTarget);
     }
 

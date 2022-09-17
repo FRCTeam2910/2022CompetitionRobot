@@ -109,8 +109,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 .withProperties(Map.of("min", 0.0, "max", 100.0, "Block increment", 10.0)).withPosition(0, 3)
                 .getEntry();
 
-        tab.addNumber("Odometry X", () -> Units.metersToFeet(getPose().getX()));
-        tab.addNumber("Odometry Y", () -> Units.metersToFeet(getPose().getY()));
+        tab.addNumber("Odometry X", () -> getPose().getX());
+        tab.addNumber("Odometry Y", () -> getPose().getY());
         tab.addNumber("Odometry Angle", () -> getPose().getRotation().getDegrees());
         tab.addNumber("Velocity X", () -> Units.metersToFeet(getCurrentVelocity().vxMetersPerSecond));
         tab.addNumber("Trajectory Position X", () -> {
@@ -130,6 +130,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
         tab.addNumber("Moving distance offset x", () -> getHubDistanceMovingOffset().x);
         tab.addNumber("Moving distance offset y", () -> getHubDistanceMovingOffset().y);
+        tab.addBoolean("Is on target", this::isOnTargetOffset);
+        tab.addNumber("Angle to target",
+                () -> Math.toDegrees(Math.atan2((getPose().getY() * -1) + getHubDistanceMovingOffset().y,
+                        (getPose().getX() * -1) + getHubDistanceMovingOffset().x)));
 
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);
         // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel,
