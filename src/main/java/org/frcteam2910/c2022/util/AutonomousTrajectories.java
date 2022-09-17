@@ -17,6 +17,7 @@ public class AutonomousTrajectories {
     private final Trajectory twoBallGreenPartOne;
     private final Trajectory twoBallPurplePartOne;
     private final Trajectory threeBallOrangePartOne;
+    private final Trajectory threeBallTwoPreloadOrangePartOne;
     private final Trajectory threeBallOrangePartTwo;
     private final Trajectory threeBallOrangePartThree;
     private final Trajectory fiveBallOrangePartOne;
@@ -66,6 +67,11 @@ public class AutonomousTrajectories {
 
         threeBallOrangePartOne = new Trajectory(
                 new SimplePathBuilder(new Vector2(-0.669, -2.386), Rotation2.fromDegrees(-88.5))
+                        .lineTo(new Vector2(-0.66, -3.417), Rotation2.fromDegrees(-90.0)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        threeBallTwoPreloadOrangePartOne = new Trajectory(
+                new SimplePathBuilder(new Vector2(-0.669, -2.386), Rotation2.fromDegrees(91.5))
                         .lineTo(new Vector2(-0.66, -3.417), Rotation2.fromDegrees(-90.0)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
@@ -170,6 +176,10 @@ public class AutonomousTrajectories {
 
     public Trajectory getThreeBallOrangePartOne() {
         return threeBallOrangePartOne;
+    }
+
+    public Trajectory getThreeBallTwoPreloadOrangePartOne() {
+        return threeBallTwoPreloadOrangePartOne;
     }
 
     public Trajectory getThreeBallOrangePartTwo() {
