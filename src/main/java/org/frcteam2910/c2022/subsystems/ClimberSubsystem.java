@@ -33,7 +33,7 @@ public class ClimberSubsystem implements Subsystem {
     public static final double MIN_HEIGHT = Units.feetToMeters(0.0);
 
     private static final DCMotor MOTOR = DCMotor.getFalcon500(2);
-    private static final double REDUCTION = (16.0 / 36.0) * (20.0 / 44.0) * (18.0 / 48.0);
+    private static final double REDUCTION = (16.0 / 36.0) * (28.0 / 36.0) * (18.0 / 48.0);
     private static final double MASS = Units.lbsToKilograms(60.0);
     private static final double RADIUS = Units.inchesToMeters(0.90);
 
