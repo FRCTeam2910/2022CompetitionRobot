@@ -19,13 +19,17 @@ public class AutonomousChooser {
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
 
-        autonomousModeChooser.setDefaultOption("Five Ball (Orange)", AutonomousMode.FIVE_BALL_ORANGE);
+        autonomousModeChooser.setDefaultOption("Five Ball Double Preload (Orange)",
+                AutonomousMode.FIVE_BALL_DOUBLE_PRELOAD_ORANGE);
         autonomousModeChooser.addOption("Test Auto", AutonomousMode.TEST_AUTO);
         autonomousModeChooser.addOption("Fender (Red)", AutonomousMode.FENDER_RED);
         autonomousModeChooser.addOption("Two Ball (Green)", AutonomousMode.TWO_BALL_GREEN);
         autonomousModeChooser.addOption("Two Ball (Purple)", AutonomousMode.TWO_BALL_PURPLE);
         autonomousModeChooser.addOption("Three Ball (Orange)", AutonomousMode.THREE_BALL_ORANGE);
         autonomousModeChooser.addOption("Five Ball (Orange)", AutonomousMode.FIVE_BALL_ORANGE);
+        autonomousModeChooser.addOption("Fender Double Preload (Red)", AutonomousMode.FENDER_DOUBLE_PRELOAD_RED);
+        autonomousModeChooser.addOption("Two Ball Double Preload (Green)",
+                AutonomousMode.TWO_BALL_DOUBLE_PRELOAD_GREEN);
         autonomousModeChooser.addOption("Three Ball Double Preload (Orange)",
                 AutonomousMode.THREE_BALL_DOUBLE_PRELOAD_ORANGE);
         autonomousModeChooser.addOption("Five Ball Double Preload (Orange)",
@@ -65,9 +69,25 @@ public class AutonomousChooser {
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         resetRobotPose(command, container, trajectories.getFenderRedPartOne());
+
         command.addCommands(new ZeroHoodCommand(container.getShooter(), true));
 
-        command.addCommands(new FenderShootCommand(container.getFeeder(), container.getShooter()).withTimeout(1.5));
+        command.addCommands(new FenderShootCommand(container.getFeeder(), container.getShooter()).withTimeout(2.5));
+        command.addCommands(follow(container, trajectories.getFenderRedPartOne()));
+
+        return command;
+    }
+
+    public Command getFenderTwoPreloadRedAuto(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectories.getFenderRedPartOne());
+
+        command.addCommands(
+                new SimpleIntakeCommand(container.getIntake(), container.getFeeder(), container.getController())
+                        .withTimeout(1.0).alongWith(new ZeroHoodCommand(container.getShooter(), true, true)));
+
+        command.addCommands(new FenderShootCommand(container.getFeeder(), container.getShooter()).withTimeout(2.5));
         command.addCommands(follow(container, trajectories.getFenderRedPartOne()));
 
         return command;
@@ -80,6 +100,26 @@ public class AutonomousChooser {
 
         command.addCommands(followAndIntake(container, trajectories.getTwoBallGreenPartOne())
                 .alongWith(new ZeroHoodCommand(container.getShooter(), true)));
+        shootAtTarget(command, container, 2.0);
+
+        return command;
+    }
+
+    public Command get2BallTwoPreloadGreenAuto(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectories.getTwoBallGreenPartOne());
+
+        // Grab the 2nd preloaded ball
+        // Zero the hood along the way
+        command.addCommands(
+                new SimpleIntakeCommand(container.getIntake(), container.getFeeder(), container.getController())
+                        .withTimeout(1.0).alongWith(new ZeroHoodCommand(container.getShooter(), true, true)));
+
+        // Shoot preloaded balls
+        shootAtTarget(command, container, 1.5);
+
+        command.addCommands(followAndIntake(container, trajectories.getTwoBallGreenPartOne()));
         shootAtTarget(command, container, 2.0);
 
         return command;
@@ -111,12 +151,11 @@ public class AutonomousChooser {
         // Shoot preloaded balls
         shootAtTarget(command, container, 1.5);
 
-        // Grab the second ball and move to the shooting position
-        command.addCommands(followAndIntake(container, trajectories.getThreeBallTwoPreloadOrangePartOne())
-                .andThen(follow(container, trajectories.getThreeBallOrangePartTwo())));
+        // Grab the 2nd ball
+        command.addCommands(followAndIntake(container, trajectories.getThreeBallTwoPreloadOrangePartOne()));
 
         // Grab the 3rd ball
-        command.addCommands(followAndIntake(container, trajectories.getThreeBallOrangePartThree()));
+        command.addCommands(followAndIntake(container, trajectories.getThreeBallTwoPreloadOrangePartTwo()));
 
         // Shoot the 2nd and 3rd ball
         shootAtTarget(command, container, 1.5);
@@ -297,6 +336,10 @@ public class AutonomousChooser {
                 return get6BallOrangeAuto(container);
             case TWO_BALL_DEFENSIVE :
                 return get2BallDefensiveAuto(container);
+            case FENDER_DOUBLE_PRELOAD_RED :
+                return getFenderTwoPreloadRedAuto(container);
+            case TWO_BALL_DOUBLE_PRELOAD_GREEN :
+                return get2BallTwoPreloadGreenAuto(container);
             case THREE_BALL_DOUBLE_PRELOAD_ORANGE :
                 return get3BallTwoPreloadOrangeAuto(container);
             case FIVE_BALL_DOUBLE_PRELOAD_ORANGE :
@@ -336,6 +379,6 @@ public class AutonomousChooser {
     }
 
     private enum AutonomousMode {
-        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_GREEN, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FIVE_BALL_ORANGE, FIVE_BALL_DEFENSIVE, SIX_BALL_ORANGE, TWO_BALL_DEFENSIVE, FIVE_BALL_DOUBLE_PRELOAD_ORANGE, THREE_BALL_DOUBLE_PRELOAD_ORANGE
+        TEST_AUTO, FENDER_RED, FENDER_BLUE, TWO_BALL_GREEN, TWO_BALL_PURPLE, THREE_BALL_ORANGE, FIVE_BALL_ORANGE, FIVE_BALL_DEFENSIVE, SIX_BALL_ORANGE, TWO_BALL_DEFENSIVE, FIVE_BALL_DOUBLE_PRELOAD_ORANGE, THREE_BALL_DOUBLE_PRELOAD_ORANGE, TWO_BALL_DOUBLE_PRELOAD_GREEN, FENDER_DOUBLE_PRELOAD_RED
     }
 }
