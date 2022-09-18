@@ -45,6 +45,8 @@ public class ClimberSubsystem implements Subsystem {
     private static final double SENSOR_POSITION_COEFFICIENT = REDUCTION * RADIUS * 2 * Math.PI / 2048.0;
     private static final double SENSOR_VELOCITY_COEFFICIENT = SENSOR_POSITION_COEFFICIENT * 10.0;
 
+    private static final MotionProfile.Constraints EVEN_FASTER_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
+            Units.feetToMeters(7.0), Units.feetToMeters(30.0));
     private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
             Units.feetToMeters(6.0), Units.feetToMeters(12.0));
     private static final MotionProfile.Constraints SLOW_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
@@ -225,6 +227,25 @@ public class ClimberSubsystem implements Subsystem {
             secondRightMotor
                     .configMotionAcceleration(SLOW_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
         }
+    }
+
+    public void setEvenFasterMotionConstraints() {
+        firstLeftMotor
+                .configMotionCruiseVelocity(EVEN_FASTER_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+        firstLeftMotor
+                .configMotionAcceleration(EVEN_FASTER_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+        firstRightMotor
+                .configMotionCruiseVelocity(EVEN_FASTER_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+        firstRightMotor
+                .configMotionAcceleration(EVEN_FASTER_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+        secondLeftMotor
+                .configMotionCruiseVelocity(EVEN_FASTER_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+        secondLeftMotor
+                .configMotionAcceleration(EVEN_FASTER_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+        secondRightMotor
+                .configMotionCruiseVelocity(EVEN_FASTER_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
+        secondRightMotor
+                .configMotionAcceleration(EVEN_FASTER_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
     }
 
     private enum Mode {

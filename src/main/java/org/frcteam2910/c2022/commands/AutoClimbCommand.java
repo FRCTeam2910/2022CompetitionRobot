@@ -31,7 +31,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
             addCommands(new InstantCommand(shooter::disableFlywheel));
 
             // Prepare to transfer mid rung to hood
-            addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_TRANSFER_HEIGHT)
+            addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_TRANSFER_HEIGHT, false, true)
                     .alongWith(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE)));
 
             // Transfer mid rung to hood
@@ -55,8 +55,8 @@ public class AutoClimbCommand extends SequentialCommandGroup {
                             addCommands(traverseToNextRung(climber, shooter, true, false));
                         }
                         if (climbType != ClimbChooser.ClimbType.TRAVERSAL_PARTWAY) {
-                            addCommands(
-                                    new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT, false));
+                            addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT, false,
+                                    false));
                             // Transfer traverse rung to hood
                             addCommands(transferToHood(climber, shooter));
                         }
@@ -107,12 +107,12 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         if (transversal) {
             if (partway) {
                 group.addCommands(
-                        new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT, false)
+                        new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT, false, false)
                                 .alongWith(new SetHoodAngleCommand(shooter,
                                         ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE, true, true)));
                 group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_MIN_ANGLE));
             } else {
-                group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT, false)
+                group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT, false, false)
                         .alongWith(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE, true,
                                 true)));
             }
@@ -120,12 +120,12 @@ public class AutoClimbCommand extends SequentialCommandGroup {
             // Retract the climber, and move the hood to the transfer position after the
             // climber grabs onto the next rung
             if (!partway) {
-                group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT, false)
+                group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_PASSAGE_HEIGHT, false, false)
                         .alongWith(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE, true,
                                 true)));
             } else {
                 group.addCommands(
-                        new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT, false)
+                        new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT, false, false)
                                 .alongWith(new SetHoodAngleCommand(shooter,
                                         ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE, true, true)));
             }

@@ -83,11 +83,11 @@ public class RobotContainer {
                         new AlignRobotToShootCommand(drivetrain, vision, this::getForwardInput, this::getStrafeInput))
                 .alongWith(new WaitCommand(0.1).andThen(new ShootWhenReadyCommand(feeder, shooter, vision))));
         new Button(() -> controller.getPOV() == 0).whenPressed(new ConditionalCommand(
-                new ClimberToPointCommand(climber, ClimberSubsystem.MID_RUNG_HEIGHT),
-                new ClimberToPointCommand(climber, ClimberSubsystem.MAX_HEIGHT), () -> climber
+                new ClimberToPointCommand(climber, ClimberSubsystem.MID_RUNG_HEIGHT, false, true),
+                new ClimberToPointCommand(climber, ClimberSubsystem.MAX_HEIGHT, false, true), () -> climber
                         .getCurrentHeight() > (ClimberSubsystem.MAX_HEIGHT + ClimberSubsystem.MID_RUNG_HEIGHT) / 2.0));
         new Button(() -> controller.getPOV() == 180)
-                .whenPressed(new ClimberToPointCommand(climber, ClimberSubsystem.MIN_HEIGHT));
+                .whenPressed(new ClimberToPointCommand(climber, ClimberSubsystem.MIN_HEIGHT, false, true));
         new Button(controller::getBackButton).whenPressed(drivetrain::zeroRotation);
         new Button(controller::getStartButton).whenPressed(
                 new AutoClimbCommand(climber, shooter, () -> climbChooser.getClimbChooser().getSelected()));
