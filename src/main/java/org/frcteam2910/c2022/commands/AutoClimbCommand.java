@@ -31,7 +31,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
             addCommands(new InstantCommand(shooter::disableFlywheel));
 
             // Prepare to transfer mid rung to hood
-            addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_TRANSFER_HEIGHT, false, true)
+            addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.HOOD_TRANSFER_HEIGHT, true, false)
                     .alongWith(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_PREPARE_TRANSFER_ANGLE)));
 
             // Transfer mid rung to hood
