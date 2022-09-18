@@ -80,24 +80,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     private final NetworkTableEntry motorOutputPercentageLimiterEntry;
+    private final NetworkTableEntry shootingWhileMovingCoefficientEntry;
     private double motorOutputLimiter;
+    private double shootingWhileMovingCoefficient;
 
     public DrivetrainSubsystem() {
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
-                tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
+                tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 3).withPosition(0, 0),
                 Mk4iSwerveModuleHelper.GearRatio.L3, FRONT_LEFT_MODULE_DRIVE_MOTOR, FRONT_LEFT_MODULE_STEER_MOTOR,
                 FRONT_LEFT_MODULE_STEER_ENCODER, FRONT_LEFT_MODULE_STEER_OFFSET);
         frontRightModule = Mk4iSwerveModuleHelper.createFalcon500(
-                tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+                tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 3).withPosition(2, 0),
                 Mk4iSwerveModuleHelper.GearRatio.L3, FRONT_RIGHT_MODULE_DRIVE_MOTOR, FRONT_RIGHT_MODULE_STEER_MOTOR,
                 FRONT_RIGHT_MODULE_STEER_ENCODER, FRONT_RIGHT_MODULE_STEER_OFFSET);
         backLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
-                tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
+                tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 3).withPosition(4, 0),
                 Mk4iSwerveModuleHelper.GearRatio.L3, BACK_LEFT_MODULE_DRIVE_MOTOR, BACK_LEFT_MODULE_STEER_MOTOR,
                 BACK_LEFT_MODULE_STEER_ENCODER, BACK_LEFT_MODULE_STEER_OFFSET);
         backRightModule = Mk4iSwerveModuleHelper.createFalcon500(
-                tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
+                tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 3).withPosition(6, 0),
                 Mk4iSwerveModuleHelper.GearRatio.L3, BACK_RIGHT_MODULE_DRIVE_MOTOR, BACK_RIGHT_MODULE_STEER_MOTOR,
                 BACK_RIGHT_MODULE_STEER_ENCODER, BACK_RIGHT_MODULE_STEER_OFFSET);
         estimator = new SwerveDrivePoseEstimator(getGyroscopeRotation(), new Pose2d(), kinematics,
@@ -108,6 +110,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         motorOutputPercentageLimiterEntry = tab.add("Motor Percentage", 100.0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withProperties(Map.of("min", 0.0, "max", 100.0, "Block increment", 10.0)).withPosition(0, 3)
                 .getEntry();
+
+        shootingWhileMovingCoefficientEntry = tab.add("Shooting While Moving Coefficient", 1.0)
+                .withWidget(BuiltInWidgets.kNumberSlider)
+                .withProperties(Map.of("min", 0.0, "max", 2.0, "Block increment", 0.1)).withPosition(2, 3).getEntry();
 
         tab.addNumber("Odometry X", () -> getPose().getX());
         tab.addNumber("Odometry Y", () -> getPose().getY());
@@ -162,10 +168,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public double getMotorOutputLimiter() {
         return motorOutputLimiter;
-    }
-
-    public void setMotorOutputLimiter(double motorOutputLimiter) {
-        this.motorOutputLimiter = motorOutputLimiter;
     }
 
     public HolonomicMotionProfiledTrajectoryFollower getFollower() {
@@ -231,6 +233,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         }
 
         motorOutputLimiter = motorOutputPercentageLimiterEntry.getDouble(0.0) / 100;
+        shootingWhileMovingCoefficient = shootingWhileMovingCoefficientEntry.getDouble(1.0);
 
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
@@ -243,8 +246,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
                 states[3].angle.getRadians());
 
-        movingDistanceToHubX = CARGO_TIME_IN_AIR * chassisSpeeds.vxMetersPerSecond;
-        movingDistanceToHubY = CARGO_TIME_IN_AIR * chassisSpeeds.vyMetersPerSecond;
+        movingDistanceToHubX = shootingWhileMovingCoefficient * chassisSpeeds.vxMetersPerSecond;
+        movingDistanceToHubY = shootingWhileMovingCoefficient * chassisSpeeds.vyMetersPerSecond;
     }
 
     public Vector2 getHubDistanceMovingOffset() {
