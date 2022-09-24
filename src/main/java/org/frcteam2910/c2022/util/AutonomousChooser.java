@@ -193,13 +193,13 @@ public class AutonomousChooser {
         command.addCommands(get3BallTwoPreloadOrangeAuto(container));
 
         // Grab the 4th ball and wait for the 5th
-        command.addCommands(followAndIntake(container, trajectories.getFiveBallOrangePartOne(),
-                () -> container.getFeeder().isFull(), 1.0));
-        command.addCommands(followAndIntake(container, trajectories.getFiveBallOrangePartTwo(),
-                () -> container.getFeeder().isFull(), 1.0));
+        command.addCommands(followAndIntake(container, trajectories.getFiveBallTwoPreloadOrangePartOne(),
+                () -> container.getFeeder().isFull(), 0.0));
+        command.addCommands(followAndIntake(container, trajectories.getFiveBallTwoPreloadOrangePartTwo(),
+                () -> container.getFeeder().isFull(), 2.0));
 
         // Go to shooting location
-        command.addCommands(follow(container, trajectories.getFiveBallOrangePartThree()));
+        command.addCommands(follow(container, trajectories.getFiveBallTwoPreloadOrangePartThree()));
 
         // Shoot the 4th and 5th balls
         shootAtTarget(command, container, 1.5);
@@ -215,9 +215,9 @@ public class AutonomousChooser {
 
         // Grab the 4th ball and wait for the 5th
         command.addCommands(followAndIntake(container, trajectories.getFiveBallOrangePartOne(),
-                () -> container.getFeeder().isFull(), 1.0));
+                () -> container.getFeeder().isFull(), 0.0));
         command.addCommands(followAndIntake(container, trajectories.getFiveBallOrangePartTwo(),
-                () -> container.getFeeder().isFull(), 1.0));
+                () -> container.getFeeder().isFull(), 2.0));
 
         // Go to shooting location
         command.addCommands(follow(container, trajectories.getFiveBallOrangePartThree()));

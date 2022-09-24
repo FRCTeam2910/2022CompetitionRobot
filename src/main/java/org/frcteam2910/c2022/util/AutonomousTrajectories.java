@@ -21,6 +21,9 @@ public class AutonomousTrajectories {
     private final Trajectory threeBallTwoPreloadOrangePartTwo;
     private final Trajectory threeBallOrangePartTwo;
     private final Trajectory threeBallOrangePartThree;
+    private final Trajectory fiveBallTwoPreloadOrangePartOne;
+    private final Trajectory fiveBallTwoPreloadOrangePartTwo;
+    private final Trajectory fiveBallTwoPreloadOrangePartThree;
     private final Trajectory fiveBallOrangePartOne;
     private final Trajectory fiveBallOrangePartTwo;
     private final Trajectory fiveBallOrangePartThree;
@@ -79,9 +82,9 @@ public class AutonomousTrajectories {
 
         threeBallTwoPreloadOrangePartTwo = new Trajectory(
                 new SimplePathBuilder(new Vector2(-0.66, -3.417), Rotation2.fromDegrees(-90.0))
-                        .lineTo(new Vector2(-3.501, -3.268), Rotation2.fromDegrees(34.88))
-                        .arcTo(new Vector2(-3.735, -2.45), new Vector2(-3.477, -2.819))
-                        .lineTo(new Vector2(-3.54, -2.314)).build(),
+                        .lineTo(new Vector2(-3.518, -3.268), Rotation2.fromDegrees(34.88))
+                        .arcTo(new Vector2(-3.778, -2.358), new Vector2(-3.492, -2.768))
+                        .lineTo(new Vector2(-3.34, -2.053)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         threeBallOrangePartTwo = new Trajectory(
@@ -93,6 +96,22 @@ public class AutonomousTrajectories {
         threeBallOrangePartThree = new Trajectory(
                 new SimplePathBuilder(new Vector2(-3.950, -2.600), Rotation2.fromDegrees(34.88))
                         .lineTo(new Vector2(-3.540, -2.314)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        fiveBallTwoPreloadOrangePartOne = new Trajectory(
+                new SimplePathBuilder(new Vector2(-3.34, -2.053), Rotation2.fromDegrees(34.88))
+                        .lineTo(new Vector2(-5.34, -2.293), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-7.153, -2.511)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        fiveBallTwoPreloadOrangePartTwo = new Trajectory(
+                new SimplePathBuilder(new Vector2(-7.153, -2.511), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-6.792, -2.166)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        fiveBallTwoPreloadOrangePartThree = new Trajectory(
+                new SimplePathBuilder(new Vector2(-6.792, -2.166), Rotation2.fromDegrees(-131.25))
+                        .lineTo(new Vector2(-2.5, -2.5), Rotation2.fromDegrees(45.0)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         fiveBallOrangePartOne = new Trajectory(
@@ -201,6 +220,18 @@ public class AutonomousTrajectories {
 
     public Trajectory getThreeBallOrangePartThree() {
         return threeBallOrangePartThree;
+    }
+
+    public Trajectory getFiveBallTwoPreloadOrangePartOne() {
+        return fiveBallTwoPreloadOrangePartOne;
+    }
+
+    public Trajectory getFiveBallTwoPreloadOrangePartTwo() {
+        return fiveBallTwoPreloadOrangePartTwo;
+    }
+
+    public Trajectory getFiveBallTwoPreloadOrangePartThree() {
+        return fiveBallTwoPreloadOrangePartThree;
     }
 
     public Trajectory getFiveBallOrangePartOne() {
