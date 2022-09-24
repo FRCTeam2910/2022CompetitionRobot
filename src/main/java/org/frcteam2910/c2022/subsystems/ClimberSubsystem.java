@@ -50,7 +50,7 @@ public class ClimberSubsystem implements Subsystem {
     private static final MotionProfile.Constraints FAST_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
             Units.feetToMeters(6.0), Units.feetToMeters(12.0));
     private static final MotionProfile.Constraints SLOW_MOTION_CONSTRAINTS = new MotionProfile.Constraints(
-            Units.feetToMeters(4.0), Units.feetToMeters(8.0));
+            Units.feetToMeters(3.0), Units.feetToMeters(6.0));
 
     private final LinearSystem<N2, N1, N1> plant = LinearSystemId.identifyPositionSystem(VELOCITY_CONSTANT,
             ACCELERATION_CONSTANT);
