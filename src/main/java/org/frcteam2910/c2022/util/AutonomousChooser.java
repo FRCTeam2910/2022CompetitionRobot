@@ -19,21 +19,21 @@ public class AutonomousChooser {
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
 
-        autonomousModeChooser.setDefaultOption("Five Ball Double Preload (Orange)",
-                AutonomousMode.FIVE_BALL_DOUBLE_PRELOAD_ORANGE);
+        autonomousModeChooser.setDefaultOption("Five Ball (Orange)", AutonomousMode.FIVE_BALL_ORANGE);
         autonomousModeChooser.addOption("Test Auto", AutonomousMode.TEST_AUTO);
         autonomousModeChooser.addOption("Fender (Red)", AutonomousMode.FENDER_RED);
         autonomousModeChooser.addOption("Two Ball (Green)", AutonomousMode.TWO_BALL_GREEN);
         autonomousModeChooser.addOption("Two Ball (Purple)", AutonomousMode.TWO_BALL_PURPLE);
         autonomousModeChooser.addOption("Three Ball (Orange)", AutonomousMode.THREE_BALL_ORANGE);
         autonomousModeChooser.addOption("Five Ball (Orange)", AutonomousMode.FIVE_BALL_ORANGE);
-        autonomousModeChooser.addOption("Fender Double Preload (Red)", AutonomousMode.FENDER_DOUBLE_PRELOAD_RED);
-        autonomousModeChooser.addOption("Two Ball Double Preload (Green)",
-                AutonomousMode.TWO_BALL_DOUBLE_PRELOAD_GREEN);
-        autonomousModeChooser.addOption("Three Ball Double Preload (Orange)",
-                AutonomousMode.THREE_BALL_DOUBLE_PRELOAD_ORANGE);
-        autonomousModeChooser.addOption("Five Ball Double Preload (Orange)",
-                AutonomousMode.FIVE_BALL_DOUBLE_PRELOAD_ORANGE);
+        // autonomousModeChooser.addOption("Fender Double Preload (Red)",
+        // AutonomousMode.FENDER_DOUBLE_PRELOAD_RED);
+        // autonomousModeChooser.addOption("Two Ball Double Preload (Green)",
+        // AutonomousMode.TWO_BALL_DOUBLE_PRELOAD_GREEN);
+        // autonomousModeChooser.addOption("Three Ball Double Preload (Orange)",
+        // AutonomousMode.THREE_BALL_DOUBLE_PRELOAD_ORANGE);
+        // autonomousModeChooser.addOption("Five Ball Double Preload (Orange)",
+        // AutonomousMode.FIVE_BALL_DOUBLE_PRELOAD_ORANGE);
         autonomousModeChooser.addOption("Five Ball Defensive (Orange)", AutonomousMode.FIVE_BALL_DEFENSIVE);
         autonomousModeChooser.addOption("Six Ball (Orange)", AutonomousMode.SIX_BALL_ORANGE);
         autonomousModeChooser.addOption("Two Ball Defensive (Green)", AutonomousMode.TWO_BALL_DEFENSIVE);
