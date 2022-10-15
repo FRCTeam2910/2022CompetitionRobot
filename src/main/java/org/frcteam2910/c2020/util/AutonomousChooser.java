@@ -22,7 +22,9 @@ public class AutonomousChooser {
         ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous settings");
 
         autonomousModeChooser = new SendableChooser<>();
-        autonomousModeChooser.setDefaultOption("8 Ball Auto", AutonomousMode.EIGHT_BALL);
+        autonomousModeChooser.setDefaultOption("Simple Taxi Red (RAPID REACT)", AutonomousMode.TAXI_RED_RAPID_REACT);
+        autonomousModeChooser.addOption("Simple Taxi Blue (RAPID REACT)", AutonomousMode.TAXI_BLUE_RAPID_REACT);
+        autonomousModeChooser.addOption("8 Ball Auto", AutonomousMode.EIGHT_BALL);
         autonomousModeChooser.addOption("8 Ball Compatible", AutonomousMode.EIGHT_BALL_COMPATIBLE);
         autonomousModeChooser.addOption("10 Ball Auto", AutonomousMode.TEN_BALL);
         autonomousModeChooser.addOption("Circuit 10 Ball Auto", AutonomousMode.TEN_BALL_CIRCUIT);
@@ -31,6 +33,24 @@ public class AutonomousChooser {
 
     public AutonomousChooser(AutonomousTrajectories trajectories) {
         this.trajectories = trajectories;
+    }
+
+    public Command getTaxiRedRapidReact(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectories.getTaxiRedRapidReactPartOne());
+        follow(command, container, trajectories.getTaxiRedRapidReactPartOne());
+
+        return command;
+    }
+
+    public Command getTaxiBlueRapidReact(RobotContainer container) {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        resetRobotPose(command, container, trajectories.getTaxiBlueRapidReactPartOne());
+        follow(command, container, trajectories.getTaxiBlueRapidReactPartOne());
+
+        return command;
     }
 
     private SequentialCommandGroup get10BallAutoCommand(RobotContainer container) {
@@ -109,6 +129,10 @@ public class AutonomousChooser {
                 return get10BallAutoCommand(container);
             case TEN_BALL_CIRCUIT :
                 return getCircuit10BallAutoCommand(container);
+            case TAXI_RED_RAPID_REACT :
+                return getTaxiRedRapidReact(container);
+            case TAXI_BLUE_RAPID_REACT :
+                return getTaxiBlueRapidReact(container);
         }
 
         return get10BallAutoCommand(container);
@@ -154,6 +178,6 @@ public class AutonomousChooser {
     }
 
     private enum AutonomousMode {
-        EIGHT_BALL, EIGHT_BALL_COMPATIBLE, TEN_BALL, TEN_BALL_CIRCUIT
+        EIGHT_BALL, EIGHT_BALL_COMPATIBLE, TEN_BALL, TEN_BALL_CIRCUIT, TAXI_RED_RAPID_REACT, TAXI_BLUE_RAPID_REACT
     }
 }

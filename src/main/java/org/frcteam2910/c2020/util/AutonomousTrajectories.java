@@ -39,10 +39,25 @@ public class AutonomousTrajectories {
     private final Trajectory eightBallCompatiblePartTwo;
     private final Trajectory eightBallCompatiblePartThree;
 
+    private final Trajectory taxiRedRapidReactPartOne;
+    private final Trajectory taxiBlueRapidReactPartOne;
+
     public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints) throws IOException {
         TrajectoryConstraint[] slowConstraints = Arrays.copyOf(trajectoryConstraints, trajectoryConstraints.length + 1);
         slowConstraints[slowConstraints.length - 1] = new MaxVelocityConstraint(6.0 * 12.0);
         slowConstraints[slowConstraints.length - 2] = new MaxAccelerationConstraint(4.0 * 12.0);
+
+        taxiRedRapidReactPartOne = new Trajectory(
+                new SimplePathBuilder(new Vector2(-111.9, 61.8), Rotation2.fromDegrees(-21.0))
+                        .arcTo(new Vector2(-159.8, 109.6), new Vector2(-82.0, 139.6), Rotation2.fromDegrees(-21.0))
+                        .lineTo(new Vector2(-243.4, 326.5), Rotation2.fromDegrees(24.0)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        taxiBlueRapidReactPartOne = new Trajectory(
+                new SimplePathBuilder(new Vector2(-29.0, -124.5), Rotation2.fromDegrees(69.0))
+                        .arcTo(new Vector2(-24.6, -192.6), new Vector2(47.5, -153.8), Rotation2.fromDegrees(69.0))
+                        .lineTo(new Vector2(47.4, -326.5), Rotation2.fromDegrees(24.0)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
 
         eightBallAutoPartOne = new Trajectory(new SimplePathBuilder(new Vector2(509.0, -162.0), Rotation2.ZERO)
                 .lineTo(new Vector2(468.0, -67.34)).build(), trajectoryConstraints, SAMPLE_DISTANCE);
@@ -87,6 +102,14 @@ public class AutonomousTrajectories {
         try (PathReader reader = new PathReader(new InputStreamReader(in))) {
             return reader.read();
         }
+    }
+
+    public Trajectory getTaxiRedRapidReactPartOne() {
+        return taxiRedRapidReactPartOne;
+    }
+
+    public Trajectory getTaxiBlueRapidReactPartOne() {
+        return taxiBlueRapidReactPartOne;
     }
 
     public Trajectory getEightBallAutoPartOne() {

@@ -16,7 +16,7 @@ import static org.frcteam2910.c2020.Constants.INTAKE_MOTOR;
 
 public class IntakeSubsystem implements Subsystem, UpdateManager.Updatable {
     private TalonFX motor = new TalonFX(INTAKE_MOTOR);
-    private Solenoid extensionSolenoid = new Solenoid(PneumaticsModuleType.REVPH, INTAKE_EXTENSION_SOLENOID);
+    private Solenoid extensionSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, INTAKE_EXTENSION_SOLENOID);
 
     private final Object stateLock = new Object();
     @GuardedBy("stateLock")

@@ -59,8 +59,10 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        primaryController.getBackButton().whenPressed(() -> drivetrainSubsystem.resetGyroAngle(Rotation2.ZERO));
-        primaryController.getStartButton().whenPressed(new SpinFlywheelCommand(shooterSubsystem, 0.0));
+        // primaryController.getBackButton().whenPressed(() ->
+        // drivetrainSubsystem.resetGyroAngle(Rotation2.ZERO));
+        // primaryController.getStartButton().whenPressed(new
+        // SpinFlywheelCommand(shooterSubsystem, 0.0));
 
         primaryController.getLeftBumperButton().whenPressed(() -> intakeSubsystem.setExtended(true));
         primaryController.getLeftBumperButton().whileHeld(new IntakeCommand(intakeSubsystem, feederSubsystem, -1.0)
@@ -84,6 +86,7 @@ public class RobotContainer {
                 new BasicDriveCommand(drivetrainSubsystem, new Vector2(-0.5, 0.0), 0.0, false).withTimeout(0.12));
         primaryController.getAButton().whileHeld(new FeedBallsToShooterCommand(feederSubsystem, shooterSubsystem));
 
+        primaryController.getYButton().whenPressed(() -> drivetrainSubsystem.resetGyroAngle(Rotation2.ZERO));
         primaryController.getBButton().whileHeld(new IntakeCommand(intakeSubsystem, feederSubsystem, -1.0, true));
         // primaryController.getAButton().whileHeld(new
         // ManuallyAdjustShooterCommand(shooterSubsystem).alongWith(new
@@ -125,8 +128,8 @@ public class RobotContainer {
         // secondaryController.getRightBumperButton().whenPressed(wheelOfFortuneSubsystem::extendSolenoid);
         // secondaryController.getRightBumperButton().whenReleased(wheelOfFortuneSubsystem::retractSolenoid);
 
-        secondaryController.getBackButton().whenPressed(new DeployClimberCommand(climberSubsystem));
-        secondaryController.getStartButton()
+        primaryController.getBackButton().whenPressed(new DeployClimberCommand(climberSubsystem));
+        primaryController.getStartButton()
                 .whenPressed(new ConditionalCommand(new RetractClimberCommand(climberSubsystem),
                         new ExtendClimberCommand(climberSubsystem), climberSubsystem::isExtended));
 

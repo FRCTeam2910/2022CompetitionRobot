@@ -11,11 +11,11 @@ import org.frcteam2910.common.robot.UpdateManager;
 
 public class ClimberSubsystem implements Subsystem, UpdateManager.Updatable {
 
-    private final Solenoid deploySolenoid = new Solenoid(PneumaticsModuleType.REVPH,
+    private final Solenoid deploySolenoid = new Solenoid(PneumaticsModuleType.CTREPCM,
             Constants.CLIMBER_DEPLOY_SOLENOID_PORT);
     private final Solenoid[] extendSolenoids = {
-            new Solenoid(PneumaticsModuleType.REVPH, Constants.CLIMBER_EXTEND_SOLENOID_1_PORT),
-            new Solenoid(PneumaticsModuleType.REVPH, Constants.CLIMBER_EXTEND_SOLENOID_2_PORT)};
+            new Solenoid(PneumaticsModuleType.CTREPCM, Constants.CLIMBER_EXTEND_SOLENOID_1_PORT),
+            new Solenoid(PneumaticsModuleType.CTREPCM, Constants.CLIMBER_EXTEND_SOLENOID_2_PORT)};
 
     private final NetworkTableEntry isDeployedEntry;
     private final NetworkTableEntry isExtendedEntry;
