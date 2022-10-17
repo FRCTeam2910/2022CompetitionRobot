@@ -21,8 +21,7 @@ public class RobotContainer {
 
     private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem();
     private final FeederSubsystem feederSubsystem = new FeederSubsystem();
-    // private final WheelOfFortuneSubsystem wheelOfFortuneSubsystem = new
-    // WheelOfFortuneSubsystem();
+    private final WheelOfFortuneSubsystem wheelOfFortuneSubsystem = new WheelOfFortuneSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimberSubsystem climberSubsystem = new ClimberSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
@@ -133,8 +132,7 @@ public class RobotContainer {
                 .whenPressed(new ConditionalCommand(new RetractClimberCommand(climberSubsystem),
                         new ExtendClimberCommand(climberSubsystem), climberSubsystem::isExtended));
 
-        // secondaryController.getAButton().whenPressed(new
-        // PlayTheWheelOfFortuneCommand(wheelOfFortuneSubsystem));
+        primaryController.getXButton().whileHeld(new ManualWheelOfFortuneCommand(wheelOfFortuneSubsystem, () -> 0.0));
     }
 
     public Command getAutonomousCommand() {
@@ -165,9 +163,9 @@ public class RobotContainer {
         return intakeSubsystem;
     }
 
-    // public WheelOfFortuneSubsystem getWheelOfFortuneSubsystem() {
-    // return wheelOfFortuneSubsystem;
-    // }
+    public WheelOfFortuneSubsystem getWheelOfFortuneSubsystem() {
+        return wheelOfFortuneSubsystem;
+    }
 
     public ClimberSubsystem getClimberSubsystem() {
         return climberSubsystem;

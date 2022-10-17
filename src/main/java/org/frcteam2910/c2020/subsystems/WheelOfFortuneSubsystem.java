@@ -49,7 +49,7 @@ public class WheelOfFortuneSubsystem implements Subsystem, UpdateManager.Updatab
     // private CANPIDController pidController = motor.getPIDController();
     private TalonSRX motor = new TalonSRX(Constants.WHEEL_OF_FORTUNE_MOTOR_PORT);
 
-    private Solenoid deploySolenoid = new Solenoid(PneumaticsModuleType.REVPH,
+    private Solenoid deploySolenoid = new Solenoid(PneumaticsModuleType.CTREPCM,
             Constants.WHEEL_OF_FORTUNE_DEPLOY_SOLENOID_PORT);
 
     private DetectedColor detectedColor;

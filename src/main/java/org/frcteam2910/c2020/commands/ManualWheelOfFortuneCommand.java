@@ -17,6 +17,11 @@ public class ManualWheelOfFortuneCommand extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+        wheelOfFortuneSubsystem.extendSolenoid();
+    }
+
+    @Override
     public void execute() {
         wheelOfFortuneSubsystem.setMotorSpeed(speedSupplier.getAsDouble());
     }
@@ -24,5 +29,6 @@ public class ManualWheelOfFortuneCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         wheelOfFortuneSubsystem.stopMotor();
+        wheelOfFortuneSubsystem.retractSolenoid();
     }
 }
