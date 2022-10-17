@@ -40,9 +40,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
             * Math.PI;
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
-
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(0.891,
             0.15, 0.13592);
+
+    public static final double DRIVETRAIN_CURRENT_LIMIT = 50.0;
 
     public static final TrajectoryConstraint[] TRAJECTORY_CONSTRAINTS = {
             new FeedforwardConstraint(4.0, FEEDFORWARD_CONSTANTS.getVelocityConstant(),
@@ -80,7 +81,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public DrivetrainSubsystem() {
         Mk4ModuleConfiguration mk4ModuleConfiguration = new Mk4ModuleConfiguration();
-        mk4ModuleConfiguration.setDriveCurrentLimit(60.0);
+        mk4ModuleConfiguration.setDriveCurrentLimit(DRIVETRAIN_CURRENT_LIMIT);
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
         frontLeftModule = Mk4iSwerveModuleHelper.createFalcon500(
                 tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
