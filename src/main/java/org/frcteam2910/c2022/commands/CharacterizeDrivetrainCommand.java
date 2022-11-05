@@ -8,6 +8,7 @@ import org.frcteam2910.c2022.util.SysIdGeneralMechanismLogger;
 
 public class CharacterizeDrivetrainCommand extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
+
     private final SysIdGeneralMechanismLogger logger = new SysIdGeneralMechanismLogger();
 
     public CharacterizeDrivetrainCommand(DrivetrainSubsystem drivetrain) {

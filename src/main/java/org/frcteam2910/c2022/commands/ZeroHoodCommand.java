@@ -7,51 +7,54 @@ import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 public class ZeroHoodCommand extends CommandBase {
     private static final double ZERO_HOOD_VELOCITY_TIME = 0.25; // in sec
     private static final double HOOD_VOLTAGE = 1.5;
-
     private static final double HOOD_ALLOWABLE_ZERO_VELOCITY = Math.toRadians(0.1);
 
-    private final ShooterSubsystem shooterSubsystem;
+    private final ShooterSubsystem shooter;
 
-    private double zeroHoodStartTime = Double.NaN;
     private final boolean forward;
     private final boolean flywheel;
 
-    public ZeroHoodCommand(ShooterSubsystem shooterSubsystem, boolean forward) {
-        this(shooterSubsystem, forward, false);
+    private double zeroHoodStartTime = Double.NaN;
+
+    public ZeroHoodCommand(ShooterSubsystem shooter, boolean forward) {
+        this(shooter, forward, false);
     }
 
-    public ZeroHoodCommand(ShooterSubsystem shooterSubsystem, boolean forward, boolean flywheel) {
-        this.shooterSubsystem = shooterSubsystem;
+    public ZeroHoodCommand(ShooterSubsystem shooter, boolean forward, boolean flywheel) {
+        this.shooter = shooter;
         this.forward = forward;
         this.flywheel = flywheel;
 
-        addRequirements(shooterSubsystem);
+        addRequirements(shooter);
     }
 
     @Override
     public void initialize() {
-        shooterSubsystem.setHoodZeroed(false);
+        shooter.setHoodZeroed(false);
         zeroHoodStartTime = Double.NaN;
+
         if (forward) {
-            shooterSubsystem.setHoodVoltage(HOOD_VOLTAGE);
+            shooter.setHoodVoltage(HOOD_VOLTAGE);
         } else {
-            shooterSubsystem.setHoodVoltage(-HOOD_VOLTAGE);
+            shooter.setHoodVoltage(-HOOD_VOLTAGE);
         }
+
         if (flywheel) {
-            shooterSubsystem.setTargetFlywheelSpeed(ShooterSubsystem.FLYWHEEL_IDLE_SPEED);
-            shooterSubsystem.enableCurrentLimits(true);
+            shooter.setTargetFlywheelSpeed(ShooterSubsystem.FLYWHEEL_IDLE_SPEED);
+            shooter.enableCurrentLimits(true);
         }
     }
 
     @Override
     public boolean isFinished() {
         if (Double.isFinite(zeroHoodStartTime)) {
-            if (Math.abs(shooterSubsystem.getHoodVelocity()) > HOOD_ALLOWABLE_ZERO_VELOCITY) {
+            if (Math.abs(shooter.getHoodVelocity()) > HOOD_ALLOWABLE_ZERO_VELOCITY) {
                 zeroHoodStartTime = Double.NaN;
-            } else
+            } else {
                 return Timer.getFPGATimestamp() - zeroHoodStartTime >= ZERO_HOOD_VELOCITY_TIME;
+            }
         } else {
-            if (Math.abs(shooterSubsystem.getHoodVelocity()) < HOOD_ALLOWABLE_ZERO_VELOCITY) {
+            if (Math.abs(shooter.getHoodVelocity()) < HOOD_ALLOWABLE_ZERO_VELOCITY) {
                 zeroHoodStartTime = Timer.getFPGATimestamp();
             }
         }
@@ -61,15 +64,15 @@ public class ZeroHoodCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        shooterSubsystem.setHoodVoltage(0.0);
+        shooter.setHoodVoltage(0.0);
         if (!interrupted) {
-            shooterSubsystem.setHoodZeroed(true);
+            shooter.setHoodZeroed(true);
             if (forward) {
-                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MAX_ANGLE);
+                shooter.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MAX_ANGLE);
             } else {
-                shooterSubsystem.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(0.5));
+                shooter.setHoodMotorSensorPosition(ShooterSubsystem.HOOD_MIN_ANGLE - Math.toRadians(0.5));
             }
         }
-        shooterSubsystem.enableCurrentLimits(false);
+        shooter.enableCurrentLimits(false);
     }
 }

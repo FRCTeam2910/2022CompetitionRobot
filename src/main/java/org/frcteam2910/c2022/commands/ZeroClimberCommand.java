@@ -6,9 +6,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 
 public class ZeroClimberCommand extends CommandBase {
-
     private static final double CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 0.5;
-
     private static final double REVERSE_VOLTAGE = -0.75;
     private static final double VELOCITY_THRESHOLD = Units.inchesToMeters(0.1);
 

@@ -3,8 +3,6 @@ package org.frcteam2910.c2022.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,16 +31,6 @@ public abstract class SysIdLogger {
         SmartDashboard.putBoolean("SysIdRotate", false);
         SmartDashboard.putBoolean("SysIdOverflow", false);
         SmartDashboard.putBoolean("SysIdWrongMech", false);
-    }
-
-    public static void updateThreadPriority() {
-        if (!RobotBase.isSimulation()) {
-            if (!Notifier.setHALThreadPriority(true, HAL_THREAD_PRIORITY)) {
-                throw new RuntimeException("Setting the RT Priority failed\n");
-            }
-
-            Thread.currentThread().setPriority(THREAD_PRIORITY);
-        }
     }
 
     public void initLogging() {

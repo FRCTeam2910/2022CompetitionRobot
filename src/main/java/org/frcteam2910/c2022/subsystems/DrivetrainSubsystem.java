@@ -40,6 +40,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             * Math.PI;
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
+
     public static final DrivetrainFeedforwardConstants FEEDFORWARD_CONSTANTS = new DrivetrainFeedforwardConstants(0.891,
             0.15, 0.13592);
 
@@ -63,6 +64,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
             // Back right
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
+
     private final SwerveDrivePoseEstimator estimator;
 
     private final Pigeon2 pigeon = new Pigeon2(DRIVETRAIN_PIGEON_ID);
@@ -73,10 +75,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private final SwerveModule backRightModule;
 
     private ChassisSpeeds currentVelocity = new ChassisSpeeds();
-
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     private final NetworkTableEntry motorOutputPercentageLimiterEntry;
+
     private double motorOutputLimiter;
 
     public DrivetrainSubsystem() {
@@ -103,7 +105,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 VecBuilder.fill(0.02, 0.02, 0.01), // estimator values (x, y, rotation) std-devs
                 VecBuilder.fill(0.01), // Gyroscope rotation std-dev
                 VecBuilder.fill(0.1, 0.1, 0.01)); // Vision (x, y, rotation) std-devs
-
         motorOutputPercentageLimiterEntry = tab.add("Motor Percentage", 100.0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withProperties(Map.of("min", 0.0, "max", 100.0, "Block increment", 10.0)).withPosition(0, 3)
                 .getEntry();
@@ -127,10 +128,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
             return Units.metersToFeet(lastState.getVelocity());
         });
         tab.addNumber("Gyroscope Angle", () -> getGyroscopeRotation().getDegrees());
-
-        // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_6_Accel, 255);
-        // pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.CondStatus_3_GeneralAccel,
-        // 255);
         pigeon.configFactoryDefault();
     }
 
@@ -155,10 +152,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public double getMotorOutputLimiter() {
         return motorOutputLimiter;
-    }
-
-    public void setMotorOutputLimiter(double motorOutputLimiter) {
-        this.motorOutputLimiter = motorOutputLimiter;
     }
 
     public HolonomicMotionProfiledTrajectoryFollower getFollower() {

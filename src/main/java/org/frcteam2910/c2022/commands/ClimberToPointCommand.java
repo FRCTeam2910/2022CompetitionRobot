@@ -5,6 +5,7 @@ import org.frcteam2910.c2022.subsystems.ClimberSubsystem;
 
 public class ClimberToPointCommand extends CommandBase {
     public final ClimberSubsystem climber;
+
     public double height;
     public boolean fast;
     public boolean evenFaster;

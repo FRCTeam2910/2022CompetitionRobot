@@ -12,10 +12,12 @@ public class AutonomousTrajectories {
     private static final double SAMPLE_DISTANCE = Units.inchesToMeters(0.1);
 
     private final Trajectory testAutoPartOne;
-    private final Trajectory fenderBluePartOne;
     private final Trajectory fenderRedPartOne;
+    private final Trajectory fenderBluePartOne;
     private final Trajectory twoBallGreenPartOne;
     private final Trajectory twoBallPurplePartOne;
+    private final Trajectory twoBallDefensivePartOne;
+    private final Trajectory twoBallDefensivePartTwo;
     private final Trajectory threeBallOrangePartOne;
     private final Trajectory threeBallTwoPreloadOrangePartOne;
     private final Trajectory threeBallTwoPreloadOrangePartTwo;
@@ -34,8 +36,6 @@ public class AutonomousTrajectories {
     private final Trajectory sixBallOrangePartFour;
     private final Trajectory sixBallOrangePartFive;
     private final Trajectory sixBallOrangePartSix;
-    private final Trajectory twoBallDefensivePartOne;
-    private final Trajectory twoBallDefensivePartTwo;
 
     public AutonomousTrajectories(TrajectoryConstraint[] trajectoryConstraints) {
         testAutoPartOne = new Trajectory(
@@ -43,16 +43,16 @@ public class AutonomousTrajectories {
                         .lineTo(new Vector2(Units.feetToMeters(30.0), 0.0)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
-        fenderBluePartOne = new Trajectory(
-                new SimplePathBuilder(new Vector2(-0.290, -1.245), Rotation2.fromDegrees(69.0))
-                        .arcTo(new Vector2(-0.246, -1.926), new Vector2(0.475, -1.538), Rotation2.fromDegrees(69.0))
-                        .lineTo(new Vector2(0.474, -3.265), Rotation2.fromDegrees(24.0)).build(),
-                trajectoryConstraints, SAMPLE_DISTANCE);
-
         fenderRedPartOne = new Trajectory(
                 new SimplePathBuilder(new Vector2(-1.119, 0.618), Rotation2.fromDegrees(-21.0))
                         .arcTo(new Vector2(-1.598, 1.096), new Vector2(-0.820, 1.396), Rotation2.fromDegrees(-21.0))
                         .lineTo(new Vector2(-2.434, 3.265), Rotation2.fromDegrees(24.0)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        fenderBluePartOne = new Trajectory(
+                new SimplePathBuilder(new Vector2(-0.290, -1.245), Rotation2.fromDegrees(69.0))
+                        .arcTo(new Vector2(-0.246, -1.926), new Vector2(0.475, -1.538), Rotation2.fromDegrees(69.0))
+                        .lineTo(new Vector2(0.474, -3.265), Rotation2.fromDegrees(24.0)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         twoBallGreenPartOne = new Trajectory(
@@ -67,6 +67,17 @@ public class AutonomousTrajectories {
                         .arcTo(new Vector2(-3.477, -3.268), new Vector2(-3.472, -1.561), Rotation2.fromDegrees(34.88))
                         .arcTo(new Vector2(-3.693, -2.575), new Vector2(-3.475, -2.887))
                         .lineTo(new Vector2(-3.188, -2.222)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        twoBallDefensivePartOne = new Trajectory(
+                new SimplePathBuilder(new Vector2(-3.294, 2.068), Rotation2.fromDegrees(-32.13))
+                        .lineTo(new Vector2(-3.225, 2.141), Rotation2.fromDegrees(46.5))
+                        .lineTo(new Vector2(-2.247, 3.171)).build(),
+                trajectoryConstraints, SAMPLE_DISTANCE);
+
+        twoBallDefensivePartTwo = new Trajectory(
+                new SimplePathBuilder(new Vector2(-2.247, 3.171), Rotation2.fromDegrees(46.5))
+                        .lineTo(new Vector2(-1.5, 0.4), Rotation2.fromDegrees(-21.0)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
 
         threeBallOrangePartOne = new Trajectory(
@@ -169,29 +180,18 @@ public class AutonomousTrajectories {
                 new SimplePathBuilder(new Vector2(-3.593, 2.667), Rotation2.fromDegrees(-32.13))
                         .lineTo(new Vector2(-2.893, 2.667)).build(),
                 trajectoryConstraints, SAMPLE_DISTANCE);
-
-        twoBallDefensivePartOne = new Trajectory(
-                new SimplePathBuilder(new Vector2(-3.294, 2.068), Rotation2.fromDegrees(-32.13))
-                        .lineTo(new Vector2(-3.225, 2.141), Rotation2.fromDegrees(46.5))
-                        .lineTo(new Vector2(-2.247, 3.171)).build(),
-                trajectoryConstraints, SAMPLE_DISTANCE);
-
-        twoBallDefensivePartTwo = new Trajectory(
-                new SimplePathBuilder(new Vector2(-2.247, 3.171), Rotation2.fromDegrees(46.5))
-                        .lineTo(new Vector2(-1.5, 0.4), Rotation2.fromDegrees(-21.0)).build(),
-                trajectoryConstraints, SAMPLE_DISTANCE);
     }
 
     public Trajectory getTestAutoPartOne() {
         return testAutoPartOne;
     }
 
-    public Trajectory getFenderBluePartOne() {
-        return fenderBluePartOne;
-    }
-
     public Trajectory getFenderRedPartOne() {
         return fenderRedPartOne;
+    }
+
+    public Trajectory getFenderBluePartOne() {
+        return fenderBluePartOne;
     }
 
     public Trajectory getTwoBallGreenPartOne() {
@@ -200,6 +200,14 @@ public class AutonomousTrajectories {
 
     public Trajectory getTwoBallPurplePartOne() {
         return twoBallPurplePartOne;
+    }
+
+    public Trajectory getTwoBallDefensivePartOne() {
+        return twoBallDefensivePartOne;
+    }
+
+    public Trajectory getTwoBallDefensivePartTwo() {
+        return twoBallDefensivePartTwo;
     }
 
     public Trajectory getThreeBallOrangePartOne() {
@@ -272,13 +280,5 @@ public class AutonomousTrajectories {
 
     public Trajectory getSixBallOrangePartSix() {
         return sixBallOrangePartSix;
-    }
-
-    public Trajectory getTwoBallDefensivePartOne() {
-        return twoBallDefensivePartOne;
-    }
-
-    public Trajectory getTwoBallDefensivePartTwo() {
-        return twoBallDefensivePartTwo;
     }
 }

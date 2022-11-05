@@ -8,7 +8,9 @@ import org.frcteam2910.c2022.util.ClimbChooser;
 public class AutoClimbCommand extends SequentialCommandGroup {
     private final ClimberSubsystem climber;
     private final ShooterSubsystem shooter;
+
     private final ClimbTypeSupplier climbTypeSupplier;
+
     private boolean hasAddedCommands;
 
     @FunctionalInterface
@@ -42,7 +44,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
                     addCommands(traverseToNextRung(climber, shooter, false, true));
                     addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_MIN_ANGLE));
                 } else {
-                    addCommands(traverseToNextRung(climber, shooter, false));
+                    addCommands(traverseToNextRung(climber, shooter));
                 }
                 if (climbType != ClimbChooser.ClimbType.HIGH_PARTWAY) {
                     // Transfer high rung to hood
@@ -82,21 +84,21 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         return group;
     }
 
-    private static Command traverseToNextRung(ClimberSubsystem climber, ShooterSubsystem shooter, boolean transversal) {
-        return traverseToNextRung(climber, shooter, transversal, false);
+    private static Command traverseToNextRung(ClimberSubsystem climber, ShooterSubsystem shooter) {
+        return traverseToNextRung(climber, shooter, false, false);
     }
 
-    private static Command traverseToNextRung(ClimberSubsystem climber, ShooterSubsystem shooter, boolean transversal,
+    private static Command traverseToNextRung(ClimberSubsystem climber, ShooterSubsystem shooter, boolean traversal,
             boolean partway) {
         SequentialCommandGroup group = new SequentialCommandGroup();
 
-        if (!transversal) {
+        if (!traversal) {
             group.addCommands(
                     new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE_HIGH, true, true)
                             .alongWith(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_EXTEND_HEIGHT)));
         } else {
             // Angle the robot to extend the climber
-            group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE_TRANVERSE,
+            group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_EXTEND_ANGLE_TRAVERSE,
                     false, true));
             // Extend the climber slightly past the next rung
             group.addCommands(new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_EXTEND_HEIGHT));
@@ -104,7 +106,7 @@ public class AutoClimbCommand extends SequentialCommandGroup {
         // Angle the robot so the climber hooks will grab the next rung
         group.addCommands(new SetHoodAngleCommand(shooter, ShooterSubsystem.HOOD_TRAVERSE_RETRACT_ANGLE, false, true));
 
-        if (transversal) {
+        if (traversal) {
             if (partway) {
                 group.addCommands(
                         new ClimberToPointCommand(climber, ClimberSubsystem.TRAVERSE_RUNG_PARTWAY_HEIGHT, false, false)

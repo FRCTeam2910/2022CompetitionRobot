@@ -97,6 +97,7 @@ public class VisionSubsystem implements Subsystem {
             angleToTarget = drivetrain.getPose().getRotation().getRadians() + Math.toRadians(yaw);
         }
 
+        // // Ellipse Fitting
         // result = shooterLimelight.getLatestResult();
         //
         // if (result != null && result.hasTargets()) {

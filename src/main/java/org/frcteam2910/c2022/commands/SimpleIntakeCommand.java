@@ -11,6 +11,7 @@ public class SimpleIntakeCommand extends CommandBase {
 
     private final IntakeSubsystem intake;
     private final FeederSubsystem feeder;
+
     private final XboxController controller;
 
     public SimpleIntakeCommand(IntakeSubsystem intake, FeederSubsystem feeder, XboxController controller) {

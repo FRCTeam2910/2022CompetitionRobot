@@ -23,8 +23,6 @@ public class FeederSubsystem implements Subsystem {
     private final TalonFX motor = new TalonFX(Constants.FEEDER_MOTOR_PORT);
     private final DigitalInput fullSensor = new DigitalInput(Constants.FEEDER_SENSOR_FULL_PORT);
     private final DigitalInput entrySensor = new DigitalInput(Constants.FEEDER_SENSOR_ENTRY_PORT);
-    // private Solenoid feederSolenoid = new Solenoid(PneumaticsModuleType.REVPH,
-    // Constants.FEEDER_SOLENOID_PORT);
 
     private double motorSpeed;
 
@@ -33,23 +31,14 @@ public class FeederSubsystem implements Subsystem {
         motor.setStatusFramePeriod(StatusFrame.Status_1_General, 255);
         motor.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 20);
         motor.setNeutralMode(NeutralMode.Brake);
+
         ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Feeder");
         shuffleboardTab.addBoolean("Full Sensor", this::isFull);
         shuffleboardTab.addBoolean("Entry Sensor", this::isBallAtEntry);
-        // feederSolenoid.set(true);
-    }
-
-    @Override
-    public void periodic() {
-        motor.set(TalonFXControlMode.PercentOutput, motorSpeed);
     }
 
     public void setFeederSpeed(double motorSpeed) {
         this.motorSpeed = motorSpeed;
-    }
-
-    public double getFeederSpeed() {
-        return motorSpeed;
     }
 
     public double getPosition() {
@@ -62,5 +51,10 @@ public class FeederSubsystem implements Subsystem {
 
     public boolean isFull() {
         return !fullSensor.get();
+    }
+
+    @Override
+    public void periodic() {
+        motor.set(TalonFXControlMode.PercentOutput, motorSpeed);
     }
 }

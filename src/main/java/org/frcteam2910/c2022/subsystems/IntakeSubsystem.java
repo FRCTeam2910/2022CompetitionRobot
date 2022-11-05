@@ -32,18 +32,18 @@ public class IntakeSubsystem implements Subsystem {
         rightMotor.setInverted(true);
     }
 
-    @Override
-    public void periodic() {
-        leftMotor.set(TalonFXControlMode.PercentOutput, motorSpeed);
-        rightMotor.set(TalonFXControlMode.PercentOutput, motorSpeed);
-        extensionSolenoid.set(extended);
-    }
-
     public void setIntakeSpeed(double motorSpeed) {
         this.motorSpeed = motorSpeed;
     }
 
     public void setExtended(boolean extended) {
         this.extended = extended;
+    }
+
+    @Override
+    public void periodic() {
+        leftMotor.set(TalonFXControlMode.PercentOutput, motorSpeed);
+        rightMotor.set(TalonFXControlMode.PercentOutput, motorSpeed);
+        extensionSolenoid.set(extended);
     }
 }

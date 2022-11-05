@@ -5,6 +5,7 @@ import org.frcteam2910.c2022.subsystems.ShooterSubsystem;
 
 public class SetHoodAngleCommand extends CommandBase {
     private final ShooterSubsystem shooter;
+
     private final double targetAngle;
     private final boolean climbing;
     private final boolean fast;

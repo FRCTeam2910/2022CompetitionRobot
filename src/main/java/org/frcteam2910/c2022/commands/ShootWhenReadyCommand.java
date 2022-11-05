@@ -12,6 +12,7 @@ public class ShootWhenReadyCommand extends CommandBase {
     private final FeederSubsystem feeder;
     private final ShooterSubsystem shooter;
     private final VisionSubsystem vision;
+
     private final Timer timer = new Timer();
 
     public ShootWhenReadyCommand(FeederSubsystem feeder, ShooterSubsystem shooter, VisionSubsystem vision) {

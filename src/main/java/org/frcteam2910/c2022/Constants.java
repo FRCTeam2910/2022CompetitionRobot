@@ -13,7 +13,6 @@ public class Constants {
     public static final int CLIMBER_SECOND_LEFT_MOTOR_PORT = 17;
     public static final int CLIMBER_SECOND_RIGHT_MOTOR_PORT = 18;
     public static final int FEEDER_MOTOR_PORT = 10;
-    public static final int FEEDER_SOLENOID_PORT = 13;
 
     public static final int FEEDER_SENSOR_FULL_PORT = 1;
     public static final int FEEDER_SENSOR_ENTRY_PORT = 0;

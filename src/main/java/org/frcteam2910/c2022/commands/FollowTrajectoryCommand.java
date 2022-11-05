@@ -6,6 +6,7 @@ import org.frcteam2910.common.control.Trajectory;
 
 public class FollowTrajectoryCommand extends CommandBase {
     private final DrivetrainSubsystem drivetrain;
+
     private final Trajectory trajectory;
 
     public FollowTrajectoryCommand(DrivetrainSubsystem drivetrain, Trajectory trajectory) {

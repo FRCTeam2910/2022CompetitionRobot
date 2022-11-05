@@ -27,7 +27,6 @@ public class ClimberSubsystem implements Subsystem {
     public static final double MID_RUNG_HEIGHT = Units.inchesToMeters(30.0);
     public static final double TRAVERSE_EXTEND_HEIGHT = Units.inchesToMeters(28.5);
     public static final double TRAVERSE_RUNG_PARTWAY_HEIGHT = Units.inchesToMeters(20.0);
-    public static final double TRAVERSE_RUNG_HEIGHT = Units.inchesToMeters(18.25);
     public static final double HOOD_PASSAGE_HEIGHT = Units.inchesToMeters(3.5);
     public static final double HOOD_TRANSFER_HEIGHT = Units.inchesToMeters(-0.5);
     public static final double MIN_HEIGHT = Units.feetToMeters(0.0);
@@ -81,14 +80,13 @@ public class ClimberSubsystem implements Subsystem {
         configuration.slot0.kI = 0.0;
         configuration.slot0.kD = 0.0;
         configuration.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
-        // configuration.supplyCurrLimit.currentLimit = 100.0;
-        // configuration.supplyCurrLimit.enable = true;
         configuration.voltageCompSaturation = 12.0;
 
         firstLeftMotor.configAllSettings(configuration);
         firstRightMotor.configAllSettings(configuration);
         secondLeftMotor.configAllSettings(configuration);
         secondRightMotor.configAllSettings(configuration);
+
         firstLeftMotor.setNeutralMode(NeutralMode.Brake);
         firstRightMotor.setNeutralMode(NeutralMode.Brake);
         secondLeftMotor.setNeutralMode(NeutralMode.Brake);
@@ -107,34 +105,9 @@ public class ClimberSubsystem implements Subsystem {
         firstRightMotor.enableVoltageCompensation(true);
         secondLeftMotor.enableVoltageCompensation(true);
         secondRightMotor.enableVoltageCompensation(true);
+
         firstRightMotor.setInverted(true);
         secondRightMotor.setInverted(true);
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        simulation.setInputVoltage(targetVoltage);
-        simulation.update(0.020);
-    }
-
-    @Override
-    public void periodic() {
-        switch (mode) {
-            case POSITION :
-                if (isClimberZeroed()) {
-                    firstLeftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
-                    firstRightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
-                    secondLeftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
-                    secondRightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
-                }
-                break;
-            case VOLTAGE :
-                firstLeftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
-                firstRightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
-                secondLeftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
-                secondRightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
-                break;
-        }
     }
 
     public double getTargetHeight() {
@@ -246,6 +219,32 @@ public class ClimberSubsystem implements Subsystem {
                 .configMotionCruiseVelocity(EVEN_FASTER_MOTION_CONSTRAINTS.maxVelocity / SENSOR_VELOCITY_COEFFICIENT);
         secondRightMotor
                 .configMotionAcceleration(EVEN_FASTER_MOTION_CONSTRAINTS.maxAcceleration / SENSOR_VELOCITY_COEFFICIENT);
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        simulation.setInputVoltage(targetVoltage);
+        simulation.update(0.020);
+    }
+
+    @Override
+    public void periodic() {
+        switch (mode) {
+            case POSITION :
+                if (isClimberZeroed()) {
+                    firstLeftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                    firstRightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                    secondLeftMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                    secondRightMotor.set(TalonFXControlMode.MotionMagic, targetHeight / SENSOR_POSITION_COEFFICIENT);
+                }
+                break;
+            case VOLTAGE :
+                firstLeftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                firstRightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                secondLeftMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                secondRightMotor.set(TalonFXControlMode.PercentOutput, targetVoltage / 12.0);
+                break;
+        }
     }
 
     private enum Mode {
